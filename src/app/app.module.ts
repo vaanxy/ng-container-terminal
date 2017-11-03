@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import { CtVesselModule } from './ct-vessel/ct-vessel.module';
+import { PcNetworkModule } from './pc-network/pc-network.module';
+import { YardModule } from './yard/yard.module';
+import { CtVesselService } from './ct-vessel/ct-vessel.service';
 
 @NgModule({
   declarations: [
@@ -12,9 +16,12 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    CtVesselModule,
+    PcNetworkModule,
+    YardModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [ CtVesselService ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

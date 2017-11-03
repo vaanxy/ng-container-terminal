@@ -1,0 +1,8 @@
+<div>
+  <h3>{{yardName}}</h3>
+  <app-yard-bay *ngFor="let yardBayName of yardBayNames"
+    [size]="size"
+    [yardBayName]="yardBayName"
+    [inputContainers]="getContainers(yardBayName)"
+    (onContainerClicked)="onContainerClicked($event)" ></app-yard-bay>
+</div>
