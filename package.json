@@ -1,6 +1,6 @@
 {
-  "name": "ng-terminal",
-  "version": "0.0.0",
+  "name": "ng-container-terminal",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -10,7 +10,12 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
+  "author": "vaanxy",
+  "description": "Container terminal related UI components & tools based on Angular & d3",
+  "repository": { 
+    "type": "git", 
+    "url": "git+https://github.com:vaanxy/ng-terminal.git"
+    }, 
   "dependencies": {
     "@angular/animations": "^5.0.0",
     "@angular/common": "^5.0.0",
