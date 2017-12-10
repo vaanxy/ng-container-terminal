@@ -13,22 +13,22 @@ export class BayComponent implements OnInit {
   @Input() prestows: Prestow[];
   @Input() prestowDigest: PrestowDigest;
   // @Input() holdBay: BayInfo;
-  private host: d3.Selection<any, {}, null, undefined>;
-  private svg:  d3.Selection<any, {}, null, undefined>;
-  private xb:  d3.Selection<any, {}, null, undefined>;
-  private hb:  d3.Selection<any, {}, null, undefined>;
-  private xbTitleLabel:  d3.Selection<any, {}, null, undefined>;
-  private hbTitleLabel:  d3.Selection<any, {}, null, undefined>;
-  private xbDeckTierLabel:  d3.Selection<any, {}, null, undefined>;
-  private hbDeckTierLabel:  d3.Selection<any, {}, null, undefined>;
-  private xbHoldTierLabel:  d3.Selection<any, {}, null, undefined>;
-  private hbHoldTierLabel:  d3.Selection<any, {}, null, undefined>;
-  private xbRowLabel:  d3.Selection<any, {}, null, undefined>;
-  private hbRowLabel:  d3.Selection<any, {}, null, undefined>;
-  private xbDeck:  d3.Selection<any, {}, null, undefined>;
-  private hbDeck:  d3.Selection<any, {}, null, undefined>;
-  private xbHold:  d3.Selection<any, {}, null, undefined>;
-  private hbHold:  d3.Selection<any, {}, null, undefined>;
+  private host: d3.Selection<any, any, any, any>;
+  private svg:  d3.Selection<any, any, any, any>;
+  private xb:  d3.Selection<any, any, any, any>;
+  private hb:  d3.Selection<any, any, any, any>;
+  private xbTitleLabel:  d3.Selection<any, any, any, any>;
+  private hbTitleLabel:  d3.Selection<any, any, any, any>;
+  private xbDeckTierLabel:  d3.Selection<any, any, any, any>;
+  private hbDeckTierLabel:  d3.Selection<any, any, any, any>;
+  private xbHoldTierLabel:  d3.Selection<any, any, any, any>;
+  private hbHoldTierLabel:  d3.Selection<any, any, any, any>;
+  private xbRowLabel:  d3.Selection<any, any, any, any>;
+  private hbRowLabel:  d3.Selection<any, any, any, any>;
+  private xbDeck:  d3.Selection<any, any, any, any>;
+  private hbDeck:  d3.Selection<any, any, any, any>;
+  private xbHold:  d3.Selection<any, any, any, any>;
+  private hbHold:  d3.Selection<any, any, any, any>;
   private deckBayStruct: Cell[] = [];
   private holdBayStruct: Cell[] = [];
   private basicInfo = {
@@ -241,7 +241,7 @@ export class BayComponent implements OnInit {
    * @param: svg宿主，贝位图将会被渲染在该svg宿主之中;
    * @param: 贝位的船箱位数据;
    */
-  renderBay(host: d3.Selection<any, {}, null, undefined>, bayData: {cell: string, supply00: number}[]) {
+  renderBay(host: d3.Selection<any, any, any, any>, bayData: {cell: string, supply00: number}[]) {
     host
       .selectAll('rect')
       .data(bayData)
@@ -267,7 +267,7 @@ export class BayComponent implements OnInit {
    * @param: svg宿主，预配船图将会被渲染在该svg宿主之中;
    * @param: 预配船图的预配数据;
    */
-  renderPrestow(host: d3.Selection<any, {}, null, undefined>, prestowData: Prestow[]) {
+  renderPrestow(host: d3.Selection<any, any, any, any>, prestowData: Prestow[]) {
     let color = d3.scaleOrdinal(d3.schemeCategory10).domain(this.prestowDigest.pods);
     // console.log(color('1'), color('3'));
     host
@@ -321,7 +321,7 @@ export class BayComponent implements OnInit {
    * @param: svg宿主，贝位图将会被渲染在这个制定的svg宿主之中;
    * @param: 制定贝位的船箱位数据;
    */
-  renderContainer(host: d3.Selection<any, {}, null, undefined>, bayData: {cell: string, supply00: number}[]) {
+  renderContainer(host: d3.Selection<any, any, any, any>, bayData: {cell: string, supply00: number}[]) {
     host
       .selectAll('rect')
       .data(bayData)

@@ -4,7 +4,151 @@
 <div style="width: 100%; border: 1px solid black; overflow: auto;">
   <app-ct-vessel [vesType]="vesType"></app-ct-vessel>
 </div>-->
-<app-yard
-*ngFor="let yardName of yardNames"
-[yardName]="yardName"
-[inputContainers]="getContainers(yardName)"></app-yard>
+
+
+<!-- <div class="page-header">
+  <h1></h1>
+</div> -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        Storage.AI
+
+      </a>
+
+    </div>
+
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="#">智能收箱核心算法DEMO
+          <small>-alpha.1</small>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="btn-group" role="group">
+        <button class="btn btn-sm btn-success">选位演示</button>
+        <button class="btn btn-sm btn-primary" (click)="yaNianDemo();">压黏演示</button>
+        <button class="btn btn-sm btn-primary" (click)="kaoNianDemo();">靠黏演示</button>
+        <button class="btn btn-sm btn-primary" (click)="kaiXinWeiDemo();">开新位演示</button>
+        <button class="btn btn-sm btn-primary" (click)="neiQiangDemo();">内抢演示</button>
+        <button class="btn btn-sm btn-primary" (click)="waiQiangDemo();">外抢演示</button>
+        <button class="btn btn-sm btn-primary" (click)="hunDunGangDemo();">混吨港演示</button>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-xs-9">
+      <!-- 箱信息 -->
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">箱信息</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-xs-6">
+                  <h3>目标箱信息</h3>
+                  <div>航线：{{aimContainer.shippingLine}}</div>
+                  <div>船名：{{aimContainer.vesselNameOut}}</div>
+                  <div>航次：{{aimContainer.voyageOut}}</div>
+                  <div>卸货港：{{aimContainer.pod}}</div>
+                  <div>箱号：{{aimContainer.ctnno}}</div>
+                  <div>尺寸：{{aimContainer.size}}</div>
+                  <div>箱型：{{aimContainer.type}}</div>
+                  <div>箱高：{{aimContainer.height}}</div>
+                  <div>空重：{{aimContainer.status}}</div>
+                  <div>箱重：{{aimContainer.weight}}千克</div>
+                </div>
+                <div class="col-xs-6">
+                    <h3>选中箱信息</h3>
+                  <div>航线：{{selectedContainer?.shippingLine}}</div>
+                  <div>船名：{{selectedContainer?.vesselNameOut}}</div>
+                  <div>航次：{{selectedContainer?.voyageOut}}</div>
+                  <div>卸货港：{{selectedContainer?.pod}}</div>
+                  <div>箱号：{{selectedContainer?.ctnno}}</div>
+                  <div>尺寸：{{selectedContainer?.size}}</div>
+                  <div>箱型：{{selectedContainer?.type}}</div>
+                  <div>箱高：{{selectedContainer?.height}}</div>
+                  <div>空重：{{selectedContainer?.status}}</div>
+                  <div>箱重：{{selectedContainer?.weight}}千克</div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">统计图表</h3>
+
+            </div>
+
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li role="presentation" [ngClass]="{'active': currentChart==='count-trends'}"><a  (click)="activeChart('count-trends');">箱量趋势图</a></li>
+                    <li role="presentation" [ngClass]="{'active': currentChart==='weight-distribution'}" ><a (click)="activeChart('weight-distribution');">重量分布图</a></li>
+                  </ul>
+                <div id="line-chart" *ngIf="currentChart==='count-trends'"></div>
+                <div id="weight-chart" *ngIf="currentChart==='weight-distribution'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 可视化区域 -->
+      <div class="row">
+        <div class="col-xs-12">
+          <app-yard-bay *ngFor="let yardBay of yardBays" (onYardPosInfoClicked)="onYardPosInfoClicked($event);" [yardBay]="yardBay"></app-yard-bay>
+        </div>
+
+        <!-- <div class="col-xs-12">
+          <app-yard-bay (onYardPosInfoClicked)="onYardPosInfoClicked($event);" [yardBay]="yardBay"></app-yard-bay>
+        </div>
+        <div class="col-xs-12">
+          <app-yard-detail-canvas [yardPosInfoList]="yardPosInfoList" (onYardPosClicked)="onYardPosClicked($event)"></app-yard-detail-canvas>
+        </div> -->
+      </div>
+    </div>
+    <div class="col-xs-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          计算过程
+          <button class="pull-right btn btn-xs btn-success" (click)="autoPlay(1000);">
+            <span class="glyphicon glyphicon-play"></span>
+            自动播放</button>
+        </div>
+
+        <!-- List group -->
+        <ng-container>
+          <ul class="list-group" *ngFor="let stage of snapshot?.stages">
+            <li class="list-group-item list-group-item-info">{{stage.name}}</li>
+            <li class="operation list-group-item" [ngClass]="{'selected': currentOperation === operation}" *ngFor="let operation of stage.operations"
+              style="cursor:pointer;" (click)="onOperationClicked(stage, operation)">
+              <span class="label label-default" [ngClass]="{'label-danger': operation.action === '失败', 'label-success': operation.action === '成功', 'label-warning': operation.action === '剔除'}">{{operation.action}}</span> {{operation.description}}
+            </li>
+          </ul>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div>
+    <app-yard-detail-canvas [yardPosInfoList]="yardPosInfoList" (onYardPosClicked)="onYardPosInfoClicked($event)"></app-yard-detail-canvas>
+  </div>
+  <div>
+    <app-yard-detail-canvas *ngFor="let yardPosInfoList of yardPoses" [yardPosInfoList]="yardPosInfoList" (onYardPosClicked)="onYardPosClicked($event)"></app-yard-detail-canvas>
+    <app-yard-canvas #yardCanvas (onYardClicked)="onYardClicked($event);"></app-yard-canvas>
+  </div>
+</div>

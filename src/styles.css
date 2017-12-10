@@ -1,6 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+/* rect:hover {
+    fill: rgb(200, 200, 200);
+} */
+app-yard-bay path:hover {
+    fill: rgb(200, 200, 200);
+}
+app-yard-detail-canvas path:hover {
+    fill: rgb(200, 200, 200);
+}
 
-rect:hover {
+app-yard-canvas rect:hover {
     fill: rgb(200, 200, 200);
 }
 

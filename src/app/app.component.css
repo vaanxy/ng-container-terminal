@@ -1,0 +1,8 @@
+.selected {
+    color: black !important;
+    background: rgb(194, 194, 194)
+}
+
+.operation {
+    color: grey;
+}

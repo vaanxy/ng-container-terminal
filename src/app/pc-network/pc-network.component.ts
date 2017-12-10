@@ -16,7 +16,7 @@ export class PcNetworkComponent implements OnInit {
   tooltip;
   simulation: d3.Simulation<d3.SimulationNodeDatum, d3.SimulationLinkDatum<d3.SimulationNodeDatum>>;
   nodes: d3.SimulationNodeDatum[];
-  network = {
+  network:any = {
       nodes: [
         {'id': 'C1', 'group': 1},
         {'id': 'C2', 'group': 1},
@@ -138,7 +138,7 @@ export class PcNetworkComponent implements OnInit {
     this.simulation
       .force('link', d3.forceLink(this.network.links)
         .id((data: {id: string}) => data.id)
-        .distance((data) => data.value * 2)
+        .distance((data) => data.index * 2)
       )
       .force('brown', isolate(d3.forceX(-800 / 6), function(d) { return d.group === 1; }))
       .force('steelblue', isolate(d3.forceX(800 / 6), function(d) { return d.group === 2; }))

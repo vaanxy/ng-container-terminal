@@ -1,91 +1,124 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Container } from '../../shared/container';
+import { YardPosInfo } from '../../model/yard-pos-info';
+import { YardBay } from '../../model/yard-bay';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    OnChanges,
+    SimpleChanges
+} from '@angular/core';
 import * as d3 from 'd3';
 @Component({
   selector: 'app-yard-bay',
   templateUrl: './yard-bay.component.html',
   styleUrls: ['./yard-bay.component.css']
 })
-export class YardBayComponent implements OnInit {
+export class YardBayComponent implements OnInit, OnChanges {
+
   host: d3.Selection<any, any, any, any>;
   svg: d3.Selection<any, any, any, any>;
   yardBayGroup: d3.Selection<any, any, any, any>;
   yardBayRowLabelGroup: d3.Selection<any, any, any, any>;
   yardBayTierLabelGroup: d3.Selection<any, any, any, any>;
   yardBayNameLabelGroup: d3.Selection<any, any, any, any>;
-  containerGroup: d3.Selection<any, any, any, any>;
+  yardPosInfoGroup: d3.Selection<any, any, any, any>;
 
-  cellSize: number = 30;
+  cellSize: number = 16;
   padding: number = 16;
-  containers: Container[];
-  @Input() inputContainers: Container[];
-  @Input() size: [number, number];
-  @Input() yardBayName: string;
-  @Output() onContainerClicked: EventEmitter<Container> = new EventEmitter();
-  slots: string[] = [];
+  @Input() yardBay: YardBay = {
+    name: '',
+    maxRow: 6,
+    maxTier: 4,
+    yardPosInfoArray: [],
+    dataUpdated: null
+  };
+
+  @Output() onYardPosInfoClicked: EventEmitter<YardPosInfo> = new EventEmitter();
+  // slots: string[] = [];
 
   constructor(private el: ElementRef) {
   }
-  ngOnInit() {
-    this.containers = [...this.inputContainers];
-    d3.range(1, this.size[0] + 1)
-      .forEach((row: number) => {
-        d3.range(1, this.size[1] + 1).forEach((tier: number) => {
-          this.slots.push(this.yardBayName + '0' + row + tier);
-        });
-    });
-    this.host = d3.select(this.el.nativeElement);
-    this.svg = this.host.select('svg')
-      .attr('width', (this.size[0] + 1) * this.cellSize + 2 * this.padding)
-      .attr('height', (this.size[1] + 1) * this.cellSize + 2 * this.padding);
-    this.yardBayGroup = this.svg.append('g')
-      .attr('class', 'yard-bay-group');
-    this.containerGroup = this.svg.append('g')
-      .attr('class', 'container-group');
-    this.renderLayout();
-    this.updateContainer();
-    // this.addContainer(this.containers[0], '111');
-    // d3.interval(_ => this.updateLayout(), 1000);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['yardBay']) {
+      setTimeout(() => {
+        console.log(this.yardBay)
+        this.host = d3.select(this.el.nativeElement);
+        this.svg = this.host.select('svg')
+          .attr('width', (this.yardBay.maxRow + 1) * this.cellSize + 2 * this.padding)
+          .attr('height', (this.yardBay.maxTier + 1) * this.cellSize + 2 * this.padding);
+        this.renderLayout();
+        this.updateYardPosInfo();
+      },0);
+    }
   }
 
-  // updateLayout() {
-  //   this.slots.pop();
-  //   this.renderLayout();
-  // }
+  ngOnInit() {
+    if (this.yardBay.dataUpdated) {
+      this.yardBay.dataUpdated.subscribe(
+        () => {
+          this.updateYardPosInfo();
+        });
+
+
+    }
+
+    // 生成场地结构数据
+    // d3.range(1, this.yardBay.maxRow + 1)
+    //   .forEach((row: number) => {
+    //     d3.range(1, this.yardBay.maxTier + 1).forEach((tier: number) => {
+    //       this.slots.push(this.yardBay.name + this.padLeft(row, 2) + tier);
+    //     });
+    // });
+    this.host = d3.select(this.el.nativeElement);
+    this.svg = this.host.select('svg')
+      .attr('width', (this.yardBay.maxRow + 1) * this.cellSize + 2 * this.padding)
+      .attr('height', (this.yardBay.maxTier + 1) * this.cellSize + 2 * this.padding);
+    this.yardBayGroup = this.svg.append('g')
+      .attr('class', 'yard-bay-group');
+    this.yardPosInfoGroup = this.svg.append('g')
+      .attr('class', 'yard-pos-info-group');
+    this.renderLayout();
+    this.updateYardPosInfo();
+  }
 
   /**
    * 绘制贝位结构
    */
   renderLayout() {
-    let rect = this.yardBayGroup
-      .selectAll('rect')
-      .data(this.slots);
+    // let rect = this.yardBayGroup
+    //   .selectAll('rect')
+    //   .data(this.slots);
 
-    rect
-      .enter()
-      .append('rect')
-      .attr('x', (cellName: string) => {
-        return (parseInt(cellName.slice(5, 7), 10)) * this.cellSize;
-      })
-      .attr('y', (cellName: string) => {
-        return (this.size[1] - (parseInt(cellName[cellName.length - 1], 10))) * this.cellSize;
-      })
-      .attr('width', this.cellSize)
-      .attr('height', this.cellSize)
-      .attr('fill', 'white')
-      .attr('stroke', 'rgb(0,0,0)')
-      .attr('stroke-width', '2px');
-    rect.exit().remove();
+    // rect
+    //   .enter()
+    //   .append('rect')
+    //   .attr('x', (cellName: string) => {
+    //     return (parseInt(cellName.slice(5, 7), 10)) * this.cellSize;
+    //   })
+    //   .attr('y', (cellName: string) => {
+    //     return (this.yardBay.maxTier - (parseInt(cellName[cellName.length - 1], 10))) * this.cellSize;
+    //   })
+    //   .attr('width', this.cellSize)
+    //   .attr('height', this.cellSize)
+    //   .attr('fill', 'white')
+    //   .attr('stroke', 'rgb(0,0,0)')
+    //   .attr('stroke-width', '2px');
+    // rect.exit().remove();
 
     // 绘制层标签
+    this.svg.selectAll('g.yard-bay-tier-label-group').remove()
     this.yardBayTierLabelGroup = this.svg.append('g')
     .attr('class', 'yard-bay-tier-label-group');
-    this.yardBayTierLabelGroup.selectAll('text').data(d3.range(1, this.size[1] + 1)).enter().append('text')
+    this.yardBayTierLabelGroup.selectAll('text').data(d3.range(1, this.yardBay.maxTier + 1)).enter().append('text')
     .attr('width', this.cellSize)
     .attr('height', this.cellSize)
     .attr('transform', (label) => {
       let x = 0;
-      let y = (this.size[1] - label) * this.cellSize;
+      let y = (this.yardBay.maxTier - label) * this.cellSize;
       return `translate(${x}, ${y})`;
     })
     .attr('font-size', '12')
@@ -95,14 +128,15 @@ export class YardBayComponent implements OnInit {
     .text(c => c);
 
     // 绘制列标签
+    this.svg.selectAll('g.yard-bay-row-label-group').remove()
     this.yardBayRowLabelGroup = this.svg.append('g')
     .attr('class', 'yard-bay-row-label-group');
-    this.yardBayRowLabelGroup.selectAll('text').data(d3.range(1, this.size[0] + 1)).enter().append('text')
+    this.yardBayRowLabelGroup.selectAll('text').data(d3.range(1, this.yardBay.maxRow + 1)).enter().append('text')
     .attr('width', this.cellSize)
     .attr('height', this.cellSize)
     .attr('transform', (label) => {
       let x = label * this.cellSize;
-      let y = this.size[1] * this.cellSize;
+      let y = this.yardBay.maxTier * this.cellSize;
       return `translate(${x}, ${y})`;
     })
     .attr('font-size', '12')
@@ -112,89 +146,157 @@ export class YardBayComponent implements OnInit {
     .text(c => c);
 
     // 绘制区位号标签
+    this.svg.selectAll('g.yard-bay-name-label-group').remove()
     this.yardBayNameLabelGroup = this.svg.append('g')
     .attr('class', 'yard-bay-name-label-group');
     this.yardBayNameLabelGroup.append('text')
     .attr('transform', (label) => {
-      let x = (this.size[0] + 1) / 2.0  * this.cellSize;
-      let y = (this.size[1] + 1) * this.cellSize;
+      let x = (this.yardBay.maxRow + 1) / 2.0  * this.cellSize;
+      let y = (this.yardBay.maxTier + 1) * this.cellSize;
       return `translate(${x}, ${y})`;
     })
     .attr('font-size', '16')
     .attr('text-anchor', 'middle')
     .attr('dx', this.cellSize / 2)
     .attr('dy', this.cellSize / 2)
-    .text(this.yardBayName);
+    .text(this.yardBay.name);
 
   }
 
-  updateContainer() {
-    let cell = this.containerGroup
-      .selectAll('g.container')
-      .data(this.containers, (c: Container) => { return c.no; });
+  updateYardPosInfo() {
+    let cell = this.yardPosInfoGroup
+      .selectAll('g.yard-pos-info')
+      .data(this.yardBay.yardPosInfoArray, (pos: YardPosInfo, idx) => JSON.stringify(pos));
 
+      // 更新
+      cell.selectAll('path')
+          .transition()
+          .attr('fill', (data: any) => {
+            if (data.markColor) {
+              return data.markColor;
+            }
+            if (data.container.ctnno) {
+              return 'rgb(251,124,133)';
+            } else if (data.plans.length > 0) {
+              if (data.plans.indexOf('定位组') >= 0) {
+                return 'rgb(255,238,196)';
+              }
+              // if (data.plans.indexOf('拖车限制') >= 0) {
+              //   return 'rgb(139,172,161)';
+              // }
+              return 'white'
+              // return data.plans[0] === '定位组' ? 'yellow' : 'darkgray';
+            } else if (data.tasks.length > 0) {
+              return 'rgb(251,254,133)';
+            } else {
+              return 'white';
+            }
+          })
+          cell.selectAll('text')
+          .text((yardPosInfo: YardPosInfo) => yardPosInfo.text ? yardPosInfo.text : '');
+
+  // 新增
     let enteredCell = cell.enter();
+    this.renderYardPosInfo(enteredCell);
 
-    this.renderContainer(enteredCell);
+    // 删除
     cell.exit()
     .transition()
-    .attr('transform', (container: Container) => {
-      let x = (parseInt(container.location.slice(5, 7), 10)) * this.cellSize;
-      return `translate(${x}, -${this.cellSize})`;
+    .attr('transform', (yardPosInfo: YardPosInfo) => {
+      let x = (parseInt(yardPosInfo.location.slice(6, 8), 10)) * this.cellSize;
+      // return `translate(${x}, -${this.cellSize})`;
+      return `scale(0,0)`;
     })
     .remove();
+
+
   }
 
-  renderContainer(selection: d3.Selection<any, any, any, any>) {
+  renderYardPosInfo(selection: d3.Selection<any, any, any, any>) {
     let g = selection.append('g')
       .style('cursor', 'pointer')
-      .attr('class', 'container')
-      .attr('transform', (container: Container) => {
-        let x = (parseInt(container.location.slice(5, 7), 10)) * this.cellSize;
-        let y = (this.size[1] - (parseInt(container.location[container.location.length - 1], 10))) * this.cellSize;
+      .attr('class', 'yard-pos-info')
+      .attr('transform', (posInfo: YardPosInfo) => {
+        let x = (parseInt(posInfo.location.slice(6, 8), 10)) * this.cellSize;
+        let y = (this.yardBay.maxTier - (+posInfo.location.slice(-2))) * this.cellSize;
         return `translate(${x}, -${y + this.cellSize})`;
       })
-      .on('click', (container: Container, index: number) => {
-          this.removeContainer(container.no);
+      .on('click', (yardPosInfo: YardPosInfo, index: number) => {
+        this.onYardPosInfoClicked.emit(yardPosInfo);
       });
-    g.append('rect')
-      .attr('width', this.cellSize)
-      .attr('height', this.cellSize)
-      .attr('fill', 'burlywood')
-      .attr('stroke', 'rgb(0,0,0)')
-      .attr('stroke-width', '2px');
+
+    g.append('path')
+      .attr('d', (data) => {
+        if (data.plans.length > 0 && data.plans.indexOf('封场') >= 0 ) {
+          return `M0 0 L${this.cellSize} 0 L${this.cellSize} ${this.cellSize} L0 ${this.cellSize} Z M0 0 L${this.cellSize} ${this.cellSize} M${this.cellSize} 0 L0 ${this.cellSize}`
+
+        }
+        return `M0 0 L${this.cellSize} 0 L${this.cellSize} ${this.cellSize} L0 ${this.cellSize} Z`
+
+      })
+      .attr('fill', (data) => {
+        if (data.markColor) {
+          return data.markColor;
+        }
+        if (data.container.ctnno) {
+          return 'rgb(251,124,133)';
+        } else if (data.plans.length > 0) {
+          if (data.plans.indexOf('定位组') >= 0) {
+            return 'rgb(255,238,196)';
+          }
+          // if (data.plans.indexOf('拖车限制') >= 0) {
+          //   return 'rgb(139,172,161)';
+          // }
+          return 'white'
+          // return data.plans[0] === '定位组' ? 'yellow' : 'darkgray';
+        } else if (data.tasks.length > 0) {
+          return 'rgb(251,254,133)';
+  
+        } else {
+          return 'white';
+        }
+      })
+      .attr('stroke', 'rgb(90,68,70)')
+      .attr('stroke-width', '1px');
+    // 高箱 需要加一条粗线
+    g.append('path')
+      .attr('d', (data) => {
+        if(data.container.height + '' === '9.6') {
+          return `M0 2 L${this.cellSize} 2`;
+        } else {
+          return `M0 0 L${this.cellSize} 0`;
+        }
+      })
+      .attr('stroke', 'black')
+      .attr('stroke-width', (data) => {
+        if(data.container.height + '' === '9.6') {
+          return 4;
+        } else {
+          return 1;
+        }
+      });
     g.append('text')
       .attr('font-size', '9')
       .attr('text-anchor', 'middle')
       .attr('dx', this.cellSize / 2)
-      .attr('dy', this.cellSize / 2)
-      .text(c => c.weight.toFixed(2));
+      .attr('dy', this.cellSize / 1.2)
+      .text((yardPosInfo: YardPosInfo) => yardPosInfo.text ? yardPosInfo.text : '');
+
     g.transition()
-    .delay((container) => {
-      let tier = parseInt(container.location[container.location.length - 1], 10);
+    .delay((yardPosInfo: YardPosInfo) => {
+      let tier = (+yardPosInfo.location.slice(-2));
       return (tier) * 100;
     })
-    .attr('transform', (container: Container) => {
-      let x = (parseInt(container.location.slice(5, 7), 10)) * this.cellSize;
-      let y = (this.size[1] - (parseInt(container.location[container.location.length - 1], 10))) * this.cellSize;
+    .attr('transform', (yardPosInfo: YardPosInfo) => {
+      let x = (parseInt(yardPosInfo.location.slice(6, 8), 10)) * this.cellSize;
+      let y = (this.yardBay.maxTier - (+yardPosInfo.location.slice(-2))) * this.cellSize;
       return `translate(${x}, ${y})`;
     });
   }
 
-  // removeContainer(index: number) {
-  //   this.containers.splice(index, 1);
-  //   this.updateContainer();
-  // }
-  removeContainer(containerNo: string) {
-    this.containers = this.containers.filter(c => c.no !== containerNo);
-    this.updateContainer();
+
+  private padLeft(num, length, text = '0'): string {
+    return (Array(length).join(text) + num).slice(-length);
   }
 
-
-  addContainer(container: Container, location: string) {
-    if (location.slice(0, 5) !== this.yardBayName) {
-      throw new Error(`所安排的场地位置${location}不属于当前区位${this.yardBayName}`);
-    }
-    this.containers = [...this.containers, Object.assign({location: location}, container)];
-  }
 }

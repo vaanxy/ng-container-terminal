@@ -1,8 +1,7 @@
-import { Observable } from 'rxjs/Rx';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { CtVesselService } from '../ct-vessel/ct-vessel.service';
-import { Container } from '../shared';
-import * as d3 from 'd3';
+import { YardBay } from '../model/yard-bay';
+
+import { Yard } from '../model/yard';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-yard',
@@ -11,32 +10,31 @@ import * as d3 from 'd3';
 })
 export class YardComponent implements OnInit {
 
-  private containers: Container[] = [];
-
-  @Input() yardName: string = '***';
-  @Input()
-  set inputContainers(inputContainers: Container[]) {
-    this.containers = [...inputContainers];
-    this.yardBayNames = d3.set(this.containers, (container: Container) => container.location.slice(0, 5)).values();
-  }
-
-  yardBayNames: string[];
-  size = [6, 4];
-
+  @Input() yard: Yard = {
+    name: '',
+    yardBays: [],
+    direction: 'H',
+    maxBay: 0,
+    maxRow: 6,
+    maxTier: 4
+  };
+  // 记录最原始的yardBay数组，用于过滤使用
+  rawYardBays: YardBay[] = [];
 
 
-  constructor(private vesselService: CtVesselService) { }
+  constructor() { }
 
   ngOnInit() {
+    this.rawYardBays = [...this.yard.yardBays];
 
   }
 
-
-  getContainers(yardBayName: string): Container[] {
-    return this.containers.filter(c =>  c.location.slice(0, 5) === yardBayName);
+  findYardBays(cb: (yardBay: YardBay) => boolean) {
+    this.yard.yardBays = this.rawYardBays.filter(cb);
   }
 
-  onContainerClicked(container: Container) {
-    alert(container.no);
+
+  onYardPosInfoClicked() {
+    // alert(container.no);
   }
 }

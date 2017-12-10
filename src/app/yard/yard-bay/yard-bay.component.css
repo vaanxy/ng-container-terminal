@@ -1,6 +1,9 @@
 :host {
     display: inline-block;
 }
+rect:hover {
+    fill: rgb(200, 200, 200);
+}
 /*:host .container {
     cursor: pointer;
 }*/

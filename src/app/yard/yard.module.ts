@@ -8,6 +8,6 @@ import { YardBayComponent } from './yard-bay/yard-bay.component';
     CommonModule
   ],
   declarations: [YardBayComponent, YardComponent],
-  exports: [YardComponent]
+  exports: [YardBayComponent, YardComponent]
 })
 export class YardModule { }
