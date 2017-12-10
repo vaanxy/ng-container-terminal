@@ -1,31 +1,26 @@
 # NgTerminal
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.20-4.
+一套基于Angular和d3开发的集装箱码头相关的UI组件及工具。
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## UI组件
 
-## Code scaffolding
+UI组件主要包含两个部分：场地UI组件、船舶UI组件。
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class`.
+### 场地UI组件
 
-## Build
+1. 箱区分布图(初始版，待增强) ct-yards-overview
+2. 箱区详情图(初始版，待增强) ct-yard
+3. 区位侧面图(初始版，待增强) ct-yard-bay
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
-## Running unit tests
+### 船舶UI组件
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+1. 船舶分贝图(计划中，未开始) ct-vessel-bay
+2. 船舶侧面图(计划中，未开始) ct-vessel-side-view
+3. 箱量分布图(计划中，未开始) ct-vessel-container-stat-view
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+### 工具类
 
-## Deploying to Github Pages
-
-Run `ng github-pages:deploy` to deploy to Github Pages.
-
-## Further help
-
-To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+1. 场地位置解析服务(计划中，未开始) YardposParserService
+2. 船箱位解析服务(计划中，未开始) VescellParserService
