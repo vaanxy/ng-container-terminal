@@ -12,6 +12,7 @@ import { PcNetworkModule } from './pc-network/pc-network.module';
 import { CtVesselService } from './ct-vessel/ct-vessel.service';
 import { CtYardModule } from './ct-yard/ct-yard.module';
 import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
+import { CtMockService } from './ct-mock.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
     PcNetworkModule,
     StorageAiDesignToolModule
   ],
-  providers: [ CtVesselService, StorageAiDesignToolService ],
+  providers: [ CtVesselService, StorageAiDesignToolService, CtMockService ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

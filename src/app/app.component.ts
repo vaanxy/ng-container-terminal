@@ -24,6 +24,7 @@ import {
 
 import * as Highcharts from 'highcharts';
 import * as Histogram from 'highcharts/modules/histogram-bellcurve';
+import { CtMockService } from './ct-mock.service';
 
 @Component({
   selector: 'app-root',
@@ -101,7 +102,7 @@ export class AppComponent implements OnInit {
   @ViewChild('yardCanvas') yardCanvas;
 
 
-  constructor(private storageAI: StorageAiDesignToolService) {
+  constructor(private storageAI: StorageAiDesignToolService, private mock: CtMockService) {
     Histogram(Highcharts);
   }
   // vesType: string = 'OCL TOKY';
@@ -122,6 +123,9 @@ export class AppComponent implements OnInit {
     //   vesselNameOut: 'AFIF',
     //   voyageOut: '002W',
     // };
+    this.mock.getYardposInfoList().subscribe((data) => {
+      console.log(data);
+    });
 
 
     this.aimContainer = {

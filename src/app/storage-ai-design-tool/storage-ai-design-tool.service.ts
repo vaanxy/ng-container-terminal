@@ -1,4 +1,3 @@
-import { Operation } from '../';
 import { Container } from '../model/container';
 import { YardBay } from '../model/yard-bay';
 import { YardposInfo } from '../model/yardpos-info';
@@ -380,4 +379,11 @@ export class StorageAiDesignToolService {
     return (Array(length).join(text) + num).slice(-length);
   }
 
+}
+
+export interface Operation {
+  action: string;
+  markedLocations: YardposInfo[];
+  description: string;
+  blocks?: string[];
 }
