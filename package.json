@@ -14,7 +14,7 @@
   "description": "Container terminal related UI components & tools based on Angular & d3",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com:vaanxy/ng-terminal.git"
+    "url": "git+https://github.com:vaanxy/ng-container-terminal.git"
   },
   "dependencies": {
     "@angular/animations": "^5.0.0",

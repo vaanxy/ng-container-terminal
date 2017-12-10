@@ -1,4 +1,4 @@
-# NgTerminal
+# NgContainerTerminal
 
 一套基于Angular和d3开发的集装箱码头相关的UI组件及工具。
 
