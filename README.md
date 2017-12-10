@@ -9,7 +9,7 @@ UI组件主要包含两个部分：场地UI组件、船舶UI组件。
 ### 场地UI组件
 
 1. 箱区分布图(初始版，待增强) ct-yards-overview
-2. 箱区详情图(初始版，待增强) ct-yard
+2. 箱区详情图(初始版，待增强) ct-yard CtYardComponent
 3. 区位侧面图(初始版，待增强) ct-yard-bay
 
 
@@ -22,5 +22,5 @@ UI组件主要包含两个部分：场地UI组件、船舶UI组件。
 
 ### 工具类
 
-1. 场地位置解析服务(计划中，未开始) YardposParserService
-2. 船箱位解析服务(计划中，未开始) VescellParserService
+1. 场地位置解析服务(计划中，未开始) CtYardposParserService
+2. 船箱位解析服务(计划中，未开始) CtVescellParserService

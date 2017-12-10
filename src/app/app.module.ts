@@ -9,8 +9,9 @@ import {HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { CtVesselModule } from './ct-vessel/ct-vessel.module';
 import { PcNetworkModule } from './pc-network/pc-network.module';
-import { YardModule } from './yard/yard.module';
 import { CtVesselService } from './ct-vessel/ct-vessel.service';
+import { CtYardModule } from './ct-yard/ct-yard.module';
+import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
 
 @NgModule({
   declarations: [
@@ -22,9 +23,10 @@ import { CtVesselService } from './ct-vessel/ct-vessel.service';
     FormsModule,
     HttpClientModule,
     CtVesselModule,
+    CtYardModule,
+    CtYardBayModule,
     PcNetworkModule,
-    StorageAiDesignToolModule,
-    YardModule
+    StorageAiDesignToolModule
   ],
   providers: [ CtVesselService, StorageAiDesignToolService ],
   bootstrap: [ AppComponent ]

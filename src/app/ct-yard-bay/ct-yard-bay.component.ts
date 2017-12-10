@@ -1,5 +1,5 @@
-import { YardPosInfo } from '../../model/yard-pos-info';
-import { YardBay } from '../../model/yard-bay';
+import { YardposInfo } from '../model/yardpos-info';
+import { YardBay } from '../model/yard-bay';
 import {
     Component,
     ElementRef,
@@ -11,12 +11,13 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
+
 @Component({
-  selector: 'app-yard-bay',
-  templateUrl: './yard-bay.component.html',
-  styleUrls: ['./yard-bay.component.css']
+  selector: 'ct-yard-bay',
+  templateUrl: './ct-yard-bay.component.html',
+  styleUrls: ['./ct-yard-bay.component.css']
 })
-export class YardBayComponent implements OnInit, OnChanges {
+export class CtYardBayComponent implements OnInit, OnChanges {
 
   host: d3.Selection<any, any, any, any>;
   svg: d3.Selection<any, any, any, any>;
@@ -24,7 +25,7 @@ export class YardBayComponent implements OnInit, OnChanges {
   yardBayRowLabelGroup: d3.Selection<any, any, any, any>;
   yardBayTierLabelGroup: d3.Selection<any, any, any, any>;
   yardBayNameLabelGroup: d3.Selection<any, any, any, any>;
-  yardPosInfoGroup: d3.Selection<any, any, any, any>;
+  yardposInfoGroup: d3.Selection<any, any, any, any>;
 
   cellSize: number = 16;
   padding: number = 16;
@@ -32,12 +33,11 @@ export class YardBayComponent implements OnInit, OnChanges {
     name: '',
     maxRow: 6,
     maxTier: 4,
-    yardPosInfoArray: [],
+    YardposInfoArray: [],
     dataUpdated: null
   };
 
-  @Output() onYardPosInfoClicked: EventEmitter<YardPosInfo> = new EventEmitter();
-  // slots: string[] = [];
+  @Output() onYardposInfoClicked: EventEmitter<YardposInfo> = new EventEmitter();
 
   constructor(private el: ElementRef) {
   }
@@ -51,7 +51,7 @@ export class YardBayComponent implements OnInit, OnChanges {
           .attr('width', (this.yardBay.maxRow + 1) * this.cellSize + 2 * this.padding)
           .attr('height', (this.yardBay.maxTier + 1) * this.cellSize + 2 * this.padding);
         this.renderLayout();
-        this.updateYardPosInfo();
+        this.updateYardposInfo();
       },0);
     }
   }
@@ -60,7 +60,7 @@ export class YardBayComponent implements OnInit, OnChanges {
     if (this.yardBay.dataUpdated) {
       this.yardBay.dataUpdated.subscribe(
         () => {
-          this.updateYardPosInfo();
+          this.updateYardposInfo();
         });
 
 
@@ -79,10 +79,10 @@ export class YardBayComponent implements OnInit, OnChanges {
       .attr('height', (this.yardBay.maxTier + 1) * this.cellSize + 2 * this.padding);
     this.yardBayGroup = this.svg.append('g')
       .attr('class', 'yard-bay-group');
-    this.yardPosInfoGroup = this.svg.append('g')
+    this.yardposInfoGroup = this.svg.append('g')
       .attr('class', 'yard-pos-info-group');
     this.renderLayout();
-    this.updateYardPosInfo();
+    this.updateYardposInfo();
   }
 
   /**
@@ -163,17 +163,17 @@ export class YardBayComponent implements OnInit, OnChanges {
 
   }
 
-  updateYardPosInfo() {
-    let cell = this.yardPosInfoGroup
+  updateYardposInfo() {
+    let cell = this.yardposInfoGroup
       .selectAll('g.yard-pos-info')
-      .data(this.yardBay.yardPosInfoArray, (pos: YardPosInfo, idx) => JSON.stringify(pos));
+      .data(this.yardBay.YardposInfoArray, (pos: YardposInfo, idx) => JSON.stringify(pos));
 
       // 更新
       cell.selectAll('path')
           .transition()
           .attr('fill', (data: any) => {
-            if (data.markColor) {
-              return data.markColor;
+            if (data.fill) {
+              return data.fill;
             }
             if (data.container.ctnno) {
               return 'rgb(251,124,133)';
@@ -193,17 +193,17 @@ export class YardBayComponent implements OnInit, OnChanges {
             }
           })
           cell.selectAll('text')
-          .text((yardPosInfo: YardPosInfo) => yardPosInfo.text ? yardPosInfo.text : '');
+          .text((YardposInfo: YardposInfo) => YardposInfo.text ? YardposInfo.text : '');
 
   // 新增
     let enteredCell = cell.enter();
-    this.renderYardPosInfo(enteredCell);
+    this.renderYardposInfo(enteredCell);
 
     // 删除
     cell.exit()
     .transition()
-    .attr('transform', (yardPosInfo: YardPosInfo) => {
-      let x = (parseInt(yardPosInfo.location.slice(6, 8), 10)) * this.cellSize;
+    .attr('transform', (yardposInfo: YardposInfo) => {
+      let x = (parseInt(yardposInfo.yardpos.slice(6, 8), 10)) * this.cellSize;
       // return `translate(${x}, -${this.cellSize})`;
       return `scale(0,0)`;
     })
@@ -212,17 +212,17 @@ export class YardBayComponent implements OnInit, OnChanges {
 
   }
 
-  renderYardPosInfo(selection: d3.Selection<any, any, any, any>) {
+  renderYardposInfo(selection: d3.Selection<any, any, any, any>) {
     let g = selection.append('g')
       .style('cursor', 'pointer')
       .attr('class', 'yard-pos-info')
-      .attr('transform', (posInfo: YardPosInfo) => {
-        let x = (parseInt(posInfo.location.slice(6, 8), 10)) * this.cellSize;
-        let y = (this.yardBay.maxTier - (+posInfo.location.slice(-2))) * this.cellSize;
+      .attr('transform', (posInfo: YardposInfo) => {
+        let x = (parseInt(posInfo.yardpos.slice(6, 8), 10)) * this.cellSize;
+        let y = (this.yardBay.maxTier - (+posInfo.yardpos.slice(-2))) * this.cellSize;
         return `translate(${x}, -${y + this.cellSize})`;
       })
-      .on('click', (yardPosInfo: YardPosInfo, index: number) => {
-        this.onYardPosInfoClicked.emit(yardPosInfo);
+      .on('click', (YardposInfo: YardposInfo, index: number) => {
+        this.onYardposInfoClicked.emit(YardposInfo);
       });
 
     g.append('path')
@@ -235,8 +235,8 @@ export class YardBayComponent implements OnInit, OnChanges {
 
       })
       .attr('fill', (data) => {
-        if (data.markColor) {
-          return data.markColor;
+        if (data.fill) {
+          return data.fill;
         }
         if (data.container.ctnno) {
           return 'rgb(251,124,133)';
@@ -280,16 +280,16 @@ export class YardBayComponent implements OnInit, OnChanges {
       .attr('text-anchor', 'middle')
       .attr('dx', this.cellSize / 2)
       .attr('dy', this.cellSize / 1.2)
-      .text((yardPosInfo: YardPosInfo) => yardPosInfo.text ? yardPosInfo.text : '');
+      .text((posInfo: YardposInfo) => posInfo.text ? posInfo.text : '');
 
     g.transition()
-    .delay((yardPosInfo: YardPosInfo) => {
-      let tier = (+yardPosInfo.location.slice(-2));
+    .delay((posInfo: YardposInfo) => {
+      let tier = (+posInfo.yardpos.slice(-2));
       return (tier) * 100;
     })
-    .attr('transform', (yardPosInfo: YardPosInfo) => {
-      let x = (parseInt(yardPosInfo.location.slice(6, 8), 10)) * this.cellSize;
-      let y = (this.yardBay.maxTier - (+yardPosInfo.location.slice(-2))) * this.cellSize;
+    .attr('transform', (posInfo: YardposInfo) => {
+      let x = (parseInt(posInfo.yardpos.slice(6, 8), 10)) * this.cellSize;
+      let y = (this.yardBay.maxTier - (+posInfo.yardpos.slice(-2))) * this.cellSize;
       return `translate(${x}, ${y})`;
     });
   }

@@ -56,7 +56,7 @@ export class YardCanvasComponent implements OnInit {
   yard.selectAll('rect')
   .transition()
   .attr('fill', (yard: YardInfo) => {
-    return yard.markColor ? yard.markColor : 'burlywood';
+    return yard.fill ? yard.fill : 'burlywood';
   })
 
   let enteredYard = yard.enter();
@@ -105,6 +105,6 @@ export interface YardInfo {
   y4: number;
   width: number;
   length: number;
-  markColor?: string;
+  fill?: string;
 
 }

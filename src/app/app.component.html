@@ -108,14 +108,14 @@
       <!-- 可视化区域 -->
       <div class="row">
         <div class="col-xs-12">
-          <app-yard-bay *ngFor="let yardBay of yardBays" (onYardPosInfoClicked)="onYardPosInfoClicked($event);" [yardBay]="yardBay"></app-yard-bay>
+          <ct-yard-bay *ngFor="let yardBay of yardBays" (onYardposInfoClicked)="onYardposInfoClicked($event);" [yardBay]="yardBay"></ct-yard-bay>
         </div>
 
         <!-- <div class="col-xs-12">
-          <app-yard-bay (onYardPosInfoClicked)="onYardPosInfoClicked($event);" [yardBay]="yardBay"></app-yard-bay>
+          <app-yard-bay (onYardposInfoClicked)="onYardposInfoClicked($event);" [yardBay]="yardBay"></app-yard-bay>
         </div>
         <div class="col-xs-12">
-          <app-yard-detail-canvas [yardPosInfoList]="yardPosInfoList" (onYardPosClicked)="onYardPosClicked($event)"></app-yard-detail-canvas>
+          <app-yard-detail-canvas [YardposInfoList]="YardposInfoList" (onYardPosClicked)="onYardPosClicked($event)"></app-yard-detail-canvas>
         </div> -->
       </div>
     </div>
@@ -145,10 +145,10 @@
 
 <div>
   <div>
-    <app-yard-detail-canvas [yardPosInfoList]="yardPosInfoList" (onYardPosClicked)="onYardPosInfoClicked($event)"></app-yard-detail-canvas>
+    <ct-yard [yardposInfoList]="yardposInfoList" (onYardPosClicked)="onYardposInfoClicked($event)"></ct-yard>
   </div>
   <div>
-    <app-yard-detail-canvas *ngFor="let yardPosInfoList of yardPoses" [yardPosInfoList]="yardPosInfoList" (onYardPosClicked)="onYardPosClicked($event)"></app-yard-detail-canvas>
-    <app-yard-canvas #yardCanvas (onYardClicked)="onYardClicked($event);"></app-yard-canvas>
+    <ct-yard *ngFor="let YardposInfoList of yardPoses" [yardposInfoList]="YardposInfoList" (onYardPosClicked)="onYardPosClicked($event)"></ct-yard>
+    <!-- <app-yard-canvas #yardCanvas (onYardClicked)="onYardClicked($event);"></app-yard-canvas> -->
   </div>
 </div>

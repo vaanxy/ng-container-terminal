@@ -1,7 +1,7 @@
 import { YardDetail } from './model/yard-detail';
 import { StorageAiDesignToolService } from './storage-ai-design-tool/storage-ai-design-tool.service';
 import { Container } from './model/container';
-import { YardPosInfo } from './model/yard-pos-info';
+import { YardposInfo } from './model/yardpos-info';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as d3 from 'd3';
 import { YardBay } from './model/yard-bay';
@@ -19,8 +19,8 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { YardInfo } from 'app/storage-ai-design-tool/yard-canvas/yard-canvas.component';
-import { YardBayInfo } from 'app/storage-ai-design-tool/yard-detail-canvas/yard-detail-canvas.component';
+// import { YardInfo } from 'app/storage-ai-design-tool/yard-canvas/yard-canvas.component';
+// import { YardBayInfo } from 'app/storage-ai-design-tool/yard-detail-canvas/yard-detail-canvas.component';
 
 import * as Highcharts from 'highcharts';
 import * as Histogram from 'highcharts/modules/histogram-bellcurve';
@@ -74,16 +74,16 @@ export class AppComponent implements OnInit {
 
 
 
-  yardBayInfoList: YardBayInfo[] = []
-  yardDetails: Array<Array<YardBayInfo>> = []
-  yardPoses: Array<Array<YardPosInfo>> = []
-  yardPosInfoList: YardPosInfo[] = []
+  // yardBayInfoList: YardBayInfo[] = []
+  // yardDetails: Array<Array<YardBayInfo>> = []
+  yardPoses: Array<Array<YardposInfo>> = []
+  yardposInfoList: YardposInfo[] = []
 
   yardBay: YardBay = {
     name: null,
     maxRow: 0,
     maxTier: 0,
-    yardPosInfoArray: []
+    YardposInfoArray: []
   };
 
   // 自动播放计时器ID
@@ -144,10 +144,10 @@ export class AppComponent implements OnInit {
 
 
     // 绘制箱区详情测试
-    // this.storageAI.getLocations('*3L').subscribe((data: any[]) => {
-    //   this.yardPosInfoList = this.proecssData(data);
+    this.storageAI.getLocations('*3L').subscribe((data: any[]) => {
+      this.yardposInfoList = this.proecssData(data);
 
-    // })
+    })
 
   }
 
@@ -432,17 +432,17 @@ export class AppComponent implements OnInit {
    * 根据场地位置信息数组绘制各个区位
    * @param locations 场地位置信息数组
    */
-  redrawYardBays(locations: YardPosInfo[]) {
+  redrawYardBays(yardposInfoList: YardposInfo[]) {
     this.yardBays = [];
-    let yardBayNames = d3.set(locations, (pos) => pos.location.slice(0, 6)).values();
+    let yardBayNames = d3.set(yardposInfoList, (pos) => pos.yardpos.slice(0, 6)).values();
     yardBayNames.forEach((yardBayName) => {
-      let poses = locations.filter(pos => pos.location.indexOf(yardBayName) !== -1);
+      let poses = yardposInfoList.filter(pos => pos.yardpos.indexOf(yardBayName) !== -1);
       let dataUpdatedSource = new Subject<void>();
       let yardBay = {
         name: yardBayName,
-        maxRow: Math.max(...poses.map(d => +d.location.slice(6, 8))),
-        maxTier: Math.max(...poses.map(d => +d.location.slice(-2))),
-        yardPosInfoArray: poses,
+        maxRow: Math.max(...poses.map(d => +d.yardpos.slice(6, 8))),
+        maxTier: Math.max(...poses.map(d => +d.yardpos.slice(-2))),
+        YardposInfoArray: poses,
         dataUpdated: dataUpdatedSource.asObservable(),
         dataUpdatedSource: dataUpdatedSource
       };
@@ -454,11 +454,11 @@ export class AppComponent implements OnInit {
    * 根据场地位置信息数组绘制各个箱区详情图
    * @param locations 场地位置信息数组
    */
-  redrawBlocks(locations: YardPosInfo[]) {
+  redrawBlocks(yardposInfoList: YardposInfo[]) {
     this.yardPoses = [];
-    let yardNames = d3.set(locations, (pos) => pos.location.slice(0, 3)).values();
+    let yardNames = d3.set(yardposInfoList, (pos) => pos.yardpos.slice(0, 3)).values();
     yardNames.forEach((yardName) => {
-      let poses = locations.filter(pos => pos.location.indexOf(yardName) !== -1);
+      let poses = yardposInfoList.filter(pos => pos.yardpos.indexOf(yardName) !== -1);
       this.yardPoses.push(poses);
     });
   }
@@ -472,8 +472,8 @@ export class AppComponent implements OnInit {
     this.currentOperation = operation;
     // 先将所有标记色清空
     this.yardBays.forEach((bay) => {
-      bay.yardPosInfoArray.forEach(pos => {
-        pos.markColor = null;
+      bay.YardposInfoArray.forEach(pos => {
+        pos.fill = null;
         pos.text = null
       });
       setTimeout(() => bay.dataUpdatedSource.next(), 0);
@@ -481,38 +481,38 @@ export class AppComponent implements OnInit {
     let poses = this.proecssData(operation.markedLocations);
     if (operation.action === '过滤') {
       poses.forEach((pos) => {
-        this.updateYardPosInfo(pos, { markColor: 'skyblue' });
+        this.updateYardposInfo(pos, { fill: 'skyblue' });
       });
     }
 
     if (operation.action === '排序') {
       let poses = this.proecssData(operation.markedLocations);
       poses.forEach((pos, idx) => {
-        this.updateYardPosInfo(pos, { text: idx + 1, markColor: 'skyblue' });
+        this.updateYardposInfo(pos, { text: idx + 1, fill: 'skyblue' });
       });
     }
 
     if (operation.action === '剔除') {
       let poses = this.proecssData(operation.markedLocations);
       poses.forEach((pos, idx) => {
-        this.updateYardPosInfo(pos, { text: idx + 1, markColor: 'skyblue' });
+        this.updateYardposInfo(pos, { text: idx + 1, fill: 'skyblue' });
       });
     }
 
     if (operation.action === '成功') {
       let poses = this.proecssData(operation.markedLocations);
       poses.forEach((pos, idx) => {
-        this.updateYardPosInfo(pos, { text: '√', markColor: 'lightgreen' });
-        this.onYardPosInfoClicked(pos);
+        this.updateYardposInfo(pos, { text: '√', fill: 'lightgreen' });
+        this.onYardposInfoClicked(pos);
       });
     }
 
     // 开新位特殊operation
     if (operation.blocks) {
       // 在全场俯视图中标记这些箱区
-      this.yardCanvas.yardData.forEach((yard) => yard.markColor = null);
+      this.yardCanvas.yardData.forEach((yard) => yard.fill = null);
       let yards = this.yardCanvas.yardData.filter((yard) => operation.blocks.indexOf(yard.block) !== -1);
-      yards.forEach((yard) => yard.markColor = 'skyblue');
+      yards.forEach((yard) => yard.fill = 'skyblue');
       this.yardCanvas.updateYardCanvas();
     }
 
@@ -522,7 +522,7 @@ export class AppComponent implements OnInit {
     //   let poses = this.proecssData(operation.markedLocations);
     //   console.log(poses.length)
     //   poses.forEach((pos, idx) => {
-    //     this.updateYardPosInfo(pos, {text: idx + 1, markColor: 'lightgreen'});
+    //     this.updateYardposInfo(pos, {text: idx + 1, fill: 'lightgreen'});
     //   });
     // }
 
@@ -542,32 +542,28 @@ export class AppComponent implements OnInit {
     this.doOperation(operation);
   }
 
-  onYardPosInfoClicked(yardPosInfo: YardPosInfo) {
-    if (yardPosInfo.container) {
-      this.selectedContainer = yardPosInfo.container;
+  onYardposInfoClicked(YardposInfo: YardposInfo) {
+    if (YardposInfo.container) {
+      this.selectedContainer = YardposInfo.container;
     } else {
       this.selectedContainer = null;
     }
   }
 
-  onYardClicked(yardInfo: YardInfo) {
-    // this.storageAI.getYardDetail(yardInfo.block).subscribe((data: YardBayInfo[]) => {
-    //   this.yardBayInfoList = data;
-    // });
+  // onYardClicked(yardInfo: YardInfo) {
+  //   this.storageAI.getLocations(yardInfo.block).subscribe((data: any[]) => {
+  //     this.YardposInfoList = this.proecssData(data);
+  //   });
+  // }
 
-    this.storageAI.getLocations(yardInfo.block).subscribe((data: any[]) => {
-      this.yardPosInfoList = this.proecssData(data);
-    });
-  }
-
-  onYardPosClicked(pos: YardPosInfo) {
-    let yardBayName = pos.location.slice(0, 6);
-    let poses = this.yardPosInfoList.filter(pos => pos.location.indexOf(yardBayName) !== -1);
+  onYardPosClicked(pos: YardposInfo) {
+    let yardBayName = pos.yardpos.slice(0, 6);
+    let poses = this.yardposInfoList.filter(pos => pos.yardpos.indexOf(yardBayName) !== -1);
     this.yardBay = {
       name: yardBayName,
-      maxRow: Math.max(...poses.map(d => +d.location.slice(6, 8))),
-      maxTier: Math.max(...poses.map(d => +d.location.slice(-2))),
-      yardPosInfoArray: poses
+      maxRow: Math.max(...poses.map(d => +d.yardpos.slice(6, 8))),
+      maxTier: Math.max(...poses.map(d => +d.yardpos.slice(-2))),
+      YardposInfoArray: poses
 
     };
 
@@ -578,25 +574,25 @@ export class AppComponent implements OnInit {
    * @param pos 要更新的场地位置
    * @param newValue 更新值
    */
-  updateYardPosInfo(pos: YardPosInfo, updateValues?: any) {
-    let yardBayName = pos.location.slice(0, 6);
+  updateYardposInfo(pos: YardposInfo, updateValues?: any) {
+    let yardBayName = pos.yardpos.slice(0, 6);
     // let yardBay: YardBay = this.yardBayMap[yardBayName];
     let yardBay: YardBay = this.yardBays.find(bay => bay.name === yardBayName);
-    let idx = yardBay.yardPosInfoArray.findIndex((p) => p.location === pos.location);
+    let idx = yardBay.YardposInfoArray.findIndex((p) => p.yardpos === pos.yardpos);
     if (idx >= 0) {
-      Object.assign(yardBay.yardPosInfoArray[idx], updateValues);
+      Object.assign(yardBay.YardposInfoArray[idx], updateValues);
     }
     setTimeout(() => yardBay.dataUpdatedSource.next(), 0);
   }
 
 
-  proecssData(data: any[]): YardPosInfo[] {
+  proecssData(data: any[]): YardposInfo[] {
     let posCounter = {};
-    let yardPosInfoList: YardPosInfo[] = [];
+    let yardposInfoList: YardposInfo[] = [];
     data.forEach((d) => {
       if (posCounter[d.yardpos]) {
         // 该场地位置已经添加过，则更新之前添加的信息
-        let posInfo = yardPosInfoList.find(pos => pos.location === d.yardpos);
+        let posInfo = yardposInfoList.find(pos => pos.yardpos === d.yardpos);
         if (d.taskCtnno) {
           posInfo.tasks.push({
             container: {
@@ -617,8 +613,11 @@ export class AppComponent implements OnInit {
           })
         }
 
-        if (d.planType) {
-          posInfo.plans.push(d.planType)
+        if (d.planType && d.planType === '定位组') {
+          posInfo.plans.push({planType: d.planType})
+        }
+        if (d.planType && d.planType === '封场') {
+          posInfo.isLocked = true;
         }
 
         posCounter[d.yardpos] += 1;
@@ -626,8 +625,8 @@ export class AppComponent implements OnInit {
       } else {
         // TODO: 如果ctnno为null, 则container属性也应该为null
         posCounter[d.yardpos] = 1;
-        let posInfo: YardPosInfo = {
-          location: d.yardpos,
+        let posInfo: YardposInfo = {
+          yardpos: d.yardpos,
           container: {
             shippingLine: d.shippingLine,
             ctnno: d.ctnno,
@@ -643,7 +642,8 @@ export class AppComponent implements OnInit {
             voyageOut: d.voyage,
           },
           tasks: [],
-          plans: []
+          plans: [],
+          isLocked: false
         };
         if (d.taskCtnno) {
           posInfo.tasks.push({
@@ -664,16 +664,20 @@ export class AppComponent implements OnInit {
             type: d.taskType
           })
         }
-        if (d.planType) {
-          posInfo.plans.push(d.planType)
+        if (d.planType  && d.planType === '定位组') {
+          posInfo.plans.push({planType: d.planType})
         }
-        yardPosInfoList.push(posInfo)
+        if (d.planType && d.planType === '封场') {
+          posInfo.isLocked = true;
+        }
+        yardposInfoList.push(posInfo)
       }
 
 
     });
-    // console.log(posCounter);
-    return yardPosInfoList;
+    // console.log(JSON.stringify(yardposInfoList));
+    return yardposInfoList;
+    
   }
 
 
@@ -688,14 +692,14 @@ export interface Snapshot {
 
 export interface Stage {
   name: string;
-  locations: YardPosInfo[];
-  blockLocations?: YardPosInfo[];
+  locations: YardposInfo[];
+  blockLocations?: YardposInfo[];
   operations: Operation[]
 }
 
 export interface Operation {
   action: string;
-  markedLocations: YardPosInfo[];
+  markedLocations: YardposInfo[];
   description: string;
   blocks?: string[];
 

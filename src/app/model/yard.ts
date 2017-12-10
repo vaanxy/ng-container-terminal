@@ -1,5 +1,5 @@
 import { YardBay } from './yard-bay';
-import { YardPosInfo } from './yard-pos-info';
+import { YardposInfo } from './yardpos-info';
 export interface Yard {
     name: string;
     maxBay: number;
