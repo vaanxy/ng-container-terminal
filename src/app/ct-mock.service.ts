@@ -10,12 +10,13 @@ export class CtMockService {
   constructor() { }
 
   getYardposInfoList(): Observable<YardposInfo[]> {
-    return Observable.create((observer: Observer<YardposInfo[]>) => {
-      d3.json('../assets/mock-yardpos-data.json', (data) => {
-        // console.log(data);
-        observer.next(data);
-      });
-    });
+    return Observable.of([]);
+    // return Observable.create((observer: Observer<YardposInfo[]>) => {
+    //   d3.json('../assets/mock-yardpos-data.json', (data) => {
+    //     // console.log(data);
+    //     observer.next(data);
+    //   });
+    // });
   }
 
 }

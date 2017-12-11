@@ -123,9 +123,9 @@ export class AppComponent implements OnInit {
     //   vesselNameOut: 'AFIF',
     //   voyageOut: '002W',
     // };
-    this.mock.getYardposInfoList().subscribe((data) => {
-      console.log(data);
-    });
+    // this.mock.getYardposInfoList().subscribe((data) => {
+    //   console.log(data);
+    // });
 
 
     this.aimContainer = {
@@ -679,7 +679,7 @@ export class AppComponent implements OnInit {
 
 
     });
-    // console.log(JSON.stringify(yardposInfoList));
+    console.log(JSON.stringify(yardposInfoList));
     return yardposInfoList;
     
   }
