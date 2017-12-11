@@ -10,13 +10,13 @@ import * as d3 from 'd3';
 })
 export class CtVesselComponent implements OnInit {
   @Input() vesType: string;
-  private vessel: Cell[];
-  private prestows: Prestow[];
-  private containers: Container[];
-  private prestowDigest: PrestowDigest;
-  private bayList: BayInfoGroup[];
-  private bayDisplayList: BayInfoGroup[];
-  private vesselBasicInfo: VesselBasicInfo;
+  vessel: Cell[];
+  prestows: Prestow[];
+  containers: Container[];
+  prestowDigest: PrestowDigest;
+  bayList: BayInfoGroup[];
+  bayDisplayList: BayInfoGroup[];
+  vesselBasicInfo: VesselBasicInfo;
 
   constructor(private vesselService: CtVesselService) {
 
