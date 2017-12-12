@@ -9,6 +9,7 @@ import {
   animate,
   transition
 } from '@angular/animations';
+import { YardBay } from './model/yard-bay';
 
 
 @Component({
@@ -49,6 +50,25 @@ import {
 })
 
 export class AppComponent {
+  yardBay: YardBay = {
+    name: 'a',
+    maxRow: 6,
+    maxTier: 4,
+    yardposInfoArray: [{
+      yardpos: '*1A0010202',
+      container: null,
+      tasks: [],
+      plans: [],
+      isLocked: false
+    },
+    {
+    yardpos: '*1A0010203',
+    container: null,
+    tasks: [],
+    plans: [],
+    isLocked: true
+  }]
+  }
   constructor() {}
 
 }

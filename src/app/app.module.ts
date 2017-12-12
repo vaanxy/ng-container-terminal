@@ -5,7 +5,6 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { CtVesselModule } from './ct-vessel/ct-vessel.module';
-import { PcNetworkModule } from './pc-network/pc-network.module';
 import { CtVesselService } from './ct-vessel/ct-vessel.service';
 import { CtYardModule } from './ct-yard/ct-yard.module';
 import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
@@ -18,8 +17,7 @@ import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
     BrowserAnimationsModule,
     CtVesselModule,
     CtYardModule,
-    CtYardBayModule,
-    PcNetworkModule
+    CtYardBayModule
   ],
   providers: [],
   bootstrap: [ AppComponent ]

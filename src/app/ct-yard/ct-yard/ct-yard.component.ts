@@ -9,6 +9,7 @@ import {
 import * as d3 from 'd3';
 import { Observable } from 'rxjs/Observable';
 import { YardposInfo } from '../../model/yardpos-info';
+import { CtYardposParserService } from '../../tool';
 
 
 @Component({
@@ -45,7 +46,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
   @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
 
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef, private yardposParser: CtYardposParserService) { }
 
   ngOnInit() {
     this.host = d3.select(this.el.nativeElement);
@@ -85,11 +86,11 @@ export class CtYardComponent implements OnInit, OnChanges {
    */
   extractBasicInfo() {
     // TODO: 改用CtYardBayParser解析贝、列、层
-    this.maxRow = Math.max(...this.yardposInfoList.map(d => +d.yardpos.slice(6, 8)));
-    this.maxTier = Math.max(...this.yardposInfoList.map(d => +d.yardpos.slice(-2)));
-    this.maxBay = d3.set(this.yardposInfoList.map(d => +d.yardpos.slice(3, 6)).filter(bay => bay % 2 === 1)).values().length;
+    this.maxRow = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getP(d.yardpos)));
+    this.maxTier = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getC(d.yardpos)));
+    this.maxBay = d3.set(this.yardposInfoList.map(d => +this.yardposParser.getW(d.yardpos)).filter(bay => bay % 2 === 1)).values().length;
 
-    this.pods = d3.set(this.yardposInfoList.filter(pos => pos.container.pod), (pos) => pos.container.pod).values();
+    this.pods = d3.set(this.yardposInfoList.filter(pos => pos.container && pos.container.pod), (pos) => pos.container.pod).values();
     this.podColor = d3.scaleOrdinal(d3.schemeCategory20);
   }
 
@@ -100,13 +101,13 @@ export class CtYardComponent implements OnInit, OnChanges {
     let bayInfo = [];
     // 计算每个场地位置是否含有集装箱、任务、计划
     this.yardposInfoList.forEach((pos, idx) => {
-      let bay = +pos.yardpos.slice(3, 6);
+      let bay = +this.yardposParser.getW(pos.yardpos);
       if (bayInfo[bay]) {
-        if (pos.container.ctnno || pos.plans.length > 0 || pos.tasks.length > 0 ) {
+        if ((pos.container && pos.container.ctnno) || pos.plans.length > 0 || pos.tasks.length > 0 ) {
           bayInfo[bay] += 1;
         }   
       } else {
-        if (pos.container.ctnno || pos.plans.length > 0 || pos.tasks.length > 0 ) {
+        if ((pos.container && pos.container.ctnno) || pos.plans.length > 0 || pos.tasks.length > 0 ) {
           bayInfo[bay] = 1;
         } else {
           bayInfo[bay] = 0;
@@ -117,13 +118,13 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     bayInfo.forEach((count, idx) => {
       if (count > 0) {
-        let poses = this.yardposInfoList.filter(pos => +pos.yardpos.slice(3, 6) === idx);
+        let poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
         this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList]
       } else if( (idx) % 2 === 1 && 
                   (bayInfo[idx + 1] === undefined || bayInfo[idx + 1] === 0) &&
                   (bayInfo[idx - 1] === undefined || bayInfo[idx - 1] === 0)) {
         // 如果是基数贝，则向前向后找其偶数倍是否存在占位信息，若不存在则需要画该基数贝
-        let poses = this.yardposInfoList.filter(pos => +pos.yardpos.slice(3, 6) === idx);
+        let poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
         this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList]
       }
     });
@@ -183,8 +184,8 @@ export class CtYardComponent implements OnInit, OnChanges {
     let pos = yardPoses.enter().append('g')
       .attr('class', 'yardpos')
       .attr('transform', (data) => {
-        let x = (parseInt(data.yardpos.slice(6, 8), 10)) * this.baseWidth;
-        let y = (this.maxTier - (+data.yardpos.slice(-2))) * this.baseHeight;
+        let x = (+this.yardposParser.getP(data.yardpos)) * this.baseWidth;
+        let y = (this.maxTier - (+this.yardposParser.getC(data.yardpos))) * this.baseHeight;
         return `translate(${x}, ${y})`;
       })
       .on('click', (data) => {
@@ -193,18 +194,18 @@ export class CtYardComponent implements OnInit, OnChanges {
 
       });
     pos.transition()
-    .delay((YardposInfo: YardposInfo) => {
-      let bay = +YardposInfo.yardpos.slice(3, 6);
-      let row = +YardposInfo.yardpos.slice(6, 8);
-      let tier = (+YardposInfo.yardpos.slice(-2));
+    .delay((posInfo: YardposInfo) => {
+      let bay = +this.yardposParser.getW(posInfo.yardpos);
+      let row = +this.yardposParser.getP(posInfo.yardpos);
+      let tier = +this.yardposParser.getC(posInfo.yardpos);
       
       return bay * 10 + (row) * 10 + tier * 10;
     })
-    .attr('transform', (data: YardposInfo) => {
+    .attr('transform', (posInfo: YardposInfo) => {
       let x = 0
-      let bay = +data.yardpos.slice(3, 6);
-      let row = +data.yardpos.slice(6, 8);
-      let tier = +data.yardpos.slice(-2);
+      let bay = +this.yardposParser.getW(posInfo.yardpos);
+      let row = +this.yardposParser.getP(posInfo.yardpos);
+      let tier = +this.yardposParser.getC(posInfo.yardpos);
       if (bay % 2 === 1) {
         // 基数贝
         x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
@@ -220,7 +221,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     pos.append('path')
     .attr('d', (data) => {
-      let bay = +data.yardpos.slice(3, 6);
+      let bay = +this.yardposParser.getW(data.yardpos);
       let width = 0;
       if (bay % 2 === 1) {
         // 基数贝
@@ -245,7 +246,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     })
     .attr('fill', (data) => {
-      if (data.container.ctnno) {
+      if (data.container && data.container.ctnno) {
         return this.podColor(data.container.pod);
       } else if (data.plans.length > 0) {
         if (data.plans.filter(p => p.planType === '定位组').length > 0) {

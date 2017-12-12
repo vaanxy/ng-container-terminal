@@ -6,7 +6,7 @@ export interface YardBay {
     name: string;
     maxRow: number;
     maxTier: number;
-    YardposInfoArray: YardposInfo[];
+    yardposInfoArray: YardposInfo[];
     dataUpdated?: Observable<void>;
     dataUpdatedSource?: Subject<void>;
 }

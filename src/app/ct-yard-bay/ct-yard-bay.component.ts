@@ -11,6 +11,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
+import { CtYardposParserService } from '../tool/index';
 
 @Component({
   selector: 'ct-yard-bay',
@@ -33,13 +34,13 @@ export class CtYardBayComponent implements OnInit, OnChanges {
     name: '',
     maxRow: 6,
     maxTier: 4,
-    YardposInfoArray: [],
+    yardposInfoArray: [],
     dataUpdated: null
   };
 
   @Output() onYardposInfoClicked: EventEmitter<YardposInfo> = new EventEmitter();
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef, private yardposParser: CtYardposParserService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -66,13 +67,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
 
     }
 
-    // 生成场地结构数据
-    // d3.range(1, this.yardBay.maxRow + 1)
-    //   .forEach((row: number) => {
-    //     d3.range(1, this.yardBay.maxTier + 1).forEach((tier: number) => {
-    //       this.slots.push(this.yardBay.name + this.padLeft(row, 2) + tier);
-    //     });
-    // });
+
     this.host = d3.select(this.el.nativeElement);
     this.svg = this.host.select('svg')
       .attr('width', (this.yardBay.maxRow + 1) * this.cellSize + 2 * this.padding)
@@ -89,25 +84,6 @@ export class CtYardBayComponent implements OnInit, OnChanges {
    * 绘制贝位结构
    */
   renderLayout() {
-    // let rect = this.yardBayGroup
-    //   .selectAll('rect')
-    //   .data(this.slots);
-
-    // rect
-    //   .enter()
-    //   .append('rect')
-    //   .attr('x', (cellName: string) => {
-    //     return (parseInt(cellName.slice(5, 7), 10)) * this.cellSize;
-    //   })
-    //   .attr('y', (cellName: string) => {
-    //     return (this.yardBay.maxTier - (parseInt(cellName[cellName.length - 1], 10))) * this.cellSize;
-    //   })
-    //   .attr('width', this.cellSize)
-    //   .attr('height', this.cellSize)
-    //   .attr('fill', 'white')
-    //   .attr('stroke', 'rgb(0,0,0)')
-    //   .attr('stroke-width', '2px');
-    // rect.exit().remove();
 
     // 绘制层标签
     this.svg.selectAll('g.yard-bay-tier-label-group').remove()
@@ -166,7 +142,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
   updateYardposInfo() {
     let cell = this.yardposInfoGroup
       .selectAll('g.yard-pos-info')
-      .data(this.yardBay.YardposInfoArray, (pos: YardposInfo, idx) => JSON.stringify(pos));
+      .data(this.yardBay.yardposInfoArray, (pos: YardposInfo, idx) => JSON.stringify(pos));
 
       // 更新
       cell.selectAll('path')
@@ -175,7 +151,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
             if (data.fill) {
               return data.fill;
             }
-            if (data.container.ctnno) {
+            if (data.container && data.container.ctnno) {
               return 'rgb(251,124,133)';
             } else if (data.plans.length > 0) {
               if (data.plans.indexOf('定位组') >= 0) {
@@ -203,7 +179,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
     cell.exit()
     .transition()
     .attr('transform', (yardposInfo: YardposInfo) => {
-      let x = (parseInt(yardposInfo.yardpos.slice(6, 8), 10)) * this.cellSize;
+      let x = (parseInt(this.yardposParser.getP(yardposInfo.yardpos), 10)) * this.cellSize;
       // return `translate(${x}, -${this.cellSize})`;
       return `scale(0,0)`;
     })
@@ -217,8 +193,8 @@ export class CtYardBayComponent implements OnInit, OnChanges {
       .style('cursor', 'pointer')
       .attr('class', 'yard-pos-info')
       .attr('transform', (posInfo: YardposInfo) => {
-        let x = (parseInt(posInfo.yardpos.slice(6, 8), 10)) * this.cellSize;
-        let y = (this.yardBay.maxTier - (+posInfo.yardpos.slice(-2))) * this.cellSize;
+        let x = (parseInt(this.yardposParser.getP(posInfo.yardpos), 10)) * this.cellSize;
+        let y = (this.yardBay.maxTier - (+this.yardposParser.getC(posInfo.yardpos))) * this.cellSize;
         return `translate(${x}, -${y + this.cellSize})`;
       })
       .on('click', (YardposInfo: YardposInfo, index: number) => {
@@ -227,7 +203,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
 
     g.append('path')
       .attr('d', (data) => {
-        if (data.plans.length > 0 && data.plans.indexOf('封场') >= 0 ) {
+        if (data.isLocked) {
           return `M0 0 L${this.cellSize} 0 L${this.cellSize} ${this.cellSize} L0 ${this.cellSize} Z M0 0 L${this.cellSize} ${this.cellSize} M${this.cellSize} 0 L0 ${this.cellSize}`
 
         }
@@ -238,7 +214,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
         if (data.fill) {
           return data.fill;
         }
-        if (data.container.ctnno) {
+        if (data.container && data.container.ctnno) {
           return 'rgb(251,124,133)';
         } else if (data.plans.length > 0) {
           if (data.plans.indexOf('定位组') >= 0) {
@@ -261,7 +237,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
     // 高箱 需要加一条粗线
     g.append('path')
       .attr('d', (data) => {
-        if(data.container.height + '' === '9.6') {
+        if(data.container && data.container.height + '' === '9.6') {
           return `M0 2 L${this.cellSize} 2`;
         } else {
           return `M0 0 L${this.cellSize} 0`;
@@ -269,7 +245,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
       })
       .attr('stroke', 'black')
       .attr('stroke-width', (data) => {
-        if(data.container.height + '' === '9.6') {
+        if(data.container && data.container.height + '' === '9.6') {
           return 4;
         } else {
           return 1;
@@ -284,19 +260,13 @@ export class CtYardBayComponent implements OnInit, OnChanges {
 
     g.transition()
     .delay((posInfo: YardposInfo) => {
-      let tier = (+posInfo.yardpos.slice(-2));
+      let tier = (+this.yardposParser.getP(posInfo.yardpos));
       return (tier) * 100;
     })
     .attr('transform', (posInfo: YardposInfo) => {
-      let x = (parseInt(posInfo.yardpos.slice(6, 8), 10)) * this.cellSize;
-      let y = (this.yardBay.maxTier - (+posInfo.yardpos.slice(-2))) * this.cellSize;
+      let x = (parseInt(this.yardposParser.getP(posInfo.yardpos), 10)) * this.cellSize;
+      let y = (this.yardBay.maxTier - (+this.yardposParser.getC(posInfo.yardpos))) * this.cellSize;
       return `translate(${x}, ${y})`;
     });
   }
-
-
-  private padLeft(num, length, text = '0'): string {
-    return (Array(length).join(text) + num).slice(-length);
-  }
-
 }

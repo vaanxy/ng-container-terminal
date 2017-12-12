@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { YardposParserConfig } from './model/yardpos-parser-config';
+import { Injectable, Inject } from '@angular/core';
+import { YardposParserConfig, YARDPOS_PARSER_CONFIG } from './model/yardpos-parser-config';
+
 @Injectable()
 export class CtYardposParserService {
 
@@ -16,7 +17,7 @@ export class CtYardposParserService {
 
   private finalConfig: YardposParserConfig = this.defaultConfig;
 
-  constructor(private config: YardposParserConfig) {
+  constructor(@Inject(YARDPOS_PARSER_CONFIG)private config: YardposParserConfig) {
     // 合并用户提供的解析器配置
     this.finalConfig = Object.assign(this.finalConfig, config);
     // 重新计算索引
@@ -35,21 +36,21 @@ export class CtYardposParserService {
   }
 
   getQ(yardpos: string) {
-    return yardpos.slice(this.idxMap["Q"]["s"], this.idxMap["Q"]["e"]);
+    return yardpos.slice(this.idxMap['Q']['s'], this.idxMap['Q']['e']);
   }
 
   getW(yardpos: string) {
-    return yardpos.slice(this.idxMap["Q"]["s"], this.idxMap["Q"]["e"]);
+    return yardpos.slice(this.idxMap['W']['s'], this.idxMap['W']['e']);
 
   }
 
   getP(yardpos: string) {
-    return yardpos.slice(this.idxMap["Q"]["s"], this.idxMap["Q"]["e"]);
+    return yardpos.slice(this.idxMap['P']['s'], this.idxMap['P']['e']);
 
   }
 
   getC(yardpos: string) {
-    return yardpos.slice(this.idxMap["Q"]["s"], this.idxMap["Q"]["e"]);
+    return yardpos.slice(this.idxMap['C']['s'], this.idxMap['C']['e']);
 
   }
 
@@ -63,25 +64,25 @@ export class CtYardposParserService {
   }
 
   formatW(bay: number | string) {
-    const bayStringWidth = this.idxMap["P"]["e"] - this.idxMap["P"]["s"]
+    const bayStringWidth = this.idxMap['W']['e'] - this.idxMap['W']['s']
     if (bay.toString().length > bayStringWidth) {
-      throw Error("传入参数有误，其长度应<=" + bayStringWidth);
+      throw Error('传入参数有误，其长度应<=' + bayStringWidth);
     }
     return bay.toString().padStart(bayStringWidth, '0');
   }
 
   formatP(row: number | string) {
-    const rowStringWidth = this.idxMap["P"]["e"] - this.idxMap["P"]["s"]
+    const rowStringWidth = this.idxMap['P']['e'] - this.idxMap['P']['s']
     if (row.toString().length > rowStringWidth) {
-      throw Error("传入参数有误，其长度应<=" + rowStringWidth);
+      throw Error('传入参数有误，其长度应<=' + rowStringWidth);
     }
     return row.toString().padStart(rowStringWidth, '0');
   }
 
   formatC(tier: number | string) {
-    const tierStringWidth = this.idxMap["P"]["e"] - this.idxMap["P"]["s"]
+    const tierStringWidth = this.idxMap['C']['e'] - this.idxMap['C']['s']
     if (tier.toString().length > tierStringWidth) {
-      throw Error("传入参数有误，其长度应<=" + tierStringWidth);
+      throw Error('传入参数有误，其长度应<=' + tierStringWidth);
     }
     return tier.toString().padStart(tierStringWidth, '0');
   }

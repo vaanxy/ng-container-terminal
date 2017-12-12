@@ -22,5 +22,57 @@ UI组件主要包含两个部分：场地UI组件、船舶UI组件。
 
 ## 工具类
 
-1. 场地位置解析服务(计划中，未开始) CtYardposParserService
-2. 船箱位解析服务(计划中，未开始) CtVescellParserService
+1. 场地位置字符串位置解析服务(已完成) CtYardposParserService
+2. 船箱位字符串解析服务(计划中，未开始) CtVescellParserService
+
+## 使用指南
+
+### 场地位置字符串位置解析服务 CtYardposParserService
+
+场地位置字符串位通常由4部分构成(区、位、排、层), 如: *1A0010203。
+
+用户可通过为该服务配置pattern字符串，从而使得解析器能够根据pattern提取(区、位、排、层)。
+
+在模块中引入该服务，并提供pattern
+
+~~~typescript
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CtYardComponent } from './ct-yard/ct-yard.component';
+import { CtYardposParserService, YARDPOS_PARSER_CONFIG } from 'ng-container-terminal/tool';
+
+@NgModule({
+  imports: [
+    CommonModule
+  ],
+  declarations: [CtYardComponent],
+  exports: [CtYardComponent],
+  providers:[
+    [CtYardposParserService, {
+      provide: YARDPOS_PARSER_CONFIG, useValue: {pattern: 'QQQWWWPPCC'}
+    }]
+  ]
+})
+export class CtYardModule { }
+~~~
+
+
+在组件中使用该服务
+~~~typescript
+...
+import { CtYardposParserService } from 'ng-container-terminal/tool';
+
+
+@Component({
+  selector: 'ct-yard',
+  templateUrl: './ct-yard.component.html',
+  styleUrls: ['./ct-yard.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class CtYardComponent {
+  constructor(private yardposParser: CtYardposParserService) {
+      // 获取场地位置的排
+      this.yardposParser.getP('*1A0010203');
+  }
+}
+~~~
