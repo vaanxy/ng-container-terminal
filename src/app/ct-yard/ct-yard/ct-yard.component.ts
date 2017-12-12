@@ -93,7 +93,7 @@ export class CtYardComponent implements OnInit, OnChanges {
     this.podColor = d3.scaleOrdinal(d3.schemeCategory20);
   }
 
-  // TODO: BUG 如果偶数贝存在定位组信息，则其对应的基数贝也存在定位组信息，这时候应当只画基数贝
+  // TODO: BUG 如果偶数贝存在定位组信息，则其对应的基数贝也存在定位组信息，这时候应当只画偶数贝
   processData() {
     // TODO: 改用CtYardBayParser解析贝、列、层
     this.displayYardposInfoList = [];
