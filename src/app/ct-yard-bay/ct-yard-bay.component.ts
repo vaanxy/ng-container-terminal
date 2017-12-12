@@ -11,7 +11,7 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import { CtYardposParserService } from '../tool/index';
+import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
 
 @Component({
   selector: 'ct-yard-bay',

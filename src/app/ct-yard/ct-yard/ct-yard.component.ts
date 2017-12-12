@@ -9,7 +9,7 @@ import {
 import * as d3 from 'd3';
 import { Observable } from 'rxjs/Observable';
 import { YardposInfo } from '../../model/yardpos-info';
-import { CtYardposParserService } from '../../tool';
+import { CtYardposParserService } from '../../tool/ct-yardpos-parser.service';
 
 
 @Component({

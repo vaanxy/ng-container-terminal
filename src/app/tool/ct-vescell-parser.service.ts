@@ -4,6 +4,6 @@ import { VescellParserConfig } from './model/vescell-parser-config';
 @Injectable()
 export class CtVescellParserService {
 
-  constructor(private config: VescellParserConfig) { }
+  constructor() { }
 
 }

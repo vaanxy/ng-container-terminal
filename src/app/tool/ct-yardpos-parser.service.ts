@@ -35,6 +35,11 @@ export class CtYardposParserService {
     this.idxMap['C']['e'] = this.finalConfig.pattern.lastIndexOf('C') + 1
   }
 
+
+  private _padLeft(num, length, text = '0'): string {
+    return (Array(length).join(text) + num).slice(-length);
+  }
+
   getQ(yardpos: string) {
     return yardpos.slice(this.idxMap['Q']['s'], this.idxMap['Q']['e']);
   }
@@ -68,7 +73,7 @@ export class CtYardposParserService {
     if (bay.toString().length > bayStringWidth) {
       throw Error('传入参数有误，其长度应<=' + bayStringWidth);
     }
-    return bay.toString().padStart(bayStringWidth, '0');
+    return this._padLeft(bay.toString(), bayStringWidth, '0');
   }
 
   formatP(row: number | string) {
@@ -76,7 +81,7 @@ export class CtYardposParserService {
     if (row.toString().length > rowStringWidth) {
       throw Error('传入参数有误，其长度应<=' + rowStringWidth);
     }
-    return row.toString().padStart(rowStringWidth, '0');
+    return this._padLeft(row.toString(), rowStringWidth, '0');
   }
 
   formatC(tier: number | string) {
@@ -84,6 +89,7 @@ export class CtYardposParserService {
     if (tier.toString().length > tierStringWidth) {
       throw Error('传入参数有误，其长度应<=' + tierStringWidth);
     }
-    return tier.toString().padStart(tierStringWidth, '0');
+    return this._padLeft(tier.toString(), tierStringWidth, '0');
   }
+
 }
