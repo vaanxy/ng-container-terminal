@@ -260,7 +260,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
 
     g.transition()
     .delay((posInfo: YardposInfo) => {
-      let tier = (+this.yardposParser.getP(posInfo.yardpos));
+      let tier = (+this.yardposParser.getC(posInfo.yardpos));
       return (tier) * 100;
     })
     .attr('transform', (posInfo: YardposInfo) => {

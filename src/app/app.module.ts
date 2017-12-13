@@ -8,6 +8,7 @@ import { CtVesselModule } from './ct-vessel/ct-vessel.module';
 import { CtVesselService } from './ct-vessel/ct-vessel.service';
 import { CtYardModule } from './ct-yard/ct-yard.module';
 import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
+import { CtMockService } from '../../mock/src/ct-mock.service';
 @NgModule({
   declarations: [
     AppComponent
@@ -19,7 +20,7 @@ import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
     CtYardModule,
     CtYardBayModule
   ],
-  providers: [],
+  providers: [ CtMockService ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

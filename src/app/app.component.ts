@@ -10,6 +10,8 @@ import {
   transition
 } from '@angular/animations';
 import { YardBay } from './model/yard-bay';
+import { CtMockService } from '../../mock/src/ct-mock.service';
+import { YardposInfo } from './model/yardpos-info';
 
 
 @Component({
@@ -50,6 +52,7 @@ import { YardBay } from './model/yard-bay';
 })
 
 export class AppComponent {
+  blockLocations = [];
   yardBay: YardBay = {
     name: 'a',
     maxRow: 6,
@@ -69,7 +72,11 @@ export class AppComponent {
     isLocked: true
   }]
   }
-  constructor() {}
+  constructor(private mock: CtMockService) {
+    this.mock.getYardposInfoList().subscribe((blockLocations) => {
+      this.blockLocations = blockLocations;
+    });
+  }
 
 }
 
