@@ -81,6 +81,8 @@ export class AppComponent {
 }
 ~~~
 
+在html中使用绑定该模拟数据到CtYardCompoent的yardposInfoList上;
+
 ~~~html
 ...
 
@@ -90,14 +92,11 @@ export class AppComponent {
 ~~~
 
 
-
-
-
 ### 场地位置字符串位置解析服务 CtYardposParserService
 
 场地位置字符串位通常由4部分构成(区、位、排、层), 如: *1A0010203。
 
-用户可通过为该服务配置pattern字符串，从而使得解析器能够根据pattern提取(区、位、排、层)。
+用户可通过为服务配置pattern字符串，从而使得解析器能够根据pattern提取(区、位、排、层)。
 
 
 

@@ -2,7 +2,9 @@
     "ngPackage": {
         "lib": {
             "entryFile": "index.ts",
-            "flatModuleFile": "index"
+            "externals": {
+                "../src/app/model": "model"
+              }
         }
     }
 }

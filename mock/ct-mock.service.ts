@@ -4,7 +4,6 @@ import { Observable } from 'rxjs/Observable';
 // import { of } from 'rxjs/observable/of';
 import 'rxjs/add/observable/of';
 import * as d3 from 'd3';
-import { YardposInfo } from '../../';
 import { mockBlockLocations } from './data/block-locations';
 
 
@@ -13,14 +12,14 @@ export class CtMockService {
 
   constructor() { }
 
-  getYardposInfoList(): Observable<YardposInfo[]> {
-    const data: YardposInfo[] = this.proecssData(mockBlockLocations);
+  getYardposInfoList(): Observable<any[]> {
+    const data: any[] = this.proecssData(mockBlockLocations);
     return Observable.of(data);
   }
 
-  proecssData(data: any[]): YardposInfo[] {
+  proecssData(data: any[]) {
     const posCounter = {};
-    const yardposInfoList: YardposInfo[] = [];
+    const yardposInfoList = [];
     data.forEach((d) => {
       if (posCounter[d.yardpos]) {
         // 该场地位置已经添加过，则更新之前添加的信息
@@ -57,7 +56,7 @@ export class CtMockService {
       } else {
         // TODO: 如果ctnno为null, 则container属性也应该为null
         posCounter[d.yardpos] = 1;
-        const posInfo: YardposInfo = {
+        const posInfo = {
           yardpos: d.yardpos,
           container: {
             shippingLine: d.shippingLine,

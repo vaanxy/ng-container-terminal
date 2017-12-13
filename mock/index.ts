@@ -1,1 +1,1 @@
-export * from './src/ct-mock.service';
+export * from './ct-mock.service';
