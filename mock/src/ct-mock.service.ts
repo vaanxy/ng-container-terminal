@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 // import { of } from 'rxjs/observable/of';
 import 'rxjs/add/observable/of';
 import * as d3 from 'd3';
-import { YardposInfo } from '../../src/app/model/yardpos-info';
+import { YardposInfo } from '../../';
 import { mockBlockLocations } from './data/block-locations';
 
 

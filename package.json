@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "packagr": "ng-packagr -p ng-package.json"
+    "packagr": "ng-packagr -p ng-package.json",
+    "build:mock": "ng-packagr -p ./mock/package.json"
   },
   "author": "vaanxy",
   "description": "Container terminal related UI components & tools based on Angular & d3",
