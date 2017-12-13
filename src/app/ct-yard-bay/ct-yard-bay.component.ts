@@ -11,7 +11,8 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
+import { CtYardposParserService } from '../../../tool/ct-yardpos-parser.service';
+import { YARDPOS_PARSER_CONFIG } from '../../../tool/model/yardpos-parser-config';
 
 @Component({
   selector: 'ct-yard-bay',
@@ -28,8 +29,8 @@ export class CtYardBayComponent implements OnInit, OnChanges {
   yardBayNameLabelGroup: d3.Selection<any, any, any, any>;
   yardposInfoGroup: d3.Selection<any, any, any, any>;
 
-  cellSize: number = 16;
-  padding: number = 16;
+  cellSize = 16;
+  padding = 16;
   @Input() yardBay: YardBay = {
     name: '',
     maxRow: 6,
@@ -53,7 +54,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
           .attr('height', (this.yardBay.maxTier + 1) * this.cellSize + 2 * this.padding);
         this.renderLayout();
         this.updateYardposInfo();
-      },0);
+      }, 0);
     }
   }
 
@@ -169,7 +170,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
             }
           })
           cell.selectAll('text')
-          .text((YardposInfo: YardposInfo) => YardposInfo.text ? YardposInfo.text : '');
+          .text((posInfo: YardposInfo) => posInfo.text ? posInfo.text : '');
 
   // 新增
     let enteredCell = cell.enter();
@@ -197,8 +198,8 @@ export class CtYardBayComponent implements OnInit, OnChanges {
         let y = (this.yardBay.maxTier - (+this.yardposParser.getC(posInfo.yardpos))) * this.cellSize;
         return `translate(${x}, -${y + this.cellSize})`;
       })
-      .on('click', (YardposInfo: YardposInfo, index: number) => {
-        this.onYardposInfoClicked.emit(YardposInfo);
+      .on('click', (posInfo: YardposInfo, index: number) => {
+        this.onYardposInfoClicked.emit(posInfo);
       });
 
     g.append('path')
@@ -227,7 +228,6 @@ export class CtYardBayComponent implements OnInit, OnChanges {
           // return data.plans[0] === '定位组' ? 'yellow' : 'darkgray';
         } else if (data.tasks.length > 0) {
           return 'rgb(251,254,133)';
-  
         } else {
           return 'white';
         }
@@ -237,7 +237,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
     // 高箱 需要加一条粗线
     g.append('path')
       .attr('d', (data) => {
-        if(data.container && data.container.height + '' === '9.6') {
+        if (data.container && data.container.height + '' === '9.6') {
           return `M0 2 L${this.cellSize} 2`;
         } else {
           return `M0 0 L${this.cellSize} 0`;
@@ -245,7 +245,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
       })
       .attr('stroke', 'black')
       .attr('stroke-width', (data) => {
-        if(data.container && data.container.height + '' === '9.6') {
+        if (data.container && data.container.height + '' === '9.6') {
           return 4;
         } else {
           return 1;

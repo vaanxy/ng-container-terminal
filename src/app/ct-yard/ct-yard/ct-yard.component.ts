@@ -1,4 +1,4 @@
-import { 
+import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -9,7 +9,8 @@ import {
 import * as d3 from 'd3';
 import { Observable } from 'rxjs/Observable';
 import { YardposInfo } from '../../model/yardpos-info';
-import { CtYardposParserService } from '../../tool/ct-yardpos-parser.service';
+import { CtYardposParserService } from '../../../../tool/ct-yardpos-parser.service';
+
 
 
 @Component({
@@ -42,7 +43,7 @@ export class CtYardComponent implements OnInit, OnChanges {
   pods = [];
   podColor;
 
-  @Input() yardposInfoList: YardposInfo[] = [];  
+  @Input() yardposInfoList: YardposInfo[] = [];
 
   @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
 
@@ -72,7 +73,7 @@ export class CtYardComponent implements OnInit, OnChanges {
         this.extractBasicInfo();
         this.processData();
         this.redraw();
-      },0);
+      }, 0);
     }
   }
 
@@ -105,7 +106,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       if (bayInfo[bay]) {
         if ((pos.container && pos.container.ctnno) || pos.plans.length > 0 || pos.tasks.length > 0 ) {
           bayInfo[bay] += 1;
-        }   
+        }
       } else {
         if ((pos.container && pos.container.ctnno) || pos.plans.length > 0 || pos.tasks.length > 0 ) {
           bayInfo[bay] = 1;
@@ -120,7 +121,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       if (count > 0) {
         let poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
         this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList]
-      } else if( (idx) % 2 === 1 && 
+      } else if ( (idx) % 2 === 1 &&
                   (bayInfo[idx + 1] === undefined || bayInfo[idx + 1] === 0) &&
                   (bayInfo[idx - 1] === undefined || bayInfo[idx - 1] === 0)) {
         // 如果是基数贝，则向前向后找其偶数倍是否存在占位信息，若不存在则需要画该基数贝
@@ -135,7 +136,7 @@ export class CtYardComponent implements OnInit, OnChanges {
     let rowLabels = this.rowLabelsGroup
       .selectAll('g.row-label')
       .data(d3.range(this.maxRow));
-    
+
     let rowLabel = rowLabels.enter().append('g')
       .attr('class', 'row-label')
       .attr('transform', (data) => {
@@ -170,9 +171,9 @@ export class CtYardComponent implements OnInit, OnChanges {
       .text(c => c + 1);
     oddBayLabels.exit().remove();
 
-    //TODO: 绘制偶数贝标签
+    // TODO: 绘制偶数贝标签
 
-    
+
 
 
 
@@ -198,7 +199,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       let bay = +this.yardposParser.getW(posInfo.yardpos);
       let row = +this.yardposParser.getP(posInfo.yardpos);
       let tier = +this.yardposParser.getC(posInfo.yardpos);
-      
+
       return bay * 10 + (row) * 10 + tier * 10;
     })
     .attr('transform', (posInfo: YardposInfo) => {
@@ -229,16 +230,16 @@ export class CtYardComponent implements OnInit, OnChanges {
       } else {
         width = this.baseWidth * 2;
       }
-      
+
       let baseRect = `M0 0 L${width} 0 L${width} ${this.baseHeight} L0 ${this.baseHeight} Z`;
       let finalRect = baseRect;
       if (data.isLocked ) {
-        //有封场则画X表示
+        // 有封场则画X表示
         finalRect = finalRect + ` M0 0 L${width} ${this.baseHeight} M${width} 0 L0 ${this.baseHeight}`
 
       }
       if (data.tasks.length > 0) {
-        //有任务占位则画圈表示
+        // 有任务占位则画圈表示
         finalRect = finalRect + ` M0 ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${width} ${this.baseHeight / 2}  M${width} ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${0} ${this.baseHeight / 2}`
 
       }

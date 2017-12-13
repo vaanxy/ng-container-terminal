@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CtYardBayComponent } from './ct-yard-bay.component';
-import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
-import { YARDPOS_PARSER_CONFIG } from '../tool/model/yardpos-parser-config';
+import { CtYardposParserService } from '../../../tool/ct-yardpos-parser.service';
+import { YARDPOS_PARSER_CONFIG } from '../../../tool/model/yardpos-parser-config';
 @NgModule({
   imports: [
     CommonModule
