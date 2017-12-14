@@ -87,7 +87,11 @@ export class CtYardComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['yardposInfoList']) {
-      this.block = this.yardposParser.getQ(this.yardposInfoList[0].yardpos);
+      if (this.yardposInfoList.length > 0) {
+        this.block = this.yardposParser.getQ(this.yardposInfoList[0].yardpos);
+      } else {
+        this.block = '';
+      }
       setTimeout(() => {
         this.extractBasicInfo();
         this.processData();
