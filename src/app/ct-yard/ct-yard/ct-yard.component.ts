@@ -30,15 +30,13 @@ export class CtYardComponent implements OnInit, OnChanges {
   evenBayLabelsGroup: d3.Selection<any, any, any, any>;
   displayYardposInfoList: YardposInfo[] = [];
 
-  baseWidth = 6;
-  baseHeight = 12;
-
   interval = 1;
 
   maxRow = 6;
   maxTier = 5;
   maxBay = 0;
 
+  // TODO: 根据数据自动计算
   canvasWidth = 2000;
   canvasHeight = 100;
 
@@ -49,14 +47,9 @@ export class CtYardComponent implements OnInit, OnChanges {
 
   private _renderOptions: RenderOptions<YardposInfo>;
 
-  @Input() yardposInfoList: YardposInfo[] = [];
-
   @Input() set renderOptions(options: RenderOptions<YardposInfo>){
     this._renderOptions = options;
-    console.log(options);
     setTimeout(() => {
-      // this.extractBasicInfo();
-      // this.processData();
       this.redraw();
     }, 0);
   }
@@ -64,6 +57,11 @@ export class CtYardComponent implements OnInit, OnChanges {
   get renderOptions() {
     return this._renderOptions;
   }
+
+  @Input() yardposInfoList: YardposInfo[] = [];
+
+  @Input() baseWidth = 6;
+  @Input() baseHeight = 12;
 
   @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
 
