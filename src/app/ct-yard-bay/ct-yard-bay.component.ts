@@ -168,7 +168,8 @@ export class CtYardBayComponent implements OnInit, OnChanges {
             } else {
               return 'white';
             }
-          })
+          });
+
           cell.selectAll('text')
           .text((posInfo: YardposInfo) => posInfo.text ? posInfo.text : '');
 

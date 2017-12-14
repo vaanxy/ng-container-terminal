@@ -11,6 +11,7 @@ import * as d3 from 'd3';
 import { Observable } from 'rxjs/Observable';
 import { YardposInfo } from '../../model/yardpos-info';
 import { CtYardposParserService } from '../../../../tool/ct-yardpos-parser.service';
+import { RenderOptions } from '../../model/render-options';
 
 
 
@@ -44,7 +45,25 @@ export class CtYardComponent implements OnInit, OnChanges {
   pods = [];
   podColor;
 
+  block = '';
+
+  private _renderOptions: RenderOptions<YardposInfo>;
+
   @Input() yardposInfoList: YardposInfo[] = [];
+
+  @Input() set renderOptions(options: RenderOptions<YardposInfo>){
+    this._renderOptions = options;
+    console.log(options);
+    setTimeout(() => {
+      // this.extractBasicInfo();
+      // this.processData();
+      this.redraw();
+    }, 0);
+  }
+
+  get renderOptions() {
+    return this._renderOptions;
+  }
 
   @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
 
@@ -70,6 +89,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['yardposInfoList']) {
+      this.block = this.yardposParser.getQ(this.yardposInfoList[0].yardpos);
       setTimeout(() => {
         this.extractBasicInfo();
         this.processData();
@@ -87,16 +107,14 @@ export class CtYardComponent implements OnInit, OnChanges {
    * pods: 所有卸货港数组
    */
   extractBasicInfo() {
-    // TODO: 改用CtYardBayParser解析贝、列、层
+
     this.maxRow = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getP(d.yardpos)));
     this.maxTier = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getC(d.yardpos)));
     this.maxBay = d3.set(this.yardposInfoList.map(d => +this.yardposParser.getW(d.yardpos)).filter(bay => bay % 2 === 1)).values().length;
-
     this.pods = d3.set(this.yardposInfoList.filter(pos => pos.container && pos.container.pod), (pos) => pos.container.pod).values();
     this.podColor = d3.scaleOrdinal(d3.schemeCategory20);
   }
 
-  // TODO: BUG 如果偶数贝存在定位组信息，则其对应的基数贝也存在定位组信息，这时候应当只画偶数贝
   processData() {
     this.displayYardposInfoList = [];
     let bayInfo = [];
@@ -121,7 +139,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       }
 
     });
-    console.log(bayInfo);
+    // console.log(bayInfo);
 
     bayInfo.forEach((info, idx) => {
       // 如果是基数贝，则向前向后找其偶数倍是否存在占位信息，若不存在则需要画该基数贝
@@ -210,12 +228,17 @@ export class CtYardComponent implements OnInit, OnChanges {
 
 
 
-
-
-
     let yardPoses = this.yardGroup
       .selectAll('g.yardpos')
       .data(this.displayYardposInfoList, (data) => JSON.stringify(data));
+
+      // 更新
+      yardPoses.selectAll('path')
+      .transition()
+      .attr('fill', (data: any) => {
+        return this._fillFunction(data);
+      });
+
 
     let pos = yardPoses.enter().append('g')
       .attr('class', 'yardpos')
@@ -224,11 +247,19 @@ export class CtYardComponent implements OnInit, OnChanges {
         let y = (this.maxTier - (+this.yardposParser.getC(data.yardpos))) * this.baseHeight;
         return `translate(${x}, ${y})`;
       })
+      .on('mouseover', function(data, i, nodes) {
+        d3.select(nodes[i]).select('path').attr('fill', 'grey');
+      })
+      .on('mouseleave', (data, i, nodes) => {
+        d3.select(nodes[i]).select('path').attr('fill', (d) => this._fillFunction(data));
+      })
       .on('click', (data) => {
         console.log(data);
         this.onYardposClicked.emit(data);
-
       });
+
+
+
     pos.transition()
       .delay((posInfo: YardposInfo) => {
         let bay = +this.yardposParser.getW(posInfo.yardpos);
@@ -284,16 +315,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
       })
       .attr('fill', (data) => {
-        if (data.container && data.container.ctnno) {
-          return this.podColor(data.container.pod);
-        } else if (data.plans.length > 0) {
-          if (data.plans.filter(p => p.planType === '定位组').length > 0) {
-            return 'lightgrey';
-          }
-          return 'white'
-        } else {
-          return 'white';
-        }
+        return this._fillFunction(data);
       })
       .attr('stroke', 'rgb(90,68,70)')
       .attr('stroke-width', '1px');
@@ -301,6 +323,30 @@ export class CtYardComponent implements OnInit, OnChanges {
       .remove();
 
 
+  }
+
+
+  private _fillFunction(data: YardposInfo) {
+    // 如果提供了填充色选项则使用填充色选项的配置
+    if (this.renderOptions && this.renderOptions.fill) {
+      if (typeof(this.renderOptions.fill) === 'string') {
+        return this.renderOptions.fill;
+      } else {
+        return this.renderOptions.fill(data);
+      }
+    } else {
+      // 默认填充色配置
+      if (data.container && data.container.ctnno) {
+        return this.podColor(data.container.pod);
+      } else if (data.plans.length > 0) {
+        if (data.plans.filter(p => p.planType === '定位组').length > 0) {
+          return 'lightgrey';
+        }
+        return 'white'
+      } else {
+        return 'white';
+      }
+    }
   }
 
 

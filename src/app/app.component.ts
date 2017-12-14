@@ -10,8 +10,9 @@ import {
   transition
 } from '@angular/animations';
 import { YardBay } from './model/yard-bay';
-import { CtMockService } from '../../mock/src/ct-mock.service';
+import { CtMockService } from '../../mock/ct-mock.service';
 import { YardposInfo } from './model/yardpos-info';
+import { RenderOptions } from './model/render-options';
 
 
 @Component({
@@ -51,7 +52,7 @@ import { YardposInfo } from './model/yardpos-info';
   ]
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
   blockLocations = [];
   yardBay: YardBay = {
     name: 'a',
@@ -71,10 +72,22 @@ export class AppComponent {
     plans: [],
     isLocked: true
   }]
-  }
+  };
+
+  renderOptions: RenderOptions<YardposInfo>;
   constructor(private mock: CtMockService) {
+
+  }
+
+  ngOnInit() {
     this.mock.getYardposInfoList().subscribe((blockLocations) => {
       this.blockLocations = blockLocations;
+      // setTimeout(() => {
+      //   this.renderOptions = {
+      //     fill: 'red'
+      //   };
+      // }, 2000);
+
     });
   }
 

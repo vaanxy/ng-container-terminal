@@ -145,3 +145,7 @@ export class CtYardComponent {
   }
 }
 ~~~
+
+## TODO
+
+1. 为ct-yard及ct-yard-bay添加options配置，可配置其填充色等相关内容
