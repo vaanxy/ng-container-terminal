@@ -93,11 +93,19 @@ export class CtYardComponent implements OnInit, OnChanges {
         this.block = '';
       }
       setTimeout(() => {
-        this.extractBasicInfo();
-        this.processData();
-        this.redraw();
+        this.notifyDataUpdated();
       }, 0);
     }
+  }
+
+
+  /**
+   * 当yardposInfoList里面的相关属性发生变化时，通知视图进行刷行
+   */
+  notifyDataUpdated() {
+    this.extractBasicInfo();
+    this.processData();
+    this.redraw();
   }
 
 
@@ -117,6 +125,9 @@ export class CtYardComponent implements OnInit, OnChanges {
     this.podColor = d3.scaleOrdinal(d3.schemeCategory20);
   }
 
+  /**
+   * 数据预处理，从所有数据中提取出需要显示的数据
+   */
   processData() {
     this.displayYardposInfoList = [];
     let bayInfo = [];
@@ -186,6 +197,9 @@ export class CtYardComponent implements OnInit, OnChanges {
     });
   }
 
+  /**
+   * 视图渲染
+   */
   redraw() {
     // 绘制列标签
     let rowLabels = this.rowLabelsGroup
@@ -244,11 +258,28 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     let pos = yardPoses.enter().append('g')
       .attr('class', 'yardpos')
-      .attr('transform', (data) => {
-        let x = (+this.yardposParser.getP(data.yardpos)) * this.baseWidth;
-        let y = (this.maxTier - (+this.yardposParser.getC(data.yardpos))) * this.baseHeight;
-        return `translate(${x}, ${y})`;
+      .attr('transform', (posInfo) => {
+        // let x = (+this.yardposParser.getP(data.yardpos)) * this.baseWidth;
+        // let y = (this.maxTier - (+this.yardposParser.getC(data.yardpos))) * this.baseHeight;
+        // return `translate(${x}, ${y})`;
+
+        let x = 0
+        let bay = +this.yardposParser.getW(posInfo.yardpos);
+        let row = +this.yardposParser.getP(posInfo.yardpos);
+        let tier = +this.yardposParser.getC(posInfo.yardpos);
+        if (bay % 2 === 1) {
+          // 基数贝
+          x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
+          x = x + (tier - 1) * this.baseWidth;
+        } else {
+          x = ((bay / 2) - 1) * (this.maxTier * this.baseWidth);
+          x = x + (tier - 1) * this.baseWidth * 2;
+        }
+        x = x + (bay - 1) * this.interval;
+        let y = this.baseHeight * (row - 1);
+        return `translate(${x + 8}, ${y})`;
       })
+      .attr('opacity', '0')
       .on('mouseover', function(data, i, nodes) {
         d3.select(nodes[i]).select('path').attr('fill', 'grey');
       })
@@ -264,13 +295,19 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     pos.transition()
       .delay((posInfo: YardposInfo) => {
-        let bay = +this.yardposParser.getW(posInfo.yardpos);
-        let row = +this.yardposParser.getP(posInfo.yardpos);
-        let tier = +this.yardposParser.getC(posInfo.yardpos);
+        //   let bay = +this.yardposParser.getW(posInfo.yardpos);
+        //   let row = +this.yardposParser.getP(posInfo.yardpos);
+        //   let tier = +this.yardposParser.getC(posInfo.yardpos);
 
-        return bay * 10 + (row) * 10 + tier * 10;
+        //   return bay * 10 + (row) * 10 + tier * 10;
+
+        let bay = +this.yardposParser.getW(posInfo.yardpos);
+        return bay * 10;
+
       })
-      .attr('transform', (posInfo: YardposInfo) => {
+      .duration(500)
+      .ease(d3.easeCubicOut)
+      .attr('transform', (posInfo) => {
         let x = 0
         let bay = +this.yardposParser.getW(posInfo.yardpos);
         let row = +this.yardposParser.getP(posInfo.yardpos);
@@ -286,6 +323,24 @@ export class CtYardComponent implements OnInit, OnChanges {
         x = x + (bay - 1) * this.interval;
         let y = this.baseHeight * (row - 1);
         return `translate(${x}, ${y})`;
+      })
+      .attr('opacity', (posInfo: YardposInfo) => {
+        return 1;
+        // let x = 0
+        // let bay = +this.yardposParser.getW(posInfo.yardpos);
+        // let row = +this.yardposParser.getP(posInfo.yardpos);
+        // let tier = +this.yardposParser.getC(posInfo.yardpos);
+        // if (bay % 2 === 1) {
+        //   // 基数贝
+        //   x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
+        //   x = x + (tier - 1) * this.baseWidth;
+        // } else {
+        //   x = ((bay / 2) - 1) * (this.maxTier * this.baseWidth);
+        //   x = x + (tier - 1) * this.baseWidth * 2;
+        // }
+        // x = x + (bay - 1) * this.interval;
+        // let y = this.baseHeight * (row - 1);
+        // return `translate(${x}, ${y})`;
       });
 
     pos.append('path')
@@ -322,6 +377,9 @@ export class CtYardComponent implements OnInit, OnChanges {
       .attr('stroke', 'rgb(90,68,70)')
       .attr('stroke-width', '1px');
     yardPoses.exit()
+      .transition()
+      .attr('opacity', '0')
+      .attr('transform', 'scale(0.5)')
       .remove();
 
 
