@@ -91,13 +91,24 @@ export class AppComponent implements OnInit {
       setTimeout(() => {
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
         location.container = this.blockLocations[50].container;
-        this.blockLocations[50].container = null;
+        // this.blockLocations[50].container = null;
         this.yardComponents.last.extractBasicInfo();
         this.yardComponents.last.processData();
         this.yardComponents.last.redraw();
         // this.blockLocations = [...this.blockLocations];
         // this.blocks[0] = [...this.blocks[0]];
       }, 2000);
+
+      setTimeout(() => {
+        const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
+        location.container = this.blockLocations[50].container;
+        // this.blockLocations[50].container = null;
+        // this.yardComponents.last.extractBasicInfo();
+        // this.yardComponents.last.processData();
+        this.yardComponents.last.redraw();
+        // this.blockLocations = [...this.blockLocations];
+        // this.blocks[0] = [...this.blocks[0]];
+      }, 4000);
       // setTimeout(() => {
       //   this.renderOptions = {
       //     fill: 'red'

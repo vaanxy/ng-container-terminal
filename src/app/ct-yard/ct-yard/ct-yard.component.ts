@@ -249,10 +249,32 @@ export class CtYardComponent implements OnInit, OnChanges {
       .data(this.displayYardposInfoList, (data) => JSON.stringify(data));
 
       // 更新
-      yardPoses.selectAll('path')
+      yardPoses.selectAll('path.cell')
       .transition()
       .attr('fill', (data: any) => {
         return this._fillFunction(data);
+      });
+          // 高箱 需要加一条粗线
+      yardPoses.selectAll('path.ctn-height')
+      .transition()
+      .attr('d', (data: YardposInfo) => {
+        if (data.container && data.container.height + '' === '9.6') {
+          let factor = 1;
+          if (data.container.size !== '20') {
+            factor = 2
+          }
+          return `M0 2 L${this.baseWidth * factor } 2`;
+        } else {
+          return `M0 0 L${this.baseWidth} 0`;
+        }
+      })
+      .attr('stroke', 'black')
+      .attr('stroke-width', (data: YardposInfo) => {
+        if (data.container && data.container.height + '' === '9.6') {
+          return 4;
+        } else {
+          return 1;
+        }
       });
 
 
@@ -326,24 +348,10 @@ export class CtYardComponent implements OnInit, OnChanges {
       })
       .attr('opacity', (posInfo: YardposInfo) => {
         return 1;
-        // let x = 0
-        // let bay = +this.yardposParser.getW(posInfo.yardpos);
-        // let row = +this.yardposParser.getP(posInfo.yardpos);
-        // let tier = +this.yardposParser.getC(posInfo.yardpos);
-        // if (bay % 2 === 1) {
-        //   // 基数贝
-        //   x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
-        //   x = x + (tier - 1) * this.baseWidth;
-        // } else {
-        //   x = ((bay / 2) - 1) * (this.maxTier * this.baseWidth);
-        //   x = x + (tier - 1) * this.baseWidth * 2;
-        // }
-        // x = x + (bay - 1) * this.interval;
-        // let y = this.baseHeight * (row - 1);
-        // return `translate(${x}, ${y})`;
       });
 
     pos.append('path')
+      .attr('class', 'cell')
       .attr('d', (data) => {
         let bay = +this.yardposParser.getW(data.yardpos);
         let width = 0;
@@ -380,6 +388,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     // 高箱 需要加一条粗线
     pos.append('path')
+    .attr('class', 'ctn-height')
     .attr('d', (data) => {
       if (data.container && data.container.height + '' === '9.6') {
         let factor = 1;
@@ -398,7 +407,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       } else {
         return 1;
       }
-    });  
+    });
     yardPoses.exit()
       .transition()
       .attr('opacity', '0')
