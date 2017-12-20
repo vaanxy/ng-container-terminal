@@ -376,6 +376,29 @@ export class CtYardComponent implements OnInit, OnChanges {
       })
       .attr('stroke', 'rgb(90,68,70)')
       .attr('stroke-width', '1px');
+
+
+    // 高箱 需要加一条粗线
+    pos.append('path')
+    .attr('d', (data) => {
+      if (data.container && data.container.height + '' === '9.6') {
+        let factor = 1;
+        if (data.container.size !== '20') {
+          factor = 2
+        }
+        return `M0 2 L${this.baseWidth * factor } 2`;
+      } else {
+        return `M0 0 L${this.baseWidth} 0`;
+      }
+    })
+    .attr('stroke', 'black')
+    .attr('stroke-width', (data) => {
+      if (data.container && data.container.height + '' === '9.6') {
+        return 4;
+      } else {
+        return 1;
+      }
+    });  
     yardPoses.exit()
       .transition()
       .attr('opacity', '0')
