@@ -8,7 +8,7 @@ UI组件主要包含两个部分：场地UI组件、船舶UI组件。
 
 ### 场地UI组件
 
-1. 箱区分布图(初始版，待增强) ct-yards-overview
+1. 箱区分布图(初始版，待增强) ct-yard-overview
 2. 箱区详情图(初始版，待增强) ct-yard CtYardComponent
 3. 区位侧面图(初始版，待增强) ct-yard-bay
 
@@ -145,7 +145,3 @@ export class CtYardComponent {
   }
 }
 ~~~
-
-## TODO
-
-1. 为ct-yard及ct-yard-bay添加options配置，可配置其填充色等相关内容
