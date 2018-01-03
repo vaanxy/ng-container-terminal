@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import * as d3 from 'd3';
 import { mockBlockLocations } from './data/block-locations';
+import { mockYardInfoList } from './data/yard-info-list';
 
 
 @Injectable()
@@ -15,6 +16,10 @@ export class CtMockService {
   getYardposInfoList(): Observable<any[]> {
     const data: any[] = this.proecssData(mockBlockLocations);
     return Observable.of(data);
+  }
+
+  getYardInfoList(): Observable<any[]> {
+    return Observable.of(mockYardInfoList);
   }
 
   proecssData(data: any[]) {

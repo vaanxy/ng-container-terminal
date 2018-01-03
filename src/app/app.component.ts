@@ -10,6 +10,7 @@ import {
   transition
 } from '@angular/animations';
 import { YardBay } from './model/yard-bay';
+import { YardInfo } from './model/yard-info';
 import { CtMockService } from '../../mock/ct-mock.service';
 import { YardposInfo } from './model/yardpos-info';
 import { RenderOptions } from './model/render-options';
@@ -55,6 +56,7 @@ import { CtYardComponent } from './ct-yard/ct-yard/ct-yard.component';
 
 export class AppComponent implements OnInit {
   blockLocations = [];
+  yardInfoList: YardInfo[] = [];
   blocks: YardposInfo[][] = [];
   yardBay: YardBay = {
     name: 'a',
@@ -91,31 +93,25 @@ export class AppComponent implements OnInit {
       setTimeout(() => {
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
         location.container = this.blockLocations[50].container;
-        // this.blockLocations[50].container = null;
-        this.yardComponents.last.extractBasicInfo();
-        this.yardComponents.last.processData();
-        this.yardComponents.last.redraw();
-        // this.blockLocations = [...this.blockLocations];
-        // this.blocks[0] = [...this.blocks[0]];
+        this.yardComponents.last.notifyDataUpdated()
       }, 2000);
 
       setTimeout(() => {
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
         location.container = this.blockLocations[50].container;
-        // this.blockLocations[50].container = null;
-        // this.yardComponents.last.extractBasicInfo();
-        // this.yardComponents.last.processData();
         this.yardComponents.last.redraw();
-        // this.blockLocations = [...this.blockLocations];
-        // this.blocks[0] = [...this.blocks[0]];
       }, 4000);
-      // setTimeout(() => {
-      //   this.renderOptions = {
-      //     fill: 'red'
-      //   };
-      // }, 2000);
 
     });
+
+    this.mock.getYardInfoList().subscribe((yardInfoList: YardInfo[]) => {
+      this.yardInfoList = yardInfoList;
+
+    });
+  }
+
+  onYardClicked(yardInfo: YardInfo) {
+    console.log(yardInfo);
   }
 
 }

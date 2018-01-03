@@ -9,6 +9,7 @@ import { CtVesselService } from './ct-vessel/ct-vessel.service';
 import { CtYardModule } from './ct-yard/ct-yard.module';
 import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
 import { CtMockService } from '../../mock/ct-mock.service';
+import { CtYardOverviewModule } from './ct-yard-overview/ct-yard-overview.module';
 @NgModule({
   declarations: [
     AppComponent
@@ -18,7 +19,8 @@ import { CtMockService } from '../../mock/ct-mock.service';
     BrowserAnimationsModule,
     CtVesselModule,
     CtYardModule,
-    CtYardBayModule
+    CtYardBayModule,
+    CtYardOverviewModule
   ],
   providers: [ CtMockService ],
   bootstrap: [ AppComponent ]
