@@ -9,9 +9,17 @@ import {
 } from '@angular/core';
 import * as d3 from 'd3';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { YardposInfo } from '../../model/yardpos-info';
 import { CtYardposParserService } from '../../../../tool/ct-yardpos-parser.service';
 import { RenderOptions } from '../../model/render-options';
+import 'rxjs/add/operator/takeWhile';
+import 'rxjs/add/operator/bufferTime';
+// import 'rxjs/add/operator/debounceTime';
+// import 'rxjs/add/operator/throttleTime';
+import 'rxjs/add/operator/filter';
+// import 'rxjs/add/operator/distinctUntilChanged';
+
 
 
 
@@ -50,7 +58,7 @@ export class CtYardComponent implements OnInit, OnChanges {
   @Input() set renderOptions(options: RenderOptions<YardposInfo>){
     this._renderOptions = options;
     setTimeout(() => {
-      this.redraw();
+      this.notifyDataUpdated(true);
     }, 0);
   }
 
@@ -64,6 +72,10 @@ export class CtYardComponent implements OnInit, OnChanges {
   @Input() rotation = 0;
 
   @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
+
+  onNotifyDataChanged = new Subject<number>();
+  onNotifyDataChanged$ = this.onNotifyDataChanged.asObservable();
+
 
   constructor(private el: ElementRef, private yardposParser: CtYardposParserService) { }
 
@@ -83,6 +95,17 @@ export class CtYardComponent implements OnInit, OnChanges {
     this.oddBayLabelsGroup = this.svg.append('g')
       .attr('class', 'odd-bay-labels-group')
       .attr('transform', 'translate(20, 0)');
+    this.onNotifyDataChanged$.bufferTime(100).filter(x => x.length > 0).subscribe((data: number[]) => {
+      // console.log(data);
+      const s = new Date().getTime();
+      if (Math.max(...data) === 1) {
+        this.extractBasicInfo();
+        this.processData();
+      }
+      this.redraw();
+      const e = new Date().getTime();
+      // console.log( (e - s) + 'ms');
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -96,9 +119,9 @@ export class CtYardComponent implements OnInit, OnChanges {
         this.notifyDataUpdated();
       }, 0);
     }
-    if (changes['rotation'] && !changes['rotation'].firstChange) {
+    if (changes['rotation']) {
       setTimeout(() => {
-        this.redraw();
+        this.notifyDataUpdated(true);
       }, 0);
 
     }
@@ -108,10 +131,12 @@ export class CtYardComponent implements OnInit, OnChanges {
   /**
    * 当yardposInfoList里面的相关属性发生变化时，通知视图进行刷行
    */
-  notifyDataUpdated() {
-    this.extractBasicInfo();
-    this.processData();
-    this.redraw();
+  notifyDataUpdated(redrawOnly = false) {
+    if (redrawOnly) {
+      this.onNotifyDataChanged.next(0);
+    } else {
+      this.onNotifyDataChanged.next(1);
+    }
   }
 
 
@@ -206,7 +231,7 @@ export class CtYardComponent implements OnInit, OnChanges {
   /**
    * 视图渲染
    */
-  redraw() {
+  private redraw() {
     // 绘制列标签
     this.rowLabelsGroup.selectAll('g.row-label').remove();
     let rowLabels = this.rowLabelsGroup
@@ -362,11 +387,8 @@ export class CtYardComponent implements OnInit, OnChanges {
 
 
     pos.transition()
-      .delay((posInfo: YardposInfo) => {
-        let bay = +this.yardposParser.getW(posInfo.yardpos);
-        return bay * 10;
-      })
-      .duration(500)
+
+      .duration(300)
       .ease(d3.easeCubicOut)
       .attr('transform', (posInfo) => {
         return this._transformFunction(posInfo)
@@ -436,6 +458,7 @@ export class CtYardComponent implements OnInit, OnChanges {
     });
     yardPoses.exit()
       .transition()
+      .duration(300)
       .attr('opacity', '0')
       .attr('transform', 'scale(0.5)')
       .remove();

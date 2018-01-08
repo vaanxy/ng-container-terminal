@@ -101,9 +101,11 @@ export class AppComponent implements OnInit {
 
 
       setTimeout(() => {
+        console.log(111111);
         this.rotation = 90;
-        // const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
-        // location.container = this.blockLocations[50].container;
+        const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
+        location.container = this.blockLocations[50].container;
+        this.yardComponents.last.notifyDataUpdated(true);
         // setTimeout(() => {
         //   this.yardComponents.first.redraw();
         //   this.yardComponents.last.redraw();
