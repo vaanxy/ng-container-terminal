@@ -59,9 +59,9 @@ export class CtYardComponent implements OnInit, OnChanges {
   }
 
   @Input() yardposInfoList: YardposInfo[] = [];
-
   @Input() baseWidth = 6;
   @Input() baseHeight = 12;
+  @Input() rotation = 0;
 
   @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
 
@@ -95,6 +95,12 @@ export class CtYardComponent implements OnInit, OnChanges {
       setTimeout(() => {
         this.notifyDataUpdated();
       }, 0);
+    }
+    if (changes['rotation'] && !changes['rotation'].firstChange) {
+      setTimeout(() => {
+        this.redraw();
+      }, 0);
+
     }
   }
 
@@ -202,15 +208,25 @@ export class CtYardComponent implements OnInit, OnChanges {
    */
   redraw() {
     // 绘制列标签
+    this.rowLabelsGroup.selectAll('g.row-label').remove();
     let rowLabels = this.rowLabelsGroup
-      .selectAll('g.row-label')
-      .data(d3.range(this.maxRow));
-
+      .selectAll('g.row-label');
+    if (this.rotation === 90) {
+      rowLabels = rowLabels.data(d3.range(this.maxRow));
+    } else {
+      rowLabels = rowLabels.data(d3.range(this.maxTier));
+    }
     let rowLabel = rowLabels.enter().append('g')
-      .attr('class', 'row-label')
-      .attr('transform', (data) => {
-        return `translate(0, ${data * this.baseHeight})`
-      });
+    .attr('class', 'row-label')
+    .attr('transform', (data: number) => {
+      if (this.rotation === 90) {
+        return `translate(0, ${data * this.baseHeight})`;
+      } else {
+        return `translate(0, ${(this.maxTier - data - 1) * this.baseHeight})`;
+      }
+    });
+
+
     rowLabel.append('text')
       .attr('width', 20)
       .attr('height', this.baseHeight)
@@ -218,20 +234,33 @@ export class CtYardComponent implements OnInit, OnChanges {
       .attr('text-anchor', 'middle')
       .attr('dx', 15)
       .attr('dy', this.baseHeight / 1.2)
-      .text(c => c + 1);
+      .text((c: number) => c + 1);
     rowLabels.exit().remove();
 
     // 绘制基数贝标签
+    this.oddBayLabelsGroup.selectAll('g.odd-bay-label').remove();
     let oddBayLabels = this.oddBayLabelsGroup
       .selectAll('g.odd-bay-label')
       .data(d3.range(0, this.maxBay * 2, 2));
     let oddBayLabel = oddBayLabels.enter().append('g')
       .attr('class', 'odd-bay-label')
       .attr('transform', (data, idx) => {
-        return `translate(${idx * this.baseWidth * this.maxTier + this.interval * data}, 0)`
+        let x = 0;
+        if (this.rotation === 90) {
+          x = idx * this.baseWidth * this.maxTier + this.interval * data
+        } else {
+          x = idx * this.baseWidth * this.maxRow + this.interval * data
+        }
+        return `translate(${x}, 0)`
       });
     oddBayLabel.append('text')
-      .attr('width', (data, idx) => idx * this.baseWidth * this.maxTier + this.interval * data)
+      .attr('width', (data, idx) => {
+        if (this.rotation === 90) {
+          return idx * this.baseWidth * this.maxTier + this.interval * data
+        } else {
+          return idx * this.baseWidth * this.maxRow + this.interval * data
+        }
+      })
       .attr('height', 20)
       .attr('font-size', '9')
       .attr('text-anchor', 'middle')
@@ -249,11 +278,16 @@ export class CtYardComponent implements OnInit, OnChanges {
       .data(this.displayYardposInfoList, (data) => JSON.stringify(data));
 
       // 更新
+      yardPoses.transition()
+      .attr('transform', (posInfo: YardposInfo) => {
+        return this._transformFunction(posInfo)
+      });
       yardPoses.selectAll('path.cell')
       .transition()
-      .attr('fill', (data: any) => {
+      .attr('fill', (data: YardposInfo) => {
         return this._fillFunction(data);
-      });
+      })
+
           // 高箱 需要加一条粗线
       yardPoses.selectAll('path.ctn-height')
       .transition()
@@ -281,24 +315,36 @@ export class CtYardComponent implements OnInit, OnChanges {
     let pos = yardPoses.enter().append('g')
       .attr('class', 'yardpos')
       .attr('transform', (posInfo) => {
-        // let x = (+this.yardposParser.getP(data.yardpos)) * this.baseWidth;
-        // let y = (this.maxTier - (+this.yardposParser.getC(data.yardpos))) * this.baseHeight;
-        // return `translate(${x}, ${y})`;
-
-        let x = 0
+        let x = 0;
+        let y = 0;
         let bay = +this.yardposParser.getW(posInfo.yardpos);
         let row = +this.yardposParser.getP(posInfo.yardpos);
         let tier = +this.yardposParser.getC(posInfo.yardpos);
-        if (bay % 2 === 1) {
-          // 基数贝
-          x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
-          x = x + (tier - 1) * this.baseWidth;
+        if (this.rotation === 90) {
+          if (bay % 2 === 1) {
+            // 基数贝
+            x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
+            x = x + (tier - 1) * this.baseWidth;
+          } else {
+            x = ((bay / 2) - 1) * (this.maxTier * this.baseWidth);
+            x = x + (tier - 1) * this.baseWidth * 2;
+          }
+          x = x + (bay - 1) * this.interval;
+          y = this.baseHeight * (row - 1);
         } else {
-          x = ((bay / 2) - 1) * (this.maxTier * this.baseWidth);
-          x = x + (tier - 1) * this.baseWidth * 2;
+          if (bay % 2 === 1) {
+            // 基数贝
+            x = (bay - 1) / 2 * (this.maxRow * this.baseWidth);
+            x = x + (row - 1) * this.baseWidth;
+          } else {
+            x = ((bay / 2) - 1) * (this.maxRow * this.baseWidth);
+            x = x + (row - 1) * this.baseWidth * 2;
+          }
+          x = x + (bay - 1) * this.interval;
+          y = this.baseHeight * (this.maxTier - tier);
         }
-        x = x + (bay - 1) * this.interval;
-        let y = this.baseHeight * (row - 1);
+
+
         return `translate(${x + 8}, ${y})`;
       })
       .attr('opacity', '0')
@@ -317,38 +363,18 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     pos.transition()
       .delay((posInfo: YardposInfo) => {
-        //   let bay = +this.yardposParser.getW(posInfo.yardpos);
-        //   let row = +this.yardposParser.getP(posInfo.yardpos);
-        //   let tier = +this.yardposParser.getC(posInfo.yardpos);
-
-        //   return bay * 10 + (row) * 10 + tier * 10;
-
         let bay = +this.yardposParser.getW(posInfo.yardpos);
         return bay * 10;
-
       })
       .duration(500)
       .ease(d3.easeCubicOut)
       .attr('transform', (posInfo) => {
-        let x = 0
-        let bay = +this.yardposParser.getW(posInfo.yardpos);
-        let row = +this.yardposParser.getP(posInfo.yardpos);
-        let tier = +this.yardposParser.getC(posInfo.yardpos);
-        if (bay % 2 === 1) {
-          // 基数贝
-          x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
-          x = x + (tier - 1) * this.baseWidth;
-        } else {
-          x = ((bay / 2) - 1) * (this.maxTier * this.baseWidth);
-          x = x + (tier - 1) * this.baseWidth * 2;
-        }
-        x = x + (bay - 1) * this.interval;
-        let y = this.baseHeight * (row - 1);
-        return `translate(${x}, ${y})`;
+        return this._transformFunction(posInfo)
       })
       .attr('opacity', (posInfo: YardposInfo) => {
         return 1;
-      });
+      })
+
 
     pos.append('path')
       .attr('class', 'cell')
@@ -439,6 +465,38 @@ export class CtYardComponent implements OnInit, OnChanges {
         return 'white';
       }
     }
+  }
+
+  private _transformFunction(posInfo: YardposInfo) {
+    let x = 0;
+    let y = 0;
+    let bay = +this.yardposParser.getW(posInfo.yardpos);
+    let row = +this.yardposParser.getP(posInfo.yardpos);
+    let tier = +this.yardposParser.getC(posInfo.yardpos);
+    if (this.rotation === 90) {
+      if (bay % 2 === 1) {
+        // 基数贝
+        x = (bay - 1) / 2 * (this.maxTier * this.baseWidth);
+        x = x + (tier - 1) * this.baseWidth;
+      } else {
+        x = ((bay / 2) - 1) * (this.maxTier * this.baseWidth);
+        x = x + (tier - 1) * this.baseWidth * 2;
+      }
+      x = x + (bay - 1) * this.interval;
+      y = this.baseHeight * (row - 1);
+    } else {
+      if (bay % 2 === 1) {
+        // 基数贝
+        x = (bay - 1) / 2 * (this.maxRow * this.baseWidth);
+        x = x + (row - 1) * this.baseWidth;
+      } else {
+        x = ((bay / 2) - 1) * (this.maxRow * this.baseWidth);
+        x = x + (row - 1) * this.baseWidth * 2;
+      }
+      x = x + (bay - 1) * this.interval;
+      y = this.baseHeight * (this.maxTier - tier);
+    }
+    return `translate(${x}, ${y})`;
   }
 
 

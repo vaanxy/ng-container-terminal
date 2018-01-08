@@ -78,6 +78,8 @@ export class AppComponent implements OnInit {
   }]
   };
 
+  rotation = 0;
+
   @ViewChildren(CtYardComponent) yardComponents: QueryList<CtYardComponent>;
 
   renderOptions: RenderOptions<YardposInfo>;
@@ -93,13 +95,19 @@ export class AppComponent implements OnInit {
       setTimeout(() => {
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
         location.container = this.blockLocations[50].container;
-        this.yardComponents.last.notifyDataUpdated()
+        this.yardComponents.last.notifyDataUpdated();
       }, 2000);
 
+
+
       setTimeout(() => {
-        const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
-        location.container = this.blockLocations[50].container;
-        this.yardComponents.last.redraw();
+        this.rotation = 90;
+        // const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
+        // location.container = this.blockLocations[50].container;
+        // setTimeout(() => {
+        //   this.yardComponents.first.redraw();
+        //   this.yardComponents.last.redraw();
+        // }, 0);
       }, 4000);
 
     });

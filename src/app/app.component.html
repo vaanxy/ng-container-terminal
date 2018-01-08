@@ -36,9 +36,11 @@
   <ct-yard-bay
     [yardBay]="yardBay"
     cellSize="24"></ct-yard-bay>  
-  <ct-yard [yardposInfoList]="blockLocations" [renderOptions]="renderOptions"></ct-yard>
+  <ct-yard [yardposInfoList]="blockLocations" [renderOptions]="renderOptions" [rotation]="rotation"></ct-yard>
   <ct-yard 
+  [rotation]="rotation"
   *ngFor="let poses of blocks"
   [yardposInfoList]="poses"
+  
   ></ct-yard>
 </div>
