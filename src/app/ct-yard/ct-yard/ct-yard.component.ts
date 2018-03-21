@@ -150,7 +150,11 @@ export class CtYardComponent implements OnInit, OnChanges {
     this.maxRow = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getP(d.yardpos)));
     this.maxTier = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getC(d.yardpos)));
     this.maxBay = d3.set(this.yardposInfoList.map(d => +this.yardposParser.getW(d.yardpos)).filter(bay => bay % 2 === 1)).values().length;
-    this.pods = d3.set(this.yardposInfoList.filter(pos => pos.container && pos.container.pod), (pos) => pos.container.pod).values();
+    const containers = this.yardposInfoList
+      .filter(pos => pos.containers && pos.containers.length > 0)
+      .map(pos => pos.containers)
+      .reduce((a, b) => a.concat(b), []);
+    this.pods = d3.set(containers, (c) => c.pod).values();
     this.podColor = d3.scaleOrdinal(d3.schemeCategory20);
   }
 
@@ -160,39 +164,31 @@ export class CtYardComponent implements OnInit, OnChanges {
   processData() {
     this.displayYardposInfoList = [];
     let bayInfo = [];
-    // 计算每个场地位置是否含有集装箱、任务、计划
+    // 计算每个场地位置是否含有集装箱、计划
     this.yardposInfoList.forEach((pos, idx) => {
       let bay = +this.yardposParser.getW(pos.yardpos);
       if (!bayInfo[bay]) {
         bayInfo[bay] = {
           containerCount: 0,
           planCount: 0,
-          taskCount: 0
         };
       }
-      if (pos.container && pos.container.ctnno) {
+      if (pos.containers && pos.containers.length > 0) {
         bayInfo[bay].containerCount += 1;
       }
-      if (pos.plans.length > 0) {
+      if (pos.plans && pos.plans.length > 0) {
         bayInfo[bay].planCount += 1;
       }
-      if (pos.tasks.length > 0) {
-        bayInfo[bay].taskCount += 1;
-      }
-
     });
-    // console.log(bayInfo);
 
     bayInfo.forEach((info, idx) => {
       // 如果是基数贝，则向前向后找其偶数倍是否存在占位信息，若不存在则需要画该基数贝
       if ((idx) % 2 === 1) {
         if ((bayInfo[idx + 1] === undefined ||
             (bayInfo[idx + 1].containerCount === 0 &&
-            bayInfo[idx + 1].taskCount === 0 &&
             bayInfo[idx + 1].planCount === 0)) &&
            ((bayInfo[idx - 1] === undefined ||
             bayInfo[idx - 1].containerCount === 0 &&
-            bayInfo[idx - 1].taskCount === 0 &&
             bayInfo[idx - 1].planCount === 0))) {
           let poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
           this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
@@ -295,9 +291,9 @@ export class CtYardComponent implements OnInit, OnChanges {
       yardPoses.selectAll('path.ctn-height')
       .transition()
       .attr('d', (data: YardposInfo) => {
-        if (data.container && data.container.height + '' === '9.6') {
+        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
           let factor = 1;
-          if (data.container.size !== '20') {
+          if (data.displayedContainer.size !== '20') {
             factor = 2
           }
           return `M0 2 L${this.baseWidth * factor } 2`;
@@ -307,7 +303,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       })
       .attr('stroke', 'black')
       .attr('stroke-width', (data: YardposInfo) => {
-        if (data.container && data.container.height + '' === '9.6') {
+        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
           return 4;
         } else {
           return 1;
@@ -395,8 +391,8 @@ export class CtYardComponent implements OnInit, OnChanges {
           finalRect = finalRect + ` M0 0 L${width} ${this.baseHeight} M${width} 0 L0 ${this.baseHeight}`
 
         }
-        if (data.tasks.length > 0) {
-          // 有任务占位则画圈表示
+        if (data.displayedContainer && data.displayedContainer.task) {
+          // 显示的集装箱有任务则画圈表示
           finalRect = finalRect +
             ` M0 ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${width} ${this.baseHeight / 2}` + // 上半圈
             ` M${width} ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${0} ${this.baseHeight / 2}`// 下半圈
@@ -416,9 +412,9 @@ export class CtYardComponent implements OnInit, OnChanges {
     pos.append('path')
     .attr('class', 'ctn-height')
     .attr('d', (data) => {
-      if (data.container && data.container.height + '' === '9.6') {
+      if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
         let factor = 1;
-        if (data.container.size !== '20') {
+        if (data.displayedContainer.size !== '20') {
           factor = 2
         }
         return `M0 2 L${this.baseWidth * factor } 2`;
@@ -428,7 +424,7 @@ export class CtYardComponent implements OnInit, OnChanges {
     })
     .attr('stroke', 'black')
     .attr('stroke-width', (data) => {
-      if (data.container && data.container.height + '' === '9.6') {
+      if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
         return 4;
       } else {
         return 1;
@@ -455,8 +451,8 @@ export class CtYardComponent implements OnInit, OnChanges {
       }
     } else {
       // 默认填充色配置
-      if (data.container && data.container.ctnno) {
-        return this.podColor(data.container.pod);
+      if (data.displayedContainer && data.displayedContainer.ctnno) {
+        return this.podColor(data.displayedContainer.pod);
       } else if (data.plans.length > 0) {
         if (data.plans.filter(p => p.planType === '定位组').length > 0) {
           return 'lightgrey';

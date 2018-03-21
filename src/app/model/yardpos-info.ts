@@ -3,9 +3,9 @@ import { Task } from './task';
 import { Container } from './container';
 
 export interface YardposInfo {
+    displayedContainer: Container;
     yardpos: string;
-    container: Container;
-    tasks: Task[];
+    containers: Container[];
     plans: Plan[];
     isLocked: boolean;
     fill?: string;

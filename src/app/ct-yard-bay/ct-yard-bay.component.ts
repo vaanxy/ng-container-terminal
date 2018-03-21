@@ -268,14 +268,14 @@ export class CtYardBayComponent implements OnInit, OnChanges {
       if (data.fill) {
         return data.fill;
       }
-      if (data.container && data.container.ctnno) {
+      if (data.displayedContainer && data.displayedContainer.ctnno) {
         return 'rgb(251,124,133)';
       } else if (data.plans.length > 0) {
         if (data.plans.filter(p => p.planType === '定位组').length > 0) {
           return 'rgb(255,238,196)';
         }
         return 'white'
-      } else if (data.tasks.length > 0) {
+      } else if (data.displayedContainer && data.displayedContainer.task) {
         return 'rgb(251,254,133)';
       } else {
         return 'white';

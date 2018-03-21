@@ -64,15 +64,15 @@ export class AppComponent implements OnInit {
     maxTier: 4,
     yardposInfoArray: [{
       yardpos: '*1A0010202',
-      container: null,
-      tasks: [],
+      displayedContainer: null,
+      containers: [],
       plans: [],
       isLocked: false
     },
     {
     yardpos: '*1A0010203',
-    container: null,
-    tasks: [],
+    displayedContainer: null,
+    containers: [],
     plans: [],
     isLocked: true
   }]
