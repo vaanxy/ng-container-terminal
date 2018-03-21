@@ -27,11 +27,9 @@ export class CtVesselComponent implements OnInit {
     this.prestows = this.vesselService.getPrestow('P1604260001');
     this.containers = this.vesselService.getContainer('P1604260001');
     this.prestowDigest = this.getPrestowDigest(this.prestows);
-    console.log(this.prestowDigest);
     this.vesselBasicInfo = this.getVesselBasicInfo();
     this.bayList = this.getBayList(this.vessel);
     this.bayDisplayList = [].concat(this.bayList);
-    console.log(this.bayDisplayList);
     // setInterval(() => this.bayDisplayList.pop(), 1000);
   }
 

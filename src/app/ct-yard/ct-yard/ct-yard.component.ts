@@ -15,10 +15,8 @@ import { CtYardposParserService } from '../../../../tool/ct-yardpos-parser.servi
 import { RenderOptions } from '../../model/render-options';
 import 'rxjs/add/operator/takeWhile';
 import 'rxjs/add/operator/bufferTime';
-// import 'rxjs/add/operator/debounceTime';
-// import 'rxjs/add/operator/throttleTime';
 import 'rxjs/add/operator/filter';
-// import 'rxjs/add/operator/distinctUntilChanged';
+
 
 
 
@@ -205,26 +203,6 @@ export class CtYardComponent implements OnInit, OnChanges {
           this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
         }
       }
-
-      // if (info.containerCount > 0 || info.taskCount > 0) {
-      //   let poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
-      //   this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList]
-      // } else if ((idx) % 2 === 1 &&
-      //   (bayInfo[idx + 1] === undefined || (bayInfo[idx + 1].containerCount === 0 || bayInfo[idx + 1].taskCount === 0 || bayInfo[idx + 1].planCount === 0)) &&
-      //   (bayInfo[idx - 1] === undefined || (bayInfo[idx - 1].containerCount === 0 || bayInfo[idx - 1].taskCount === 0 || bayInfo[idx - 1].planCount === 0))) {
-      //   // 如果是基数贝，则向前向后找其偶数倍是否存在占位信息，若不存在则需要画该基数贝
-      //   let poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
-      //   this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList]
-      // } else {
-      //   // 如果基数贝有计划信息，查其前后偶数贝是否包含计划信息，若包含则不画该基数贝
-      //   if (info.planCount > 0 && (idx) % 2 === 1 &&
-      //     (bayInfo[idx + 1] === undefined || bayInfo[idx + 1].planCount === 0) &&
-      //     (bayInfo[idx - 1] === undefined || bayInfo[idx - 1].planCount === 0)
-      //   ) {
-      //     let poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
-      //     this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList]
-      //   }
-      // }
     });
   }
 

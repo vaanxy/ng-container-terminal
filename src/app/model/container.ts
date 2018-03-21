@@ -1,5 +1,6 @@
 export interface Container {
-    shippingLine: string;
+    shippingLineOut: string;
+    shippingLineIn: string;
     ctnno: string;
     pod: string;
     size: string;

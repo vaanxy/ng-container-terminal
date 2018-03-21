@@ -63,8 +63,6 @@ export class BayComponent implements OnInit {
     this.svg
       .attr('width', this.boxWidth * 2)
       .attr('height', this.boxHeight);
-    // console.log(d3.set(this.prestows, prestow => prestow.pod).values);
-
   }
 
 
@@ -77,17 +75,6 @@ export class BayComponent implements OnInit {
       this.holdBayStruct = this.vesselService.getBay(this.bayInfoGroup.hold.name);
     }
     this.basicInfo.supply00 = this.deckBayStruct.some(cell => cell.name.slice(4, 6) === '00') ? 0 : 1;
-    // let maxHoldHeight: number =
-    //   d3.max(this.bayStruct
-    //     .filter(cell => cell.name.slice(3, 4) === 'H')
-    //     .map(cell => parseInt(cell.name.slice(6, 8), 10)));
-    // let maxDeckHeight: number =
-    //   d3.max(this.bayStruct
-    //     .filter(cell => cell.name.slice(3, 4) === 'D')
-    //     .map(cell => parseInt(cell.name.slice(6, 8), 10)));
-    // console.log('maxHoldHeight: ', maxHoldHeight / 2);
-    // console.log('maxDeckHeight: ', (maxDeckHeight - 80) / 2);
-    // console.log(this.bayNo, this.bayStruct[0].supply00);
 
     this.xb = this.svg.append('g');
     this.hb = this.svg.append('g')
@@ -215,7 +202,6 @@ export class BayComponent implements OnInit {
             parseInt(p.cell.slice(0, 3), 10) - 1 === parseInt(this.bayInfoGroup.name.slice(0, 3), 10)
           );
       });
-      // console.log(xbDeckPrestow);
       this.renderPrestow(this.xbDeck, xbDeckPrestow);
       this.renderPrestow(this.xbHold, xbHoldPrestow);
       this.renderPrestow(this.hbDeck, hbDeckPrestow);
@@ -297,8 +283,6 @@ export class BayComponent implements OnInit {
         return color(data.pod);
       })
       .on('mouseover', (d) => {
-        console.log(d);
-        console.log(this.tooltip);
         this.tooltip.transition()
           .duration(200)
           .style('opacity', .9);

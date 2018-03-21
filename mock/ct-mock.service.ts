@@ -32,7 +32,8 @@ export class CtMockService {
         if (d.taskCtnno) {
           posInfo.tasks.push({
             container: {
-              shippingLine: d.taskShippingLine,
+              shippingLineOut: d.taskShippingLine,
+              shippingLineIn: null,
               ctnno: d.taskCtnno,
               pod: d.taskPod,
               size: d.taskCtnSize,
@@ -64,7 +65,8 @@ export class CtMockService {
         const posInfo = {
           yardpos: d.yardpos,
           container: {
-            shippingLine: d.shippingLine,
+            shippingLineOut: d.shippingLine,
+            shippingLineIn: null,
             ctnno: d.ctnno,
             pod: d.pod,
             size: d.ctnSize,
@@ -84,7 +86,8 @@ export class CtMockService {
         if (d.taskCtnno) {
           posInfo.tasks.push({
             container: {
-              shippingLine: d.taskShippingLine,
+              shippingLineOut: d.taskShippingLine,
+              shippingLineIn: null,
               ctnno: d.taskCtnno,
               pod: d.taskPod,
               size: d.taskCtnSize,
@@ -111,7 +114,6 @@ export class CtMockService {
 
 
     });
-    // console.log(JSON.stringify(yardposInfoList));
     return yardposInfoList;
 
   }

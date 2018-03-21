@@ -91,7 +91,6 @@ export class AppComponent implements OnInit {
     this.mock.getYardposInfoList().subscribe((blockLocations) => {
       this.blockLocations = blockLocations;
       this.blocks[0] = [...this.blockLocations]
-      console.log();
       setTimeout(() => {
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
         location.container = this.blockLocations[50].container;
@@ -101,7 +100,6 @@ export class AppComponent implements OnInit {
 
 
       setTimeout(() => {
-        console.log(111111);
         this.rotation = 90;
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
         location.container = this.blockLocations[50].container;
