@@ -173,7 +173,7 @@ export class CtYardComponent implements OnInit, OnChanges {
           planCount: 0,
         };
       }
-      if (pos.containers && pos.containers.length > 0) {
+      if (pos.displayedContainer && pos.displayedContainer.ctnno) {
         bayInfo[bay].containerCount += 1;
       }
       if (pos.plans && pos.plans.length > 0) {
