@@ -283,9 +283,37 @@ export class CtYardComponent implements OnInit, OnChanges {
       });
       yardPoses.selectAll('path.cell')
       .transition()
+      .attr('d', (data: YardposInfo) => {
+        let bay = +this.yardposParser.getW(data.yardpos);
+        let width = 0;
+        if (bay % 2 === 1) {
+          // 基数贝
+          width = this.baseWidth;
+        } else {
+          width = this.baseWidth * 2;
+        }
+
+        let baseRect = `M0 0 L${width} 0 L${width} ${this.baseHeight} L0 ${this.baseHeight} Z`;
+        let finalRect = baseRect;
+        if (data.isLocked) {
+          // 有封场则画X表示
+          finalRect = finalRect + ` M0 0 L${width} ${this.baseHeight} M${width} 0 L0 ${this.baseHeight}`
+
+        }
+        if (data.displayedContainer && data.displayedContainer.task) {
+          // 显示的集装箱有任务则画圈表示
+          finalRect = finalRect +
+            ` M0 ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${width} ${this.baseHeight / 2}` + // 上半圈
+            ` M${width} ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${0} ${this.baseHeight / 2}`// 下半圈
+
+        }
+        return finalRect
+      })
       .attr('fill', (data: YardposInfo) => {
         return this._fillFunction(data);
       })
+      .attr('stroke', 'rgb(90,68,70)')
+      .attr('stroke-width', '1px');
 
           // 高箱 需要加一条粗线
       yardPoses.selectAll('path.ctn-height')
