@@ -1,8 +1,14 @@
 {
   "name": "ng-container-terminal",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "peerDependencies": {
     "@angular/common": "^7.1.0",
     "@angular/core": "^7.1.0"
+  },
+  "author": "vaanxy",
+  "description": "Container terminal related UI components & tools based on Angular & d3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com:vaanxy/ng-container-terminal.git"
   }
 }

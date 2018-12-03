@@ -9,7 +9,7 @@
 <!-- <div class="page-header">
   <h1></h1>
 </div> -->
-<nav class="navbar navbar-default">
+<!-- <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">
@@ -27,7 +27,7 @@
       </li>
     </ul>
   </div>
-</nav>
+</nav> -->
 <div>
   <ct-yard-overview
   [yardInfoList]="yardInfoList"
@@ -37,10 +37,5 @@
     [yardBay]="yardBay"
     cellSize="24"></ct-yard-bay>  
   <ct-yard [yardposInfoList]="blockLocations" [renderOptions]="renderOptions" [rotation]="rotation"></ct-yard>
-  <ct-yard 
-  [rotation]="rotation"
-  *ngFor="let poses of blocks"
-  [yardposInfoList]="poses"
-  
-  ></ct-yard>
+  <ct-yard [rotation]="rotation" *ngFor="let poses of blocks" [yardposInfoList]="poses"></ct-yard>
 </div>

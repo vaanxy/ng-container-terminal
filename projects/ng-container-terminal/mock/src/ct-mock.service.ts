@@ -1,6 +1,5 @@
 
-import { Observable } from 'rxjs/Observable';
-import {of as observableOf} from 'rxjs/observable/of';
+import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 import { mockBlockLocations } from './data/block-locations';
@@ -14,11 +13,11 @@ export class CtMockService {
 
   getYardposInfoList(): Observable<any[]> {
     const data: any[] = this.proecssData(mockBlockLocations);
-    return observableOf(data);
+    return of(data);
   }
 
   getYardInfoList(): Observable<any[]> {
-    return observableOf(mockYardInfoList);
+    return of(mockYardInfoList);
   }
 
   proecssData(data: any[]) {

@@ -1,6 +1,4 @@
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
+import { Subject, Observable } from 'rxjs';
 import { YardposInfo } from './yardpos-info';
 
 export interface YardBay {
@@ -8,6 +6,6 @@ export interface YardBay {
     maxRow: number;
     maxTier: number;
     yardposInfoArray: YardposInfo[];
-    dataUpdated?: Observable<void>;
-    dataUpdatedSource?: Subject<void>;
+    dataUpdated?: Observable<any>;
+    dataUpdatedSource?: Subject<any>;
 }

@@ -10,7 +10,7 @@ import {
   SimpleChanges, Output, EventEmitter
 } from '@angular/core';
 import * as d3 from 'd3';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { YardposInfo } from '../../model/yardpos-info';
 import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
 import { RenderOptions } from '../../model/render-options';
