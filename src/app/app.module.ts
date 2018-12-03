@@ -4,12 +4,12 @@ import { NgModule } from '@angular/core';
 
 
 import { AppComponent } from './app.component';
-import { CtVesselModule } from './ct-vessel/ct-vessel.module';
-import { CtVesselService } from './ct-vessel/ct-vessel.service';
-import { CtYardModule } from './ct-yard/ct-yard.module';
-import { CtYardBayModule } from './ct-yard-bay/ct-yard-bay.module';
-import { CtMockService } from '../../mock/ct-mock.service';
-import { CtYardOverviewModule } from './ct-yard-overview/ct-yard-overview.module';
+import { CtVesselModule } from 'ng-container-terminal';
+
+import { CtYardModule } from 'ng-container-terminal';
+import { CtYardBayModule } from 'ng-container-terminal';
+import { CtMockService } from 'ng-container-terminal/mock';
+import { CtYardOverviewModule } from 'ng-container-terminal';
 @NgModule({
   declarations: [
     AppComponent
