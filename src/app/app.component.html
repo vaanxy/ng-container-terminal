@@ -31,11 +31,12 @@
 <div>
   <ct-yard-overview
   [yardInfoList]="yardInfoList"
-  [scaleFactor]="'0.2'"
-  (onYardClicked)="onYardClicked($event)"></ct-yard-overview>
+  [renderOptions]="yardOverviewRenderOptions"
+  (yardContentRender)="renderYardContent($event)"
+  (yardClick)="onYardClicked($event)"></ct-yard-overview>
   <ct-yard-bay
     [yardBay]="yardBay"
-    cellSize="24"></ct-yard-bay>  
+    cellSize="24"></ct-yard-bay>
   <ct-yard [yardposInfoList]="blockLocations" [renderOptions]="renderOptions" [rotation]="rotation"></ct-yard>
   <ct-yard [rotation]="rotation" *ngFor="let poses of blocks" [yardposInfoList]="poses"></ct-yard>
 </div>

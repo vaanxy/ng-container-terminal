@@ -1,3 +1,4 @@
 export interface RenderOptions<T> {
-    fill: ((data: T) => string) | string;
+  fill?: string | ((data: T) => string);
+  scaleFactor?: number;
 }

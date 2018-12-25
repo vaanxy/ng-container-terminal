@@ -1,14 +1,12 @@
-export interface YardInfo {
+export interface YardInfo<T> {
     block: string;
     direction: 'H' | 'V';
     maxBay: number;
     maxRow: number;
     maxTier: number;
-    isEmpty: boolean;
-    x1: number;
-    y1: number;
+    x: number;
+    y: number;
     width: number;
     height: number;
-    fill?: string;
-    text?: string;
+    data?: T;
 }

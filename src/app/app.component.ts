@@ -15,6 +15,7 @@ import { CtMockService } from 'ng-container-terminal/mock';
 import { YardposInfo } from 'ng-container-terminal';
 import { RenderOptions } from 'ng-container-terminal';
 import { CtYardComponent } from 'ng-container-terminal';
+import { nodeValue } from '@angular/core/src/view';
 
 
 @Component({
@@ -56,7 +57,7 @@ import { CtYardComponent } from 'ng-container-terminal';
 
 export class AppComponent implements OnInit {
   blockLocations = [];
-  yardInfoList: YardInfo[] = [];
+  yardInfoList: YardInfo<any>[] = [];
   blocks: YardposInfo[][] = [];
   yardBay: YardBay = {
     name: 'a',
@@ -83,6 +84,9 @@ export class AppComponent implements OnInit {
   @ViewChildren(CtYardComponent) yardComponents: QueryList<CtYardComponent>;
 
   renderOptions: RenderOptions<YardposInfo>;
+  yardOverviewRenderOptions: RenderOptions<YardInfo<any>> = {
+    scaleFactor: 0.3
+  };
   constructor(private mock: CtMockService) {
 
   }
@@ -112,14 +116,26 @@ export class AppComponent implements OnInit {
 
     });
 
-    this.mock.getYardInfoList().subscribe((yardInfoList: YardInfo[]) => {
+    this.mock.getYardInfoList().subscribe((yardInfoList: YardInfo<any>[]) => {
       this.yardInfoList = yardInfoList;
 
     });
   }
 
-  onYardClicked(yardInfo: YardInfo) {
+  onYardClicked(yardInfo: YardInfo<any>) {
     console.log(yardInfo);
+  }
+
+  renderYardContent($event: {node: d3.Selection<any, any, any, any>, data:  YardInfo<any>}) {
+    const { node, data } = $event;
+    node
+        .append('rect')
+        .attr('width', 10)
+        .attr('height', data.height)
+        .attr('stroke', 'rgb(0,0,0)')
+        .attr('stroke-width', '2px')
+        // .attr('transform', `translate(${index * pieceWidth}, 0)`)
+        .attr('fill', 'red');
   }
 
 }
