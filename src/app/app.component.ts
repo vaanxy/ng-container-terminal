@@ -9,11 +9,11 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { YardBay } from './model/yard-bay';
-import { YardInfo } from './model/yard-info';
+import { YardBay } from 'ng-container-terminal';
+import { YardInfo } from 'ng-container-terminal';
 import { CtMockService } from 'ng-container-terminal/mock';
-import { YardposInfo } from './model/yardpos-info';
-import { RenderOptions } from './model/render-options';
+import { YardposInfo } from 'ng-container-terminal';
+import { RenderOptions } from 'ng-container-terminal';
 import { CtYardComponent } from 'ng-container-terminal';
 
 
