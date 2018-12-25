@@ -1,3 +1,12 @@
+## 0.5.0(201-12-25)
+
+### Features
+
+ct-yard-overview: 提供了 `yardContentRender` Output，使得该组件具备了自定义渲染 yard 内部内容的能力
+ct-yard-overview: 提供了 `yardClick` 替代了原有的 `onYardClicked` Output，更符合 Angular 规范
+ct-yard-overview: 将 `scaleFactor` 移入了 `renderOptions` 中
+ct-yard-overview: 使用了 `OnPush` change dection 策略
+
 ## 0.4.1(201-12-03)
 
 ### Bug Fixed
