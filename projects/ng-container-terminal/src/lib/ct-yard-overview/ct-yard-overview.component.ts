@@ -53,8 +53,8 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
   }
 
   initYardOverview() {
-    this.ctxWidth = Math.max(...this.yardInfoList.map((d) => d.x + d.width + 16));
-    this.ctxHeight = Math.max(...this.yardInfoList.map((d) => d.y + d.height + 16));
+    this.ctxWidth = Math.max(...this.yardInfoList.map((d) => d.x + d.width + 16), 0);
+    this.ctxHeight = Math.max(...this.yardInfoList.map((d) => d.y + d.height + 16), 0);
 
     this.host.select('svg').selectAll('g.ct-yard-overview-group').remove();
     this.svgCtx = this.host.select('svg')
