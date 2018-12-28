@@ -1,3 +1,8 @@
+## 0.5.1(201-12-28)
+### Bug Fixed
+
+ct-yard-overview:  fix svg attribute width: Expected length, '-Infinitypx' problem
+
 ## 0.5.0(201-12-25)
 
 ### Features

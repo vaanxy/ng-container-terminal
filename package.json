@@ -1,11 +1,11 @@
 {
   "name": "ng-container-terminal",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build ng-container-terminal && cp README.md dist/ng-container-terminal && cp CHANGELOG.md dist/ng-container-terminal",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

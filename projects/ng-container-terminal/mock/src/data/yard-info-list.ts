@@ -9,8 +9,7 @@ export const mockYardInfoList = [
         'x': 264,
         'y': 820,
         'width': 80,
-        'height': 180,
-        'data': [1, 2, 3, 4]
+        'height': 180
     },
     { 'block': '*0B', 'direction': 'V', 'maxBay': 17, 'maxRow': 17, 'maxTier': 7, 'isEmpty': null, 'x': 160, 'y': 820, 'width': 85, 'height': 180 },
     { 'block': '*0C', 'direction': 'V', 'maxBay': 9, 'maxRow': 16, 'maxTier': 6, 'isEmpty': null, 'x': 266, 'y': 1040, 'width': 80, 'height': 90 },
