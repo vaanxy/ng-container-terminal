@@ -3,6 +3,8 @@
 ### Features
 
 renderOptions:  support stroke and strokeWidth
+ct-yard: 提供了 `yardposClick` 替代了原有的 `onYardposClicked` Output，更符合 Angular 规范
+ct-yard-bay: 提供了 `yardposClick` 替代了原有的 `onYardposClicked` Output，更符合 Angular 规范
 
 ## 0.5.1(2018-12-28)
 

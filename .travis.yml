@@ -4,10 +4,9 @@ node_js:
 cache:
   directories:
     - node_modules
-addons:
-  chrome: stable
 script:
-  - npm test
+  - npm run lint
+  - npm run test-headless
   - npm run build
 on:
   branch: master

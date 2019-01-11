@@ -64,7 +64,7 @@ export class CtYardComponent implements OnInit, OnChanges {
   @Input() baseHeight = 12;
   @Input() rotation = 0;
 
-  @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
+  @Output() yardposClick: EventEmitter<YardposInfo> = new EventEmitter();
 
   onNotifyDataChanged = new Subject<number>();
   onNotifyDataChanged$ = this.onNotifyDataChanged.asObservable();
@@ -378,7 +378,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       })
       .on('click', (data) => {
         console.log(data);
-        this.onYardposClicked.emit(data);
+        this.yardposClick.emit(data);
       });
 
 

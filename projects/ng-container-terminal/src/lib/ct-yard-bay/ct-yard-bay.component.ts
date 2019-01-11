@@ -55,7 +55,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
     dataUpdated: null
   };
 
-  @Output() onYardposClicked: EventEmitter<YardposInfo> = new EventEmitter();
+  @Output() yardposClick: EventEmitter<YardposInfo> = new EventEmitter();
 
   constructor(private el: ElementRef, private yardposParser: CtYardposParserService) {
   }
@@ -202,7 +202,7 @@ export class CtYardBayComponent implements OnInit, OnChanges {
         d3.select(nodes[i]).select('path').attr('fill', (d) => this._fillFunction(data));
       })
       .on('click', (posInfo: YardposInfo, index: number) => {
-        this.onYardposClicked.emit(posInfo);
+        this.yardposClick.emit(posInfo);
       });
 
     g.append('path')
