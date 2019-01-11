@@ -15,7 +15,6 @@ import { CtMockService } from 'ng-container-terminal/mock';
 import { YardposInfo } from 'ng-container-terminal';
 import { RenderOptions } from 'ng-container-terminal';
 import { CtYardComponent } from 'ng-container-terminal';
-import { nodeValue } from '@angular/core/src/view';
 
 
 @Component({

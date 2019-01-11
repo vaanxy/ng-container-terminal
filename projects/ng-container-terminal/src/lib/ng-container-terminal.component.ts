@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'lib-ng-container-terminal',
+  selector: 'ct-ng-container-terminal',
   template: `
     <p>
       ng-container-terminal works!

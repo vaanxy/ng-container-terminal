@@ -1,16 +1,14 @@
 {
   "name": "ng-container-terminal",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build ng-container-terminal && cp README.md dist/ng-container-terminal && cp CHANGELOG.md dist/ng-container-terminal",
-    "test": "ng test",
+    "test": "ng test ng-container-terminal",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "packagr": "ng-packagr -p ng-package.json",
-    "build:mock": "ng-packagr -p ./mock/package.json"
+    "e2e": "ng e2e"
   },
   "author": "vaanxy",
   "description": "Container terminal related UI components & tools based on Angular & d3",

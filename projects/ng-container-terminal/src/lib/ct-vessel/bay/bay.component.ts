@@ -4,7 +4,7 @@ import { Cell, BayInfoGroup, Prestow, PrestowDigest } from '../../../model';
 import * as d3 from 'd3';
 
 @Component({
-  selector: 'app-bay',
+  selector: 'ct-bay',
   templateUrl: './bay.component.html',
   styleUrls: ['./bay.component.css']
 })
@@ -54,7 +54,7 @@ export class BayComponent implements OnInit {
 
 
   constructor(private el: ElementRef, private vesselService: CtVesselService) {
-    this.host = d3.select(el.nativeElement);
+    this.host = d3.select(this.el.nativeElement);
     // this.host.html('');
     this.svg = this.host.append('svg');
     this.bayWidth = this.basicInfo.maxRow * this.w;
@@ -67,6 +67,9 @@ export class BayComponent implements OnInit {
 
 
   ngOnInit() {
+    if (!this.bayInfoGroup) {
+      return;
+    }
     this.tooltip = this.host.select('div.prestow-tooltip');
     if (this.bayInfoGroup.deck) {
       this.deckBayStruct = this.vesselService.getBay(this.bayInfoGroup.deck.name);

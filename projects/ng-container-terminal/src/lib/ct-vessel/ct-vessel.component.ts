@@ -4,7 +4,7 @@ import { CtVesselService } from './ct-vessel.service';
 import * as d3 from 'd3';
 
 @Component({
-  selector: 'app-ct-vessel',
+  selector: 'ct-vessel',
   templateUrl: './ct-vessel.component.html',
   styleUrls: ['./ct-vessel.component.css']
 })

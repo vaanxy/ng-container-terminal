@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { BayComponent } from './bay/bay.component';
-import { BayListComponent } from './bay-list/bay-list.component';
 import { CtVesselComponent } from './ct-vessel.component';
 import { CtVesselService } from './ct-vessel.service';
 
@@ -10,8 +9,8 @@ import { CtVesselService } from './ct-vessel.service';
   imports: [
     CommonModule
   ],
-  declarations: [ BayComponent, BayListComponent, CtVesselComponent ],
+  declarations: [ BayComponent, CtVesselComponent ],
   exports: [ BayComponent, CtVesselComponent ],
-  providers: [ ],
+  providers: [ CtVesselService ],
 })
 export class CtVesselModule { }

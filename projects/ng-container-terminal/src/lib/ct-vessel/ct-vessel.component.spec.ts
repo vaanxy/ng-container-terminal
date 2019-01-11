@@ -4,6 +4,8 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { CtVesselComponent } from './ct-vessel.component';
+import { BayComponent } from './bay/bay.component';
+import { CtVesselService } from './ct-vessel.service';
 
 describe('CtVesselComponent', () => {
   let component: CtVesselComponent;
@@ -11,7 +13,8 @@ describe('CtVesselComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CtVesselComponent ]
+      declarations: [ BayComponent, CtVesselComponent ],
+      providers: [ CtVesselService ]
     })
     .compileComponents();
   }));

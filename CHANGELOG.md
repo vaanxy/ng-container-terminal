@@ -1,9 +1,16 @@
-## 0.5.1(201-12-28)
+## 0.5.2(2019-01-11)
+
+### Features
+
+renderOptions:  support stroke and strokeWidth
+
+## 0.5.1(2018-12-28)
+
 ### Bug Fixed
 
 ct-yard-overview:  fix svg attribute width: Expected length, '-Infinitypx' problem
 
-## 0.5.0(201-12-25)
+## 0.5.0(2018-12-25)
 
 ### Features
 
@@ -12,13 +19,13 @@ ct-yard-overview: 提供了 `yardClick` 替代了原有的 `onYardClicked` Outpu
 ct-yard-overview: 将 `scaleFactor` 移入了 `renderOptions` 中
 ct-yard-overview: 使用了 `OnPush` change dection 策略
 
-## 0.4.1(201-12-03)
+## 0.4.1(2018-12-03)
 
 ### Bug Fixed
 
 移除rxjs-compact, 并修复相关代码
 
-## 0.4.0(201-12-03)
+## 0.4.0(2018-12-03)
 
 ### Features
 

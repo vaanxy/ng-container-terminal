@@ -3,11 +3,11 @@
   <button (click)="getShadowBay('006');">过滤</button>
 </div>
 <div class="ct-vessel">
-  <app-bay *ngFor="let bayInfoGroup of bayDisplayList" 
+  <ct-bay *ngFor="let bayInfoGroup of bayDisplayList"
       [bayInfoGroup]="bayInfoGroup"
       [prestows]="getPrestow(bayInfoGroup.name)"
       [prestowDigest]="prestowDigest"
   >
-  </app-bay>
+  </ct-bay>
   <!-- <app-pc-network [prestows]="prestows" [containers]="containers"></app-pc-network> -->
 </div>

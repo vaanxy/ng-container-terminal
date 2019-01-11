@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { BayListComponent } from './bay-list.component';
+import { CtYardOverviewComponent } from './ct-yard-overview.component';
 
-describe('BayListComponent', () => {
-  let component: BayListComponent;
-  let fixture: ComponentFixture<BayListComponent>;
+describe('CtVesselComponent', () => {
+  let component: CtYardOverviewComponent<any>;
+  let fixture: ComponentFixture<CtYardOverviewComponent<any>>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BayListComponent ]
+      declarations: [ CtYardOverviewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BayListComponent);
+    fixture = TestBed.createComponent(CtYardOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
