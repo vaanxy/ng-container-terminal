@@ -18,7 +18,6 @@ export * from './lib/ct-yard-bay/ct-yard-bay.module';
 export * from './lib/ct-vessel/ct-vessel.module';
 export * from './lib/ct-vessel/ct-vessel.component';
 export * from './lib/ct-vessel/bay/bay.component';
-export * from './lib/ct-vessel/bay-list/bay-list.component';
 export * from './lib/tool/index';
 export * from './model/index';
 
