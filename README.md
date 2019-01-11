@@ -1,5 +1,7 @@
 # NgContainerTerminal
 
+[![Build Status](https://travis-ci.com/vaanxy/ng-container-terminal.svg?branch=master)](https://travis-ci.com/vaanxy/ng-container-terminal)
+
 一套基于Angular和d3开发的集装箱码头相关的UI组件及工具。
 
 ## UI组件
