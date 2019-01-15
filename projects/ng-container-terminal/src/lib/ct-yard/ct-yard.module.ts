@@ -3,10 +3,8 @@ import { CommonModule } from '@angular/common';
 import { CtYardComponent } from './ct-yard.component';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   declarations: [CtYardComponent],
   exports: [CtYardComponent]
 })
-export class CtYardModule { }
+export class CtYardModule {}

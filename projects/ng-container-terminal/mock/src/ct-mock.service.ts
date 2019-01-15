@@ -1,15 +1,12 @@
-
 import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 import { mockBlockLocations } from './data/block-locations';
 import { mockYardInfoList } from './data/yard-info-list';
 
-
 @Injectable()
 export class CtMockService {
-
-  constructor() { }
+  constructor() {}
 
   getYardposInfoList(): Observable<any[]> {
     const data: any[] = this.proecssData(mockBlockLocations);
@@ -23,7 +20,7 @@ export class CtMockService {
   proecssData(data: any[]) {
     const posCounter = {};
     const yardposInfoList = [];
-    data.forEach((d) => {
+    data.forEach(d => {
       if (posCounter[d.yardpos]) {
         // 该场地位置已经添加过，则更新之前添加的信息
         const posInfo = yardposInfoList.find(pos => pos.yardpos === d.yardpos);
@@ -80,7 +77,6 @@ export class CtMockService {
         }
 
         posCounter[d.yardpos] += 1;
-
       } else {
         posCounter[d.yardpos] = 1;
         const newPosInfo = {
@@ -105,7 +101,7 @@ export class CtMockService {
             vesselNameIn: d.vesselName,
             voyageIn: d.voyage,
             vesselNameOut: d.vesselName,
-            voyageOut: d.voyage,
+            voyageOut: d.voyage
           };
           newPosInfo.containers.push(container);
           newPosInfo.displayedContainer = container;
@@ -141,7 +137,5 @@ export class CtMockService {
       }
     });
     return yardposInfoList;
-
   }
-
 }

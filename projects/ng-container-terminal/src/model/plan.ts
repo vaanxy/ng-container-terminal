@@ -1,3 +1,3 @@
 export interface Plan {
-    planType: string;
+  planType: string;
 }

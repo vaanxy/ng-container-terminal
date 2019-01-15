@@ -6,11 +6,9 @@ import { CtVesselComponent } from './ct-vessel.component';
 import { CtVesselService } from './ct-vessel.service';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [ BayComponent, CtVesselComponent ],
-  exports: [ BayComponent, CtVesselComponent ],
-  providers: [ CtVesselService ],
+  imports: [CommonModule],
+  declarations: [BayComponent, CtVesselComponent],
+  exports: [BayComponent, CtVesselComponent],
+  providers: [CtVesselService]
 })
-export class CtVesselModule { }
+export class CtVesselModule {}

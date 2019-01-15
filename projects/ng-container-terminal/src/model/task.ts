@@ -1,7 +1,6 @@
 import { Container } from '../model/container';
 
-
 export interface Task {
-    container: Container;
-    type: string;
+  container: Container;
+  type: string;
 }

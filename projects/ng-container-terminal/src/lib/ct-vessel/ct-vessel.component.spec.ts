@@ -13,10 +13,9 @@ describe('CtVesselComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BayComponent, CtVesselComponent ],
-      providers: [ CtVesselService ]
-    })
-    .compileComponents();
+      declarations: [BayComponent, CtVesselComponent],
+      providers: [CtVesselService]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

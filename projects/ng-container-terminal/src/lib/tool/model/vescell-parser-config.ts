@@ -1,3 +1,3 @@
 export interface VescellParserConfig {
-    pattern: string;
+  pattern: string;
 }

@@ -3,15 +3,13 @@ import { Cell, Prestow, VesselContainer } from '../../model';
 
 @Injectable()
 export class CtVesselService {
-
-  constructor() { }
+  constructor() {}
   private containers: VesselContainer[] = [];
   private prestows: Prestow[] = [];
   private cells: Cell[] = [];
 
   getBay(bay: string): Cell[] {
     return this.cells.filter(cell => cell.name.slice(0, 4) === bay);
-
   }
 
   getPrestow(pid: string): Prestow[] {
@@ -23,7 +21,6 @@ export class CtVesselService {
   }
 
   getVessel(vesType: string): Cell[] {
-    return  this.cells;
+    return this.cells;
   }
-
 }

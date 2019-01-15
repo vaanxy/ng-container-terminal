@@ -11,9 +11,8 @@ describe('CtVesselComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CtYardOverviewComponent ]
-    })
-    .compileComponents();
+      declarations: [CtYardOverviewComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

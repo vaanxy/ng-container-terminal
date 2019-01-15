@@ -6,17 +6,17 @@
     fill: rgb(200, 200, 200);
 }*/
 
-div.prestow-tooltip {	
-    position: absolute;			
-    text-align: center;
-    height: 24px;
-    line-height: 24px;				
-    padding: 5px;				
-    font: 12px sans-serif;		
-    background: black;	
-    color: white;
-    border: 0px;		
-    border-radius: 4px;			
-    pointer-events: none;	
-    opacity: 0;
+div.prestow-tooltip {
+  position: absolute;
+  text-align: center;
+  height: 24px;
+  line-height: 24px;
+  padding: 5px;
+  font: 12px sans-serif;
+  background: black;
+  color: white;
+  border: 0px;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
 }

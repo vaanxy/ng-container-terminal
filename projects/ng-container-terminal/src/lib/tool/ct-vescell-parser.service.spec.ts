@@ -9,7 +9,10 @@ describe('CtVescellParserService', () => {
     });
   });
 
-  it('should be created', inject([CtVescellParserService], (service: CtVescellParserService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('should be created', inject(
+    [CtVescellParserService],
+    (service: CtVescellParserService) => {
+      expect(service).toBeTruthy();
+    }
+  ));
 });

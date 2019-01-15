@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "pretty": "prettier --write --config ./prettier.config.js /Users/vaan/workspace/webApp/ng-container-terminal/projects/ng-container-terminal/src/lib/ct-yard-overview/ct-yard-overview.component.ts",
+    "pretty": "prettier --write --config ./.prettierrc ./projects/**/*.{ts,html,css,less}",
     "start": "ng serve",
     "build": "ng build ng-container-terminal && cp README.md dist/ng-container-terminal && cp CHANGELOG.md dist/ng-container-terminal",
     "test": "ng test ng-container-terminal",
