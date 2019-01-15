@@ -1,6 +1,4 @@
-
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-
 
 import {
   trigger,
@@ -16,44 +14,47 @@ import { YardposInfo } from 'ng-container-terminal';
 import { RenderOptions } from 'ng-container-terminal';
 import { CtYardComponent } from 'ng-container-terminal';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   animations: [
     trigger('expandInAnimation', [
-      state('*',
+      state(
+        '*',
         style({
           opacity: 1,
-          transform: 'scale(1)',
+          transform: 'scale(1)'
         })
       ),
       transition(':enter', [
         style({
           opacity: 0,
-          transform: 'scale(0.8)',
+          transform: 'scale(0.8)'
         }),
         animate('300ms ease-in')
-      ]),
+      ])
     ]),
     trigger('shrinkOutAnimation', [
-      state('*',
+      state(
+        '*',
         style({
           opacity: 1,
-          transform: 'scaleY(1)',
+          transform: 'scaleY(1)'
         })
       ),
       transition(':leave', [
-        animate('300ms ease-out', style({
-          opacity: 0,
-          transform: 'scale(0.8)',
-        }))
+        animate(
+          '300ms ease-out',
+          style({
+            opacity: 0,
+            transform: 'scale(0.8)'
+          })
+        )
       ])
     ])
   ]
 })
-
 export class AppComponent implements OnInit {
   blockLocations = [];
   yardInfoList: YardInfo<any>[] = [];
@@ -62,20 +63,22 @@ export class AppComponent implements OnInit {
     name: 'a',
     maxRow: 6,
     maxTier: 4,
-    yardposInfoArray: [{
-      yardpos: '*1A0010202',
-      displayedContainer: null,
-      containers: [],
-      plans: [],
-      isLocked: false
-    },
-    {
-    yardpos: '*1A0010203',
-    displayedContainer: null,
-    containers: [],
-    plans: [],
-    isLocked: true
-  }]
+    yardposInfoArray: [
+      {
+        yardpos: '*1A0010202',
+        displayedContainer: null,
+        containers: [],
+        plans: [],
+        isLocked: false
+      },
+      {
+        yardpos: '*1A0010203',
+        displayedContainer: null,
+        containers: [],
+        plans: [],
+        isLocked: true
+      }
+    ]
   };
 
   rotation = 0;
@@ -84,27 +87,29 @@ export class AppComponent implements OnInit {
 
   renderOptions: RenderOptions<YardposInfo>;
   yardOverviewRenderOptions: RenderOptions<YardInfo<any>> = {
-    scaleFactor: 0.3
+    scaleFactor: 0.3,
+    stroke: 'green',
+    strokeWidth: 6
   };
-  constructor(private mock: CtMockService) {
-
-  }
+  constructor(private mock: CtMockService) {}
 
   ngOnInit() {
-    this.mock.getYardposInfoList().subscribe((blockLocations) => {
+    this.mock.getYardposInfoList().subscribe(blockLocations => {
       this.blockLocations = blockLocations;
       this.blocks[0] = [...this.blockLocations];
       setTimeout(() => {
-        const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
+        const location = this.blockLocations.find(
+          p => p.yardpos === '*4D0060101'
+        );
         location.container = this.blockLocations[50].container;
         this.yardComponents.last.notifyDataUpdated();
       }, 2000);
 
-
-
       setTimeout(() => {
         this.rotation = 90;
-        const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
+        const location = this.blockLocations.find(
+          p => p.yardpos === '*4D0060102'
+        );
         location.container = this.blockLocations[50].container;
         this.yardComponents.last.notifyDataUpdated(true);
         // setTimeout(() => {
@@ -112,12 +117,10 @@ export class AppComponent implements OnInit {
         //   this.yardComponents.last.redraw();
         // }, 0);
       }, 4000);
-
     });
 
     this.mock.getYardInfoList().subscribe((yardInfoList: YardInfo<any>[]) => {
       this.yardInfoList = yardInfoList;
-
     });
   }
 
@@ -125,17 +128,18 @@ export class AppComponent implements OnInit {
     console.log(yardInfo);
   }
 
-  renderYardContent($event: {node: d3.Selection<any, any, any, any>, data:  YardInfo<any>}) {
+  renderYardContent($event: {
+    node: d3.Selection<any, any, any, any>;
+    data: YardInfo<any>;
+  }) {
     const { node, data } = $event;
     node
-        .append('rect')
-        .attr('width', 10)
-        .attr('height', data.height)
-        .attr('stroke', 'rgb(0,0,0)')
-        .attr('stroke-width', '2px')
-        // .attr('transform', `translate(${index * pieceWidth}, 0)`)
-        .attr('fill', 'red');
+      .append('rect')
+      .attr('width', 10)
+      .attr('height', data.height)
+      .attr('stroke', 'rgb(0,0,0)')
+      .attr('stroke-width', '2px')
+      // .attr('transform', `translate(${index * pieceWidth}, 0)`)
+      .attr('fill', 'red');
   }
-
 }
-

@@ -4,7 +4,7 @@
 dist.*
 /dist
 /tmp
-
+/coverage
 # dependencies
 /node_modules
 /bower_components

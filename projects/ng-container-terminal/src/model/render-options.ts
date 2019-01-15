@@ -1,6 +1,7 @@
 export interface RenderOptions<T> {
   fill?: string | ((data: T) => string);
   stroke?: string | ((data: T) => string);
-  strokeWidth?: string | ((data: T) => number);
+  strokeWidth?: number | ((data: T) => number);
   scaleFactor?: number;
+  text?: string | ((data: T) => string);
 }

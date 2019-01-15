@@ -2,7 +2,7 @@
 
 ### Features
 
-renderOptions:  support stroke and strokeWidth
+renderOptions:  support stroke, strokeWidth, text
 ct-yard: 提供了 `yardposClick` 替代了原有的 `onYardposClicked` Output，更符合 Angular 规范
 ct-yard-bay: 提供了 `yardposClick` 替代了原有的 `onYardposClicked` Output，更符合 Angular 规范
 

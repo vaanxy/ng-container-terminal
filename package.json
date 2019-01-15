@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
+    "pretty": "prettier --write --config ./prettier.config.js /Users/vaan/workspace/webApp/ng-container-terminal/projects/ng-container-terminal/src/lib/ct-yard-overview/ct-yard-overview.component.ts",
     "start": "ng serve",
     "build": "ng build ng-container-terminal && cp README.md dist/ng-container-terminal && cp CHANGELOG.md dist/ng-container-terminal",
     "test": "ng test ng-container-terminal",
@@ -52,6 +53,7 @@
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "ng-packagr": "^4.4.5",
+    "prettier": "1.15.3",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tsickle": "^0.34.0",
