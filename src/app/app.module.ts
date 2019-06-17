@@ -1,19 +1,13 @@
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
-
+import { CtVesselModule, CtYardBayModule, CtYardModule, CtYardOverviewModule } from 'ng-container-terminal';
+import { CtMockService } from 'ng-container-terminal/mock';
 
 import { AppComponent } from './app.component';
-import { CtVesselModule } from 'ng-container-terminal';
 
-import { CtYardModule } from 'ng-container-terminal';
-import { CtYardBayModule } from 'ng-container-terminal';
-import { CtMockService } from 'ng-container-terminal/mock';
-import { CtYardOverviewModule } from 'ng-container-terminal';
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -22,7 +16,7 @@ import { CtYardOverviewModule } from 'ng-container-terminal';
     CtYardBayModule,
     CtYardOverviewModule
   ],
-  providers: [ CtMockService ],
-  bootstrap: [ AppComponent ]
+  providers: [CtMockService],
+  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,18 +1,7 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations';
-import { YardBay } from 'ng-container-terminal';
-import { YardInfo } from 'ng-container-terminal';
+import { CtYardComponent, RenderOptions, YardBay, YardInfo, YardposInfo } from 'ng-container-terminal';
 import { CtMockService } from 'ng-container-terminal/mock';
-import { YardposInfo } from 'ng-container-terminal';
-import { RenderOptions } from 'ng-container-terminal';
-import { CtYardComponent } from 'ng-container-terminal';
 
 @Component({
   selector: 'app-root',
@@ -59,25 +48,33 @@ export class AppComponent implements OnInit {
   blockLocations = [];
   yardInfoList: YardInfo<any>[] = [];
   blocks: YardposInfo[][] = [];
-  yardBay: YardBay = {
-    name: 'a',
-    maxRow: 6,
-    maxTier: 4,
-    yardposInfoArray: [
-      {
-        yardpos: '*1A0010202',
-        displayedContainer: null,
-        containers: [],
-        plans: [],
-        isLocked: false
-      },
-      {
-        yardpos: '*1A0010203',
-        displayedContainer: null,
-        containers: [],
-        plans: [],
-        isLocked: true
-      }
+  // yardBay: YardBay = {
+  //   name: 'a',
+  //   maxRow: 6,
+  //   maxTier: 4,
+  //   yardposInfoArray: [
+  //     {
+  //       yardpos: '*1A0010202',
+  //       displayedContainer: null,
+  //       containers: [],
+  //       plans: [],
+  //       isLocked: false
+  //     },
+  //     {
+  //       yardpos: '*1A0010203',
+  //       displayedContainer: null,
+  //       containers: [],
+  //       plans: [],
+  //       isLocked: true
+  //     }
+  //   ]
+  // };
+
+  yardBay: YardBay<string> = {
+    name: '*1A063',
+    poses: [
+      { name: '*1A0630101', data: '666' },
+      { name: '*1A0630102', data: '666' }
     ]
   };
 
