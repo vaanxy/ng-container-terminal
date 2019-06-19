@@ -1,8 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CtVesselModule, CtYardBayModule, CtYardModule, CtYardOverviewModule } from 'ng-container-terminal';
 import { CtMockService } from 'ng-container-terminal/mock';
+import {
+  CtVesselBayModule,
+  CtVesselModule,
+  CtYardBayModule,
+  CtYardModule,
+  CtYardOverviewModule,
+} from 'projects/ng-container-terminal/src/public_api';
 
 import { AppComponent } from './app.component';
 
@@ -14,6 +20,7 @@ import { AppComponent } from './app.component';
     CtVesselModule,
     CtYardModule,
     CtYardBayModule,
+    CtVesselBayModule,
     CtYardOverviewModule
   ],
   providers: [CtMockService],

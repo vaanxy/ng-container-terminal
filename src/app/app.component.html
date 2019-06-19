@@ -34,7 +34,11 @@
     (yardContentRender)="renderYardContent($event)"
     (yardClick)="onYardClicked($event)"
   ></ct-yard-overview>
-  <ct-yard-bay [yardBay]="yardBay" cellSize="24"></ct-yard-bay>
+  <ct-yard-bay
+    [yardBay]="yardBay"
+    cellSize="24"
+    [renderOptions]="yardBayRenderOptions"
+  ></ct-yard-bay>
   <ct-yard
     [yardposInfoList]="blockLocations"
     [renderOptions]="renderOptions"
@@ -46,4 +50,8 @@
     [yardposInfoList]="poses"
   ></ct-yard>
   <!-- <ct-yard-bay [yardBay]="yardBay"></ct-yard-bay> -->
+  <ct-vessel-bay
+    [vesselBay]="vesselBay"
+    [cellSize]="vescellSize"
+  ></ct-vessel-bay>
 </div>

@@ -7,3 +7,8 @@ export class Cell {
 
   constructor(vesType, name, xb, hb, supply00) {}
 }
+
+export interface Vescell<T> {
+  name: string;
+  data: T;
+}

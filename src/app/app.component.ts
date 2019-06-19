@@ -1,7 +1,553 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { CtYardComponent, RenderOptions, YardBay, YardInfo, YardposInfo } from 'ng-container-terminal';
 import { CtMockService } from 'ng-container-terminal/mock';
+import { Vescell } from 'projects/ng-container-terminal/src/model';
+import { Yardpos } from 'projects/ng-container-terminal/src/model/yardpos';
+import {
+  CtYardComponent,
+  RenderOptions,
+  VesselBay,
+  YardBay,
+  YardInfo,
+  YardposInfo,
+} from 'projects/ng-container-terminal/src/public_api';
+
+export const prestows: Vescell<any>[] = [
+  {
+    data: null,
+    name: '001D0182'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0184'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0186'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0188'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0282'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0284'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0286'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0288'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0382'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0384'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0386'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0388'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0482'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0484'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0486'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0488'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0582'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0584'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0586'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0588'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0682'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0684'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0686'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0688'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0782'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0784'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0786'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0788'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0882'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0884'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0886'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0888'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0982'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0984'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0986'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D0988'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D1082'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D1084'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D1086'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001D1088'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0112'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0114'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0116'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0118'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0212'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0214'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0216'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0218'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0316'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0318'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0416'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0418'
+  },
+  {
+    data: {
+      ctnGroup: null,
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0518'
+  },
+  {
+    data: {
+      ctnGroup: '666',
+      ctnGroup2: null,
+      ctnSize: null,
+      pod: null,
+      vesCode: 'APL SING'
+    },
+    name: '001H0618'
+  }
+];
 
 @Component({
   selector: 'app-root',
@@ -48,27 +594,10 @@ export class AppComponent implements OnInit {
   blockLocations = [];
   yardInfoList: YardInfo<any>[] = [];
   blocks: YardposInfo[][] = [];
-  // yardBay: YardBay = {
-  //   name: 'a',
-  //   maxRow: 6,
-  //   maxTier: 4,
-  //   yardposInfoArray: [
-  //     {
-  //       yardpos: '*1A0010202',
-  //       displayedContainer: null,
-  //       containers: [],
-  //       plans: [],
-  //       isLocked: false
-  //     },
-  //     {
-  //       yardpos: '*1A0010203',
-  //       displayedContainer: null,
-  //       containers: [],
-  //       plans: [],
-  //       isLocked: true
-  //     }
-  //   ]
-  // };
+  vesselBay: VesselBay<any> = {
+    name: '001',
+    vescells: prestows
+  };
 
   yardBay: YardBay<string> = {
     name: '*1A063',
@@ -78,7 +607,13 @@ export class AppComponent implements OnInit {
     ]
   };
 
+  yardBayRenderOptions: RenderOptions<Yardpos<any>> = {
+    text: d => (d.data ? '10.2' : '')
+  };
+
   rotation = 0;
+
+  vescellSize = 50;
 
   @ViewChildren(CtYardComponent) yardComponents: QueryList<CtYardComponent>;
 
@@ -91,6 +626,14 @@ export class AppComponent implements OnInit {
   constructor(private mock: CtMockService) {}
 
   ngOnInit() {
+    setTimeout(() => {
+      console.log('vessel bay');
+      // this.vescellSize = 20;
+      // this.vesselBay.vescells.pop();
+      this.vesselBay.vescells[0].data = 1111;
+      this.vesselBay = Object.assign({}, this.vesselBay);
+    }, 2000);
+
     this.mock.getYardposInfoList().subscribe(blockLocations => {
       this.blockLocations = blockLocations;
       this.blocks[0] = [...this.blockLocations];

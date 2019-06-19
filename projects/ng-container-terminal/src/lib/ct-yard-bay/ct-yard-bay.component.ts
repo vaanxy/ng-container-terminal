@@ -37,12 +37,12 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
   }
   @Input() set renderOptions(options: RenderOptions<Yardpos<T>>) {
     this._renderOptions = options;
-    this.renderLayout();
-    this.updateYardposInfo();
-    // setTimeout(() => {
-    //   this.renderLayout();
-    //   this.updateYardposInfo();
-    // }, 0);
+    // this.renderLayout();
+    // this.updateYardposInfo();
+    setTimeout(() => {
+      this.renderLayout();
+      this.updateYardposInfo();
+    }, 0);
   }
 
   get renderOptions() {
@@ -247,6 +247,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
       .selectAll('path')
       .transition()
       .attr('fill', (pos: Yardpos<T>) => this._fillFunction(pos));
+    cell.selectAll('text').text((pos: Yardpos<T>) => this._renderPosText(pos));
 
     // cell
     //   .selectAll('text')
@@ -332,12 +333,12 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
     //       return 1;
     //     }
     //   });
-    // g.append('text')
-    //   .attr('font-size', '9')
-    //   .attr('text-anchor', 'middle')
-    //   .attr('dx', this.cellSize / 2)
-    //   .attr('dy', this.cellSize / 1.2)
-    //   .text((posInfo: YardposInfo) => (posInfo.text ? posInfo.text : ''));
+    g.append('text')
+      .attr('font-size', '9')
+      .attr('text-anchor', 'middle')
+      .attr('dx', this.cellSize / 2)
+      .attr('dy', this.cellSize / 1.2)
+      .text((pos: Yardpos<T>) => this._renderPosText(pos));
 
     g.transition()
       .delay((pos: Yardpos<T>) => {
@@ -369,21 +370,18 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
       } else {
         return 'white';
       }
-      // if (data.fill) {
-      //   return data.fill;
-      // }
-      // if (data.displayedContainer && data.displayedContainer.ctnno) {
-      //   return 'rgb(251,124,133)';
-      // } else if (data.plans.length > 0) {
-      //   if (data.plans.filter(p => p.planType === '定位组').length > 0) {
-      //     return 'rgb(255,238,196)';
-      //   }
-      //   return 'white';
-      // } else if (data.displayedContainer && data.displayedContainer.task) {
-      //   return 'rgb(251,254,133)';
-      // } else {
-      //   return 'white';
-      // }
+    }
+  }
+
+  private _renderPosText(pos: Yardpos<T>) {
+    if (this.renderOptions && this.renderOptions.text) {
+      if (typeof this.renderOptions.text === 'string') {
+        return this.renderOptions.text;
+      } else {
+        return this.renderOptions.text(pos);
+      }
+    } else {
+      return '';
     }
   }
 }
