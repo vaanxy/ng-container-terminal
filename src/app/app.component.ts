@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { CtVescellParserService } from 'ng-container-terminal';
 import { CtMockService } from 'ng-container-terminal/mock';
 import { Vescell } from 'projects/ng-container-terminal/src/model';
 import { Yardpos } from 'projects/ng-container-terminal/src/model/yardpos';
@@ -11,6 +12,8 @@ import {
   YardInfo,
   YardposInfo,
 } from 'projects/ng-container-terminal/src/public_api';
+
+import { AppService } from './app.service';
 
 export const prestows: Vescell<any>[] = [
   {
@@ -594,10 +597,8 @@ export class AppComponent implements OnInit {
   blockLocations = [];
   yardInfoList: YardInfo<any>[] = [];
   blocks: YardposInfo[][] = [];
-  vesselBay: VesselBay<any> = {
-    name: '001',
-    vescells: prestows
-  };
+  vesselBay: VesselBay<any>;
+  vesselBays: VesselBay<any>[] = [];
 
   yardBay: YardBay<string> = {
     name: '*1A063',
@@ -613,7 +614,7 @@ export class AppComponent implements OnInit {
 
   rotation = 0;
 
-  vescellSize = 50;
+  vescellSize = 20;
 
   @ViewChildren(CtYardComponent) yardComponents: QueryList<CtYardComponent>;
 
@@ -623,16 +624,21 @@ export class AppComponent implements OnInit {
     stroke: 'green',
     strokeWidth: 6
   };
-  constructor(private mock: CtMockService) {}
+  constructor(
+    private mock: CtMockService,
+    private app: AppService,
+    private cellParser: CtVescellParserService
+  ) {}
 
   ngOnInit() {
-    setTimeout(() => {
-      console.log('vessel bay');
-      // this.vescellSize = 20;
-      // this.vesselBay.vescells.pop();
-      this.vesselBay.vescells[0].data = 1111;
-      this.vesselBay = Object.assign({}, this.vesselBay);
-    }, 2000);
+    // this.getPrestows();
+    // setTimeout(() => {
+    //   console.log('vessel bay');
+    //   // this.vescellSize = 20;
+    //   // this.vesselBay.vescells.pop();
+    //   this.vesselBay.frontCells[0].data = 1111;
+    //   this.vesselBay = Object.assign({}, this.vesselBay);
+    // }, 2000);
 
     this.mock.getYardposInfoList().subscribe(blockLocations => {
       this.blockLocations = blockLocations;
@@ -681,5 +687,30 @@ export class AppComponent implements OnInit {
       .attr('stroke-width', '2px')
       // .attr('transform', `translate(${index * pieceWidth}, 0)`)
       .attr('fill', 'red');
+  }
+
+  getPrestows() {
+    const cellMap: { [key: string]: Vescell<any> } = {};
+    const bayMap: { [key: string]: Vescell<any>[] } = {};
+    this.app.getPrestow().subscribe(cells => {
+      cells.forEach(cell => {
+        cellMap[cell.name] = cell;
+        const bayName = this.cellParser.getBayno(cell.name);
+        // console.log(bayName);
+
+        if (bayMap[bayName]) {
+          bayMap[bayName].push(cell);
+        } else {
+          bayMap[bayName] = [cell];
+        }
+      });
+      Object.entries(bayMap).forEach(([bayName, arr]) => {
+        this.vesselBays.push({
+          name: bayName,
+          frontCells: arr,
+          backCells: []
+        });
+      });
+    });
   }
 }

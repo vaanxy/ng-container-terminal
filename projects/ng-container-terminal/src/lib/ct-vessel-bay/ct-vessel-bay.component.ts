@@ -25,6 +25,7 @@ export class CtVesselBayComponent<T> implements OnInit {
   vesselBayNameLabelGroup: d3.Selection<any, any, any, any>;
 
   cells: Vescell<T>[] = [];
+  // backCells: Vescell<T>[] = [];
   padding = 50;
   private deckRowLabels: string[] = [];
   private deckTierLabels: string[] = [];
@@ -40,10 +41,11 @@ export class CtVesselBayComponent<T> implements OnInit {
     holdMaxRow: 0,
     holdMaxTier: 0,
     // HoldRowOffset: 0,
-    holdHasZeroRow: false
+    holdHasZeroRow: false,
+    maxRow: 0
   };
   private _vesselBay: VesselBay<T>;
-  private _cellSize = 50;
+  private _cellSize = 10;
   private _renderOptions: RenderOptions<Vescell<T>>;
 
   @Input() set renderOptions(options: RenderOptions<Vescell<T>>) {
@@ -72,7 +74,8 @@ export class CtVesselBayComponent<T> implements OnInit {
 
   @Input() set vesselBay(vesselBay: VesselBay<T>) {
     this._vesselBay = vesselBay;
-    this.cells = vesselBay.vescells;
+    this.cells = vesselBay.frontCells;
+    // this.backCells = vesselBay.backCells;
     this.premarshalling(this.cells);
     setTimeout(() => {
       this.renderLayout();
@@ -92,15 +95,7 @@ export class CtVesselBayComponent<T> implements OnInit {
   ) {}
 
   ngOnInit() {
-    // if (this.yardBay.dataUpdated) {
-    //   this.yardBay.dataUpdated.subscribe(() => {
-    //     this.updateYardposInfo();
-    //   });
-    // }
     this.host = d3.select(this.el.nativeElement);
-
-    // this.renderLayout();
-    // this.updateVescells();
   }
 
   /**
@@ -151,13 +146,20 @@ export class CtVesselBayComponent<T> implements OnInit {
       y = y * ((y % 2) * 2 - 1);
       return x - y;
     });
+    // console.log((+deckTiers[0] - 82) / 2);
+
     this.layout = {
       deckMaxRow: deckRows.size,
-      deckMaxTier: deckTiers.size,
+      deckMaxTier:
+        this.deckTierLabels.length > 0
+          ? (+this.deckTierLabels[0] - 82) / 2 + 1
+          : 0,
       deckHasZeroRow: this.hasZeroRow(deckCells),
       holdMaxRow: holdRows.size,
-      holdMaxTier: holdTiers.size,
-      holdHasZeroRow: this.hasZeroRow(holdCells)
+      holdMaxTier:
+        this.holdTierLabels.length > 0 ? +this.holdTierLabels[0] / 2 : 0,
+      holdHasZeroRow: this.hasZeroRow(holdCells),
+      maxRow: Math.max(deckRows.size, holdRows.size)
     };
     this.deckCells = deckCells;
     this.holdCells = holdCells;
@@ -190,16 +192,15 @@ export class CtVesselBayComponent<T> implements OnInit {
       .select('svg')
       .attr(
         'width',
-        (Math.max(this.deckRowLabels.length, this.holdRowLabels.length) + 1) *
-          this.cellSize +
-          2 * this.padding
+        (this.layout.maxRow + 1) * this.cellSize + 2 * this.padding
       )
       .attr(
         'height',
-        (this.deckTierLabels.length + this.holdTierLabels.length + 2) *
+        (this.layout.deckMaxTier + this.layout.holdMaxTier + 3) *
           this.cellSize +
           3 * this.padding
       );
+    this.svg.selectAll('g').remove();
     this.vesselDeckBayGroup = this.svg
       .append('g')
       .attr('class', 'vessel-deck-bay-group');
@@ -208,7 +209,8 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('class', 'vessel-hold-bay-group')
       .attr('transform', (label, index) => {
         const x = 0;
-        const y = this.deckTierLabels.length * this.cellSize + this.padding * 2;
+        // const y = this.deckTierLabels.length * this.cellSize + this.padding * 2;
+        const y = this.cellSize * (this.layout.deckMaxTier + 2);
         return `translate(${x}, ${y})`;
       });
 
@@ -228,7 +230,7 @@ export class CtVesselBayComponent<T> implements OnInit {
     } else {
       deckRowOffset = ((holdRowCount - deckRowCount) / 2) * this.cellSize;
     }
-    console.log(holdRowOffset, deckRowOffset);
+    // console.log(holdRowOffset, deckRowOffset);
 
     // deck tier label
     this.vesselDeckBayGroup
@@ -318,7 +320,7 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('transform', (label, index) => {
-        const x = holdRowOffset + index * this.cellSize + this.padding;
+        const x = holdRowOffset + (index + 1) * this.cellSize;
         const y = 0;
         return `translate(${x}, ${y})`;
       })
@@ -327,42 +329,27 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('dx', this.cellSize / 2)
       .attr('dy', this.cellSize / 2)
       .text(c => c);
-    // // 绘制区位号标签
-    // this.svg.selectAll('g.yard-bay-name-label-group').remove();
-    // this.yardBayNameLabelGroup = this.svg
-    //   .append('g')
-    //   .attr('class', 'yard-bay-name-label-group');
-    // this.yardBayNameLabelGroup
-    //   .append('text')
-    //   .attr('transform', label => {
-    //     const x = ((this.displaySize.row + 1) / 2.0) * this.cellSize;
-    //     const y = (this.displaySize.tier + 1) * this.cellSize;
-    //     return `translate(${x}, ${y})`;
-    //   })
-    //   .attr('font-size', '16')
-    //   .attr('text-anchor', 'middle')
-    //   .attr('dx', this.cellSize / 2)
-    //   .attr('dy', this.cellSize / 2)
-    //   .text(this.yardBay.name);
 
     // step3 划定舱内舱面船箱位vescell绘制区域
     this.vesselDeckBayGroup.selectAll('g.vessel-deck-bay-cell-group').remove();
     this.vesselHoldBayGroup.selectAll('g.vessel-hold-bay-cell-group').remove();
-    this.vesselHoldBayCellGroup = this.vesselHoldBayGroup
-      .append('g')
-      .attr('class', 'vessel-hold-bay-cell-group')
-      .attr('transform', (label, index) => {
-        const x = this.cellSize;
-        const y = this.cellSize;
-        return `translate(${x}, ${y})`;
-      });
 
     this.vesselDeckBayCellGroup = this.vesselDeckBayGroup
       .append('g')
       .attr('class', 'vessel-deck-bay-cell-group')
       .attr('transform', (label, index) => {
-        const x = this.cellSize;
-        const y = this.cellSize;
+        const x = deckRowOffset + this.cellSize;
+        const y = this.cellSize; // 舱面列标签占位
+        return `translate(${x}, ${y})`;
+      });
+
+    this.vesselHoldBayCellGroup = this.vesselHoldBayGroup
+      .append('g')
+      .attr('class', 'vessel-hold-bay-cell-group')
+      .attr('transform', (label, index) => {
+        const x = holdRowOffset + this.cellSize;
+        const y = this.cellSize; // 舱内列标签占位
+        // console.log(this.vesselBay.name, this.layout.deckMaxTier);
         return `translate(${x}, ${y})`;
       });
   }
@@ -377,7 +364,12 @@ export class CtVesselBayComponent<T> implements OnInit {
     const exitedDeckCells = deckCells.exit();
 
     enteredDeckCells
+
       .append('rect')
+      // .transition()
+      // .attr('transform', (pos: Vescell<T>) => {
+      //   return `scale(0,0)`;
+      // })
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('transform', (cell, index) => {
@@ -389,9 +381,9 @@ export class CtVesselBayComponent<T> implements OnInit {
         } else {
           x = x - (row % 2);
         }
-        x = x / 2 + 5;
+        x = x / 2 + (this.layout.deckMaxRow - +this.layout.deckHasZeroRow) / 2;
         //  + (row % 2)) / 2 + 5;
-        const y = (3 - tier) * this.cellSize;
+        const y = (this.layout.deckMaxTier - tier - 1) * this.cellSize;
 
         x = this.cellSize * x;
         // const y = this.cellSize;
@@ -412,7 +404,7 @@ export class CtVesselBayComponent<T> implements OnInit {
       })
       .remove();
 
-    // hold cell
+    // hold cell group
     this.vesselHoldBayCellGroup
       .selectAll('rect')
       .data(this.holdCells)
@@ -425,14 +417,16 @@ export class CtVesselBayComponent<T> implements OnInit {
         const tier = +this.cellParser.getC(cell.name) / 2;
 
         let x = row * ((row % 2) * 2 - 1);
-        // TODO:
+
         if (this.layout.holdHasZeroRow) {
           x = x + (row % 2);
         } else {
           x = x - (row % 2);
         }
-        x = x / 2 + 5;
-        const y = (9 - tier) * this.cellSize;
+        x = x / 2 + (this.layout.holdMaxRow - +this.layout.holdHasZeroRow) / 2;
+
+        const y = (this.layout.holdMaxTier - tier) * this.cellSize;
+        // console.log(this.layout.holdMaxTier, tier, y);
         x = this.cellSize * x;
         return `translate(${x}, ${y})`;
       })
