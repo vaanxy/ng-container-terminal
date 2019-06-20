@@ -631,7 +631,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this.getPrestows();
+    this.getPrestows();
     // setTimeout(() => {
     //   console.log('vessel bay');
     //   // this.vescellSize = 20;
@@ -707,8 +707,7 @@ export class AppComponent implements OnInit {
       Object.entries(bayMap).forEach(([bayName, arr]) => {
         this.vesselBays.push({
           name: bayName,
-          frontCells: arr,
-          backCells: []
+          vescells: arr
         });
       });
     });

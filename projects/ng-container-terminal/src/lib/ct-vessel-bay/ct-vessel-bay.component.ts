@@ -26,7 +26,7 @@ export class CtVesselBayComponent<T> implements OnInit {
 
   cells: Vescell<T>[] = [];
   // backCells: Vescell<T>[] = [];
-  padding = 50;
+  padding = 16;
   private deckRowLabels: string[] = [];
   private deckTierLabels: string[] = [];
   private holdRowLabels: string[] = [];
@@ -45,7 +45,7 @@ export class CtVesselBayComponent<T> implements OnInit {
     maxRow: 0
   };
   private _vesselBay: VesselBay<T>;
-  private _cellSize = 10;
+  private _cellSize = 20;
   private _renderOptions: RenderOptions<Vescell<T>>;
 
   @Input() set renderOptions(options: RenderOptions<Vescell<T>>) {
@@ -61,7 +61,7 @@ export class CtVesselBayComponent<T> implements OnInit {
   }
 
   @Input() set cellSize(size: number) {
-    this._cellSize = size;
+    this._cellSize = +size;
     setTimeout(() => {
       this.renderLayout();
       this.updateVescells();
@@ -74,7 +74,7 @@ export class CtVesselBayComponent<T> implements OnInit {
 
   @Input() set vesselBay(vesselBay: VesselBay<T>) {
     this._vesselBay = vesselBay;
-    this.cells = vesselBay.frontCells;
+    this.cells = vesselBay.vescells;
     // this.backCells = vesselBay.backCells;
     this.premarshalling(this.cells);
     setTimeout(() => {
@@ -198,19 +198,19 @@ export class CtVesselBayComponent<T> implements OnInit {
         'height',
         (this.layout.deckMaxTier + this.layout.holdMaxTier + 3) *
           this.cellSize +
-          3 * this.padding
+          2 * this.padding
       );
     this.svg.selectAll('g').remove();
     this.vesselDeckBayGroup = this.svg
       .append('g')
-      .attr('class', 'vessel-deck-bay-group');
+      .attr('class', 'vessel-deck-bay-group')
+      .attr('transform', `translate(${this.padding}, ${this.padding})`);
     this.vesselHoldBayGroup = this.svg
       .append('g')
       .attr('class', 'vessel-hold-bay-group')
       .attr('transform', (label, index) => {
-        const x = 0;
-        // const y = this.deckTierLabels.length * this.cellSize + this.padding * 2;
-        const y = this.cellSize * (this.layout.deckMaxTier + 2);
+        const x = this.padding;
+        const y = this.cellSize * (this.layout.deckMaxTier + 2) + this.padding; // +2 为2组列标签占位
         return `translate(${x}, ${y})`;
       });
 

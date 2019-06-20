@@ -6,7 +6,6 @@ import { CtVescellParserService, VESCELL_PARSER_CONFIG } from 'ng-container-term
 import { CtMockService } from 'ng-container-terminal/mock';
 import {
   CtVesselBayModule,
-  CtVesselModule,
   CtYardBayModule,
   CtYardModule,
   CtYardOverviewModule,
@@ -20,7 +19,6 @@ import { AppComponent } from './app.component';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    CtVesselModule,
     CtYardModule,
     CtYardBayModule,
     CtVesselBayModule,

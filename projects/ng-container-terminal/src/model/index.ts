@@ -13,3 +13,4 @@ export * from './prestow';
 export * from './prestow-digest';
 export * from './vessel-container';
 export * from './vessel-bay';
+export * from './yardpos';
