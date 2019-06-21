@@ -163,6 +163,8 @@ export class CtVesselBayComponent<T> implements OnInit {
     };
     this.deckCells = deckCells;
     this.holdCells = holdCells;
+    console.log(this.vesselBay.name, this.layout, this.hasZeroRow(holdCells));
+
     // const deckHasZeroRow = this.hasZeroRow(deckData);
   }
 
@@ -171,11 +173,15 @@ export class CtVesselBayComponent<T> implements OnInit {
   renderHoldBay() {}
 
   private hasZeroRow(cells: Vescell<T>[]) {
-    cells.forEach(cell => {
+    for (let index = 0; index < cells.length; index++) {
+      const cell = cells[index];
       if (+this.cellParser.getL(cell.name) === 0) {
+        // console.log(cell.name);
+
         return true;
       }
-    });
+    }
+
     return false;
   }
 
@@ -420,6 +426,7 @@ export class CtVesselBayComponent<T> implements OnInit {
 
         if (this.layout.holdHasZeroRow) {
           x = x + (row % 2);
+          // console.log('hold has 00');
         } else {
           x = x - (row % 2);
         }
