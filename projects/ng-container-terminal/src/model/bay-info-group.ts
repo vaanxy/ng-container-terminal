@@ -1,4 +1,5 @@
-import { BayInfo } from './';
+import { BayInfo } from './bay-info';
+
 export class BayInfoGroup {
   name: string;
   deck: BayInfo;
