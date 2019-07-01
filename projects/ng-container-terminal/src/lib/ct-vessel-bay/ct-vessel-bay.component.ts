@@ -152,7 +152,10 @@ export class CtVesselBayComponent<T> implements OnInit {
       deckMaxRow: deckRows.size,
       deckMaxTier:
         this.deckTierLabels.length > 0
-          ? (+this.deckTierLabels[0] - 82) / 2 + 1
+          ? (+this.deckTierLabels[0] -
+              +this.deckTierLabels[this.deckTierLabels.length - 1]) /
+              2 +
+            1
           : 0,
       deckHasZeroRow: this.hasZeroRow(deckCells),
       holdMaxRow: holdRows.size,
@@ -163,7 +166,7 @@ export class CtVesselBayComponent<T> implements OnInit {
     };
     this.deckCells = deckCells;
     this.holdCells = holdCells;
-    console.log(this.vesselBay.name, this.layout, this.hasZeroRow(holdCells));
+    // console.log(this.vesselBay.name, this.layout, this.hasZeroRow(holdCells));
 
     // const deckHasZeroRow = this.hasZeroRow(deckData);
   }
@@ -380,7 +383,10 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('height', this.cellSize)
       .attr('transform', (cell, index) => {
         const row = +this.cellParser.getL(cell.name);
-        const tier = (+this.cellParser.getC(cell.name) - 82) / 2;
+        const tier =
+          (+this.cellParser.getC(cell.name) -
+            +this.deckTierLabels[this.deckTierLabels.length - 1]) /
+          2;
         let x = row * ((row % 2) * 2 - 1);
         if (this.layout.deckHasZeroRow) {
           x = x + (row % 2);
