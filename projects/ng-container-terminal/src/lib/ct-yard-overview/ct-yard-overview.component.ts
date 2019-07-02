@@ -6,11 +6,11 @@ import {
   Input,
   OnChanges,
   OnInit,
-  Output
+  Output,
 } from '@angular/core';
 import * as d3 from 'd3';
 
-import { RenderOptions, YardInfo } from '../../model';
+import { RenderOptions, YardInfo } from '../../public_api';
 
 @Component({
   selector: 'ct-yard-overview',

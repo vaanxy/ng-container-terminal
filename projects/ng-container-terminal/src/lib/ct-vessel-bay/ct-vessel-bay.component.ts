@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as d3 from 'd3';
 
-import { Vescell, VesselBay } from '../../model';
+import { CtVescellParserService } from '../../lib/tool/ct-vescell-parser.service';
+import { Vescell } from '../../model/cell';
 import { RenderOptions } from '../../model/render-options';
-import { CtVescellParserService } from '../tool';
+import { VesselBay } from '../../model/vessel-bay';
 
 // import { YardposInfo } from '../../model/yardpos-info';
 @Component({

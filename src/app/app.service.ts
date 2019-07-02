@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Vescell } from 'projects/ng-container-terminal/src/model';
+import { Vescell } from 'ng-container-terminal';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
-import { NgContainerTerminalComponent } from './ng-container-terminal.component';
+
 import { CtYardModule } from './ct-yard/ct-yard.module';
+import { NgContainerTerminalComponent } from './ng-container-terminal.component';
 
 @NgModule({
   declarations: [NgContainerTerminalComponent],

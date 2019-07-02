@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { CtMockService } from 'projects/ng-container-terminal/mock/src/public_api';
-import { Vescell, Yardpos } from 'projects/ng-container-terminal/src/model';
+import { Vescell, Yardpos } from 'ng-container-terminal';
+import { CtMockService } from 'ng-container-terminal/mock';
 import {
   CtVescellParserService,
   CtYardComponent,

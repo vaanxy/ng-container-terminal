@@ -1,20 +1,21 @@
-import { filter, bufferTime } from 'rxjs/operators';
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
-  SimpleChanges,
   Output,
-  EventEmitter
+  SimpleChanges,
 } from '@angular/core';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
+import { bufferTime, filter } from 'rxjs/operators';
+
+import { RenderOptions } from '../../model/render-options';
 import { YardposInfo } from '../../model/yardpos-info';
 import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
-import { RenderOptions } from '../../model/render-options';
 
 @Component({
   selector: 'ct-yard',
