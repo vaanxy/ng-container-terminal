@@ -5,25 +5,21 @@
     (yardContentRender)="renderYardContent($event)"
     (yardClick)="onYardClicked($event)"
   ></ct-yard-overview>
-  <ct-yard-bay
-    [yardBay]="yardBay"
-    cellSize="24"
-    [renderOptions]="yardBayRenderOptions"
-  ></ct-yard-bay>
-  <ct-yard
-    [yardposInfoList]="blockLocations"
-    [renderOptions]="renderOptions"
-    [rotation]="rotation"
-  ></ct-yard>
-  <ct-yard
-    *ngFor="let poses of blocks"
-    [rotation]="rotation"
-    [yardposInfoList]="poses"
-  ></ct-yard>
+  <ct-yard-bay [yardBay]="yardBay" cellSize="24" [renderOptions]="yardBayRenderOptions"></ct-yard-bay>
+  <ct-yard [yardposInfoList]="blockLocations" [rotation]="rotation"></ct-yard>
+  <ct-yard *ngFor="let poses of blocks" [rotation]="rotation" [yardposInfoList]="poses"></ct-yard>
   <!-- <ct-yard-bay [yardBay]="yardBay"></ct-yard-bay> -->
-  <ct-vessel-bay
-    *ngFor="let vesselBay of vesselBays"
-    [vesselBay]="vesselBay"
+  <!-- <ct-vessel-bay
+    *ngFor="let cells of vescellsList"
+    [vescells]="cells"
     [cellSize]="vescellSize"
+    [renderOptions]="vesselRenderOptions"
+  ></ct-vessel-bay> -->
+
+  <ct-vessel-bay
+    *ngIf="vescellsList.length"
+    [vescells]="vescells"
+    [cellSize]="vescellSize"
+    [renderOptions]="vesselRenderOptions"
   ></ct-vessel-bay>
 </div>

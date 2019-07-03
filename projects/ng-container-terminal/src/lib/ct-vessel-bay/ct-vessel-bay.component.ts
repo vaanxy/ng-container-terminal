@@ -1,10 +1,11 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as d3 from 'd3';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 import { CtVescellParserService } from '../../lib/tool/ct-vescell-parser.service';
 import { Vescell } from '../../model/cell';
 import { RenderOptions } from '../../model/render-options';
-import { VesselBay } from '../../model/vessel-bay';
 
 // import { YardposInfo } from '../../model/yardpos-info';
 @Component({
@@ -13,48 +14,51 @@ import { VesselBay } from '../../model/vessel-bay';
   styleUrls: ['./ct-vessel-bay.component.css']
 })
 export class CtVesselBayComponent<T> implements OnInit {
+  renderUpdateSubject: Subject<void> = new Subject();
   host: d3.Selection<any, any, any, any>;
   svg: d3.Selection<any, any, any, any>;
   vesselDeckBayGroup: d3.Selection<any, any, any, any>;
-  vesselHoldBayGroup: d3.Selection<any, any, any, any>;
   vesselDeckBayRowLabelGroup: d3.Selection<any, any, any, any>;
   vesselDeckBayTierLabelGroup: d3.Selection<any, any, any, any>;
+  vesselDeckBayCellGroup: d3.Selection<any, any, any, any>;
+
+  vesselHoldBayGroup: d3.Selection<any, any, any, any>;
   vesselHoldBayRowLabelGroup: d3.Selection<any, any, any, any>;
   vesselHoldBayTierLabelGroup: d3.Selection<any, any, any, any>;
-  vesselDeckBayCellGroup: d3.Selection<any, any, any, any>;
   vesselHoldBayCellGroup: d3.Selection<any, any, any, any>;
   vesselBayNameLabelGroup: d3.Selection<any, any, any, any>;
 
-  cells: Vescell<T>[] = [];
-  // backCells: Vescell<T>[] = [];
+  private _vescells: Vescell<T>[] = [];
   padding = 16;
   private deckRowLabels: string[] = [];
   private deckTierLabels: string[] = [];
+  private deckCells: Vescell<T>[] = [];
+
   private holdRowLabels: string[] = [];
   private holdTierLabels: string[] = [];
-  private deckCells: Vescell<T>[] = [];
   private holdCells: Vescell<T>[] = [];
+
   private layout = {
-    deckMaxRow: 0,
-    deckMaxTier: 0,
-    // deckRowOffset: 0,
+    deckRowCount: 0,
+    deckTierCount: 0,
+    deckMinTierLabel: 82,
     deckHasZeroRow: false,
-    holdMaxRow: 0,
-    holdMaxTier: 0,
-    // HoldRowOffset: 0,
+
+    holdRowCount: 0,
+    holdTierCount: 0,
     holdHasZeroRow: false,
-    maxRow: 0
+
+    maxRow: 0 // 整贝最大列宽 max(deckMaxRow, holdMaxRow)
   };
-  private _vesselBay: VesselBay<T>;
+  // private _vesselBay: VesselBay<T>;
   private _cellSize = 20;
   private _renderOptions: RenderOptions<Vescell<T>>;
 
+  @Input() name: string;
+
   @Input() set renderOptions(options: RenderOptions<Vescell<T>>) {
     this._renderOptions = options;
-    setTimeout(() => {
-      this.renderLayout();
-      this.updateVescells();
-    }, 0);
+    this.renderUpdateSubject.next();
   }
 
   get renderOptions() {
@@ -63,40 +67,87 @@ export class CtVesselBayComponent<T> implements OnInit {
 
   @Input() set cellSize(size: number) {
     this._cellSize = +size;
-    setTimeout(() => {
-      this.renderLayout();
-      this.updateVescells();
-    }, 0);
+    this.renderUpdateSubject.next();
   }
 
   get cellSize() {
     return this._cellSize;
   }
 
-  @Input() set vesselBay(vesselBay: VesselBay<T>) {
-    this._vesselBay = vesselBay;
-    this.cells = vesselBay.vescells;
-    // this.backCells = vesselBay.backCells;
-    this.premarshalling(this.cells);
-    setTimeout(() => {
-      this.renderLayout();
-      this.updateVescells();
-    }, 0);
+  @Input() set vescells(vescells: Vescell<T>[]) {
+    console.log('update vescells');
+
+    this._vescells = vescells;
+    this.renderUpdateSubject.next();
   }
 
-  get vesselBay() {
-    return this._vesselBay;
+  get vescells() {
+    return this._vescells;
   }
 
   @Output() vescellClick: EventEmitter<Vescell<T>> = new EventEmitter();
 
-  constructor(
-    private el: ElementRef,
-    private cellParser: CtVescellParserService
-  ) {}
+  constructor(private el: ElementRef, private cellParser: CtVescellParserService) {
+    this.renderUpdateSubject.pipe(debounceTime(100)).subscribe(() => {
+      this.premarshalling(this.vescells);
+      this.renderAll();
+    });
+  }
 
   ngOnInit() {
+    console.log('ng on init');
+
     this.host = d3.select(this.el.nativeElement);
+    // step1
+    this.svg = this.host
+      .select('svg')
+      .attr('width', (this.layout.maxRow + 1) * this.cellSize + 2 * this.padding)
+      .attr('height', (this.layout.deckTierCount + this.layout.holdTierCount + 3) * this.cellSize + 2 * this.padding);
+    this.svg.selectAll('g').remove();
+    this.vesselDeckBayGroup = this.svg
+      .append('g')
+      .attr('class', 'vessel-deck-bay-group')
+      .attr('transform', `translate(${this.padding}, ${this.padding})`);
+    this.vesselHoldBayGroup = this.svg
+      .append('g')
+      .attr('class', 'vessel-hold-bay-group')
+      .attr('transform', (label, index) => {
+        const x = this.padding;
+        const y = this.cellSize * (this.layout.deckTierCount + 2) + this.padding; // +2 为2组列标签占位
+        return `translate(${x}, ${y})`;
+      });
+
+    // deck tier label
+    this.vesselDeckBayGroup.selectAll('g.vessel-deck-bay-tier-label-group').remove();
+    this.vesselDeckBayTierLabelGroup = this.vesselDeckBayGroup
+      .append('g')
+      .attr('class', 'vessel-deck-bay-tier-label-group');
+
+    // 绘制甲板列标签deck row label
+    this.vesselDeckBayGroup.selectAll('g.vessel-deck-bay-row-label-group').remove();
+    this.vesselDeckBayRowLabelGroup = this.vesselDeckBayGroup
+      .append('g')
+      .attr('class', 'vessel-deck-bay-row-label-group');
+
+    // hold tier label
+    this.vesselHoldBayGroup.selectAll('g.vessel-hold-bay-tier-label-group').remove();
+    this.vesselHoldBayTierLabelGroup = this.vesselHoldBayGroup
+      .append('g')
+      .attr('class', 'vessel-hold-bay-tier-label-group');
+
+    // hold row label
+    this.vesselHoldBayGroup.selectAll('g.vessel-hold-bay-row-label-group').remove();
+    this.vesselHoldBayRowLabelGroup = this.vesselHoldBayGroup
+      .append('g')
+      .attr('class', 'vessel-hold-bay-row-label-group');
+
+    // step3 划定舱内舱面船箱位vescell绘制区域
+    this.vesselDeckBayGroup.selectAll('g.vessel-deck-bay-cell-group').remove();
+    this.vesselHoldBayGroup.selectAll('g.vessel-hold-bay-cell-group').remove();
+
+    this.vesselDeckBayCellGroup = this.vesselDeckBayGroup.append('g').attr('class', 'vessel-deck-bay-cell-group');
+
+    this.vesselHoldBayCellGroup = this.vesselHoldBayGroup.append('g').attr('class', 'vessel-hold-bay-cell-group');
   }
 
   /**
@@ -104,6 +155,12 @@ export class CtVesselBayComponent<T> implements OnInit {
    *
    */
   premarshalling(cells: Vescell<T>[]) {
+    if (!cells || cells.length <= 0) {
+      return;
+    }
+    if (!this.name) {
+      this.name = this.cellParser.getBayno(cells[0].name);
+    }
     const deckRows = new Set<string>();
     const holdRows = new Set<string>();
     const deckTiers = new Set<string>();
@@ -149,81 +206,42 @@ export class CtVesselBayComponent<T> implements OnInit {
     });
     // console.log((+deckTiers[0] - 82) / 2);
 
+    const deckMinTierLabel = +this.deckTierLabels[this.deckTierLabels.length - 1];
     this.layout = {
-      deckMaxRow: deckRows.size,
-      deckMaxTier:
-        this.deckTierLabels.length > 0
-          ? (+this.deckTierLabels[0] -
-              +this.deckTierLabels[this.deckTierLabels.length - 1]) /
-              2 +
-            1
-          : 0,
+      deckRowCount: deckRows.size,
+      deckTierCount: this.deckTierLabels.length > 0 ? (+this.deckTierLabels[0] - deckMinTierLabel) / 2 + 1 : 0,
       deckHasZeroRow: this.hasZeroRow(deckCells),
-      holdMaxRow: holdRows.size,
-      holdMaxTier:
-        this.holdTierLabels.length > 0 ? +this.holdTierLabels[0] / 2 : 0,
+      deckMinTierLabel: deckMinTierLabel,
+
+      holdRowCount: holdRows.size,
+      holdTierCount: this.holdTierLabels.length > 0 ? +this.holdTierLabels[0] / 2 : 0,
       holdHasZeroRow: this.hasZeroRow(holdCells),
       maxRow: Math.max(deckRows.size, holdRows.size)
     };
     this.deckCells = deckCells;
     this.holdCells = holdCells;
-    // console.log(this.vesselBay.name, this.layout, this.hasZeroRow(holdCells));
-
-    // const deckHasZeroRow = this.hasZeroRow(deckData);
-  }
-
-  renderDeckBay() {}
-
-  renderHoldBay() {}
-
-  private hasZeroRow(cells: Vescell<T>[]) {
-    for (let index = 0; index < cells.length; index++) {
-      const cell = cells[index];
-      if (+this.cellParser.getL(cell.name) === 0) {
-        // console.log(cell.name);
-
-        return true;
-      }
-    }
-
-    return false;
   }
 
   /**
-   * 绘制贝位结构
-   * step1 规划舱内舱面绘制区域
-   * step2 规划舱内舱面行、列标签绘制区域
-   * step3 规划舱内舱面船箱位绘制区域
+   * ## 绘制贝位结构
+   *
+   * 1. 规划舱内舱面绘制区域
+   * 2. 规划舱内舱面行、列标签绘制区域
+   * 3. 规划舱内舱面船箱位绘制区域
    *
    */
-  renderLayout() {
+  renderAll() {
     // step1
-    this.svg = this.host
-      .select('svg')
-      .attr(
-        'width',
-        (this.layout.maxRow + 1) * this.cellSize + 2 * this.padding
-      )
-      .attr(
-        'height',
-        (this.layout.deckMaxTier + this.layout.holdMaxTier + 3) *
-          this.cellSize +
-          2 * this.padding
-      );
-    this.svg.selectAll('g').remove();
-    this.vesselDeckBayGroup = this.svg
-      .append('g')
-      .attr('class', 'vessel-deck-bay-group')
-      .attr('transform', `translate(${this.padding}, ${this.padding})`);
-    this.vesselHoldBayGroup = this.svg
-      .append('g')
-      .attr('class', 'vessel-hold-bay-group')
-      .attr('transform', (label, index) => {
-        const x = this.padding;
-        const y = this.cellSize * (this.layout.deckMaxTier + 2) + this.padding; // +2 为2组列标签占位
-        return `translate(${x}, ${y})`;
-      });
-
+    this.svg
+      .transition()
+      .attr('width', (this.layout.maxRow + 1) * this.cellSize + 2 * this.padding)
+      .attr('height', (this.layout.deckTierCount + this.layout.holdTierCount + 3) * this.cellSize + 2 * this.padding);
+    this.vesselDeckBayGroup.transition().attr('transform', `translate(${this.padding}, ${this.padding})`);
+    this.vesselHoldBayGroup.transition().attr('transform', (label, index) => {
+      const x = this.padding;
+      const y = this.cellSize * (this.layout.deckTierCount + 2) + this.padding; // +2 为2组列标签占位
+      return `translate(${x}, ${y})`;
+    });
     // step 2
     // 绘甲板制层标签deck tier
     //        bayno
@@ -240,20 +258,56 @@ export class CtVesselBayComponent<T> implements OnInit {
     } else {
       deckRowOffset = ((holdRowCount - deckRowCount) / 2) * this.cellSize;
     }
-    // console.log(holdRowOffset, deckRowOffset);
 
-    // deck tier label
-    this.vesselDeckBayGroup
-      .selectAll('g.vessel-deck-bay-tier-label-group')
-      .remove();
-    this.vesselDeckBayTierLabelGroup = this.vesselDeckBayGroup
-      .append('g')
-      .attr('class', 'vessel-deck-bay-tier-label-group');
-    this.vesselDeckBayTierLabelGroup
-      .selectAll('text')
-      .data(this.deckTierLabels)
-      .enter()
+    this.renderTierLabels(this.vesselDeckBayTierLabelGroup, this.deckTierLabels);
+
+    // 绘制甲板列标签deck row label
+    this.renderRowLabels(this.vesselDeckBayRowLabelGroup, this.deckRowLabels, deckRowOffset);
+
+    // *******HOLD********
+    // 舱内层标签
+    this.renderTierLabels(this.vesselHoldBayTierLabelGroup, this.holdTierLabels);
+    // 舱内列标签
+    this.renderRowLabels(this.vesselHoldBayRowLabelGroup, this.holdRowLabels, holdRowOffset);
+
+    // step3 划定舱内舱面船箱位vescell绘制区域
+    this.vesselDeckBayCellGroup
+      // .transition()
+      .attr('transform', (label, index) => {
+        const x = deckRowOffset + this.cellSize;
+        const y = this.cellSize; // 舱面列标签占位
+        return `translate(${x}, ${y})`;
+      });
+
+    this.vesselHoldBayCellGroup
+      // .transition()
+      .attr('transform', (label, index) => {
+        const x = holdRowOffset + this.cellSize;
+        const y = this.cellSize; // 舱内列标签占位
+        return `translate(${x}, ${y})`;
+      });
+    this.renderVescells();
+  }
+
+  renderTierLabels(selection: d3.Selection<SVGGElement, string, SVGGElement, any>, data: string[]) {
+    const tierLabelSelection = selection.selectAll('text').data(data, (label: string) => label);
+    const enteredTierLabels = tierLabelSelection.enter();
+    const updatedTierLabels = tierLabelSelection;
+    const exitedTierLabels = tierLabelSelection.exit();
+
+    // console.log(enteredTierLabels, updatedTierLabels, exitedTierLabels);
+
+    enteredTierLabels
       .append('text')
+      .attr('transform', (_, index) => {
+        const x = -this.cellSize;
+        const y = (index + 1) * this.cellSize;
+        return `translate(${x}, ${y})`;
+      })
+      .attr('opacity', 0)
+      .transition()
+      .duration(500)
+      .attr('opacity', 1)
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('transform', (label, index) => {
@@ -266,148 +320,138 @@ export class CtVesselBayComponent<T> implements OnInit {
       // .attr('dx', this.cellSize / 2)
       .attr('dy', this.cellSize / 2 + 12 / 2)
       .text(c => c);
-
-    // 绘制甲板列标签deck row label
-    this.vesselDeckBayRowLabelGroup = this.vesselDeckBayGroup
-      .append('g')
-      .attr('class', 'vessel-deck-bay-row-label-group');
-    this.vesselDeckBayRowLabelGroup
-      .selectAll('text')
-      .data(this.deckRowLabels)
-      .enter()
-      .append('text')
-      .attr('width', this.cellSize)
-      .attr('height', this.cellSize)
-      .attr('transform', (label, index) => {
-        const x = deckRowOffset + (index + 1) * this.cellSize;
-        const y = 0;
-        return `translate(${x}, ${y})`;
-      })
-      .attr('font-size', '12')
-      .attr('text-anchor', 'middle')
-      .attr('dx', this.cellSize / 2)
-      .attr('dy', this.cellSize / 2)
-      .text(c => c);
-
-    // *******HOLD********
-    // 舱内层标签
-    this.vesselHoldBayGroup
-      .selectAll('g.vessel-hold-bay-tier-label-group')
-      .remove();
-    this.vesselHoldBayTierLabelGroup = this.vesselHoldBayGroup
-      .append('g')
-      .attr('class', 'vessel-hold-bay-tier-label-group');
-    this.vesselHoldBayTierLabelGroup
-      .selectAll('text')
-      .data(this.holdTierLabels)
-      .enter()
-      .append('text')
+    updatedTierLabels
+      .transition()
+      .attr('opacity', 1)
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('transform', (label, index) => {
         const x = 0;
-        const y = (1 + index) * this.cellSize;
+        const y = (index + 1) * this.cellSize;
         return `translate(${x}, ${y})`;
       })
       .attr('font-size', '12')
       .attr('text-anchor', 'start')
       // .attr('dx', this.cellSize / 2)
       .attr('dy', this.cellSize / 2 + 12 / 2)
-      .text(c => c);
+      .text((c: string) => c);
+    exitedTierLabels.remove();
+  }
 
-    // 绘制舱内列标签
-    // this.vesselHoldBayGroup
-    //   .selectAll('g.vessel-hold-bay-row-label-group')
-    //   .remove();
-    this.vesselHoldBayRowLabelGroup = this.vesselHoldBayGroup
-      .append('g')
-      .attr('class', 'vessel-hold-bay-row-label-group');
-    this.vesselHoldBayRowLabelGroup
-      .selectAll('text')
-      .data(this.holdRowLabels)
-      .enter()
+  renderRowLabels(selection: d3.Selection<SVGGElement, string, SVGGElement, any>, data: string[], rowOffset: number) {
+    const rowLabelSelection = selection.selectAll('text').data(data, (label: string) => label);
+    const enteredRowLabels = rowLabelSelection.enter();
+    const updatedRowLabels = rowLabelSelection;
+    const exitedRowLabels = rowLabelSelection.exit();
+
+    console.log('row labels', updatedRowLabels);
+
+    enteredRowLabels
       .append('text')
+      .attr('transform', (_, index) => {
+        const x = rowOffset + (index + 1) * this.cellSize;
+        const y = -this.cellSize;
+        return `translate(${x}, ${y})`;
+      })
+      .attr('opacity', 0)
+      .transition()
+      .duration(500)
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
-      .attr('transform', (label, index) => {
-        const x = holdRowOffset + (index + 1) * this.cellSize;
+      .attr('transform', (_, index) => {
+        const x = rowOffset + (index + 1) * this.cellSize;
         const y = 0;
         return `translate(${x}, ${y})`;
       })
+      .attr('opacity', 1)
       .attr('font-size', '12')
       .attr('text-anchor', 'middle')
       .attr('dx', this.cellSize / 2)
       .attr('dy', this.cellSize / 2)
       .text(c => c);
 
-    // step3 划定舱内舱面船箱位vescell绘制区域
-    this.vesselDeckBayGroup.selectAll('g.vessel-deck-bay-cell-group').remove();
-    this.vesselHoldBayGroup.selectAll('g.vessel-hold-bay-cell-group').remove();
-
-    this.vesselDeckBayCellGroup = this.vesselDeckBayGroup
-      .append('g')
-      .attr('class', 'vessel-deck-bay-cell-group')
-      .attr('transform', (label, index) => {
-        const x = deckRowOffset + this.cellSize;
-        const y = this.cellSize; // 舱面列标签占位
+    updatedRowLabels
+      .transition()
+      .duration(500)
+      .attr('transform', (_, index) => {
+        const x = rowOffset + (index + 1) * this.cellSize;
+        const y = 0;
         return `translate(${x}, ${y})`;
-      });
-
-    this.vesselHoldBayCellGroup = this.vesselHoldBayGroup
-      .append('g')
-      .attr('class', 'vessel-hold-bay-cell-group')
-      .attr('transform', (label, index) => {
-        const x = holdRowOffset + this.cellSize;
-        const y = this.cellSize; // 舱内列标签占位
-        // console.log(this.vesselBay.name, this.layout.deckMaxTier);
-        return `translate(${x}, ${y})`;
-      });
-  }
-
-  updateVescells() {
-    const deckCells = this.vesselDeckBayCellGroup
-      .selectAll('rect')
-      .data(this.deckCells, (d: Vescell<T>) => JSON.stringify(d));
-
-    const enteredDeckCells = deckCells.enter();
-    const updatedDeckCells = deckCells.selectAll('rect');
-    const exitedDeckCells = deckCells.exit();
-
-    enteredDeckCells
-
-      .append('rect')
-      // .transition()
-      // .attr('transform', (pos: Vescell<T>) => {
-      //   return `scale(0,0)`;
-      // })
+      })
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
-      .attr('transform', (cell, index) => {
+      .attr('opacity', 1)
+      .attr('font-size', '12')
+      .attr('text-anchor', 'middle')
+      .attr('dx', this.cellSize / 2)
+      .attr('dy', this.cellSize / 2)
+      .text((c: string) => c);
+
+    exitedRowLabels
+      .transition()
+      .duration(500)
+      .attr('transform', (label, index) => {
+        const x = rowOffset + (index + 1) * this.cellSize;
+        const y = -12;
+        return `translate(${x}, ${y})`;
+      })
+      .attr('opacity', 0);
+  }
+
+  renderVescells() {
+    const deckCells = this.vesselDeckBayCellGroup
+      .selectAll('rect')
+      .data(this.deckCells, (d: Vescell<T>) => this.cellParser.getLC(d.name));
+
+    const enteredDeckCells = deckCells.enter();
+    const updatedDeckCells = deckCells;
+    const exitedDeckCells = deckCells.exit();
+    // console.log('deck cells', updatedDeckCells);
+
+    enteredDeckCells
+      .append('rect')
+      .attr('stroke-width', '2px')
+      .attr('stroke', 'black')
+      .attr('fill', 'white')
+      .transition()
+      .duration(500)
+      .attr('transform', cell => {
         const row = +this.cellParser.getL(cell.name);
-        const tier =
-          (+this.cellParser.getC(cell.name) -
-            +this.deckTierLabels[this.deckTierLabels.length - 1]) /
-          2;
+        const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
         let x = row * ((row % 2) * 2 - 1);
         if (this.layout.deckHasZeroRow) {
           x = x + (row % 2);
         } else {
           x = x - (row % 2);
         }
-        x = x / 2 + (this.layout.deckMaxRow - +this.layout.deckHasZeroRow) / 2;
-        //  + (row % 2)) / 2 + 5;
-        const y = (this.layout.deckMaxTier - tier - 1) * this.cellSize;
-
+        x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
+        const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
         x = this.cellSize * x;
-        // const y = this.cellSize;
         return `translate(${x}, ${y})`;
       })
-      .attr('stroke-width', '2px')
-      .attr('stroke', 'black')
+      .attr('width', this.cellSize)
+      .attr('height', this.cellSize)
       .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
 
     updatedDeckCells
       .transition()
+      .duration(500)
+      .attr('transform', cell => {
+        const row = +this.cellParser.getL(cell.name);
+        const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
+        let x = row * ((row % 2) * 2 - 1);
+        if (this.layout.deckHasZeroRow) {
+          x = x + (row % 2);
+        } else {
+          x = x - (row % 2);
+        }
+        x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
+        const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
+        x = this.cellSize * x;
+        return `translate(${x}, ${y})`;
+      })
+      .attr('width', this.cellSize)
+      .attr('height', this.cellSize)
       .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
 
     exitedDeckCells
@@ -418,14 +462,17 @@ export class CtVesselBayComponent<T> implements OnInit {
       .remove();
 
     // hold cell group
-    this.vesselHoldBayCellGroup
+    const holdCells = this.vesselHoldBayCellGroup
       .selectAll('rect')
-      .data(this.holdCells)
-      .enter()
+      .data(this.holdCells, (d: Vescell<T>) => this.cellParser.getLC(d.name));
+
+    const enteredHoldCells = holdCells.enter();
+    const updatedHoldCells = holdCells;
+    const exitedHoldCells = holdCells.exit();
+
+    enteredHoldCells
       .append('rect')
-      .attr('width', this.cellSize)
-      .attr('height', this.cellSize)
-      .attr('transform', (cell, index) => {
+      .attr('transform', cell => {
         const row = +this.cellParser.getL(cell.name);
         const tier = +this.cellParser.getC(cell.name) / 2;
 
@@ -433,47 +480,97 @@ export class CtVesselBayComponent<T> implements OnInit {
 
         if (this.layout.holdHasZeroRow) {
           x = x + (row % 2);
-          // console.log('hold has 00');
         } else {
           x = x - (row % 2);
         }
-        x = x / 2 + (this.layout.holdMaxRow - +this.layout.holdHasZeroRow) / 2;
+        x = x / 2 + (this.layout.holdRowCount - +this.layout.holdHasZeroRow) / 2;
 
-        const y = (this.layout.holdMaxTier - tier) * this.cellSize;
-        // console.log(this.layout.holdMaxTier, tier, y);
+        const y = (this.layout.holdTierCount - tier) * this.cellSize;
         x = this.cellSize * x;
         return `translate(${x}, ${y})`;
       })
       .attr('stroke-width', '2px')
       .attr('stroke', 'black')
+      .attr('fill', 'white')
+      .transition()
+      .duration(500)
+      .attr('width', this.cellSize)
+      .attr('height', this.cellSize)
       .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
-    // console.log('updating....');
-    // this.generatePoses();
-    // if (!this.yardposInfoGroup) {
-    //   return;
-    // }
-    // const cell = this.yardposInfoGroup
-    //   .selectAll('g.yard-pos-info')
-    //   .data(this.poses, (pos: Yardpos<T>, idx) => JSON.stringify(pos));
-    // // 更新
-    // cell
-    //   .selectAll('path')
+
+    updatedHoldCells
+      .transition()
+      .duration(500)
+      .attr('transform', cell => {
+        const row = +this.cellParser.getL(cell.name);
+        const tier = +this.cellParser.getC(cell.name) / 2;
+
+        let x = row * ((row % 2) * 2 - 1);
+
+        if (this.layout.holdHasZeroRow) {
+          x = x + (row % 2);
+        } else {
+          x = x - (row % 2);
+        }
+        x = x / 2 + (this.layout.holdRowCount - +this.layout.holdHasZeroRow) / 2;
+
+        const y = (this.layout.holdTierCount - tier) * this.cellSize;
+        x = this.cellSize * x;
+        return `translate(${x}, ${y})`;
+      })
+      .attr('width', this.cellSize)
+      .attr('height', this.cellSize)
+      .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    exitedHoldCells
+      .transition()
+      .attr('transform', (pos: Vescell<T>) => {
+        return `scale(0,0)`;
+      })
+      .remove();
+
+    // const cells = selection
+    //   .selectAll('rect')
+    //   .data(data, (d: Vescell<T>) => JSON.stringify(d));
+
+    // const enteredCells = cells.enter();
+    // const updatedCells = cells;
+    // const exitedCells = cells.exit();
+    // // console.log('cells', updatedCells);
+
+    // enteredCells
+    //   .append('rect')
+    //   .attr('width', this.cellSize)
+    //   .attr('height', this.cellSize)
+    //   .attr('transform', (cell) => {
+    //     const row = +this.cellParser.getL(cell.name);
+    //     const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
+    //     let x = row * ((row % 2) * 2 - 1);
+    //     if (this.layout.deckHasZeroRow) {
+    //       x = x + (row % 2);
+    //     } else {
+    //       x = x - (row % 2);
+    //     }
+    //     x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
+    //     const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
+    //     x = this.cellSize * x;
+    //     return `translate(${x}, ${y})`;
+    //   })
+    //   .attr('stroke-width', '2px')
+    //   .attr('stroke', 'black')
+    //   .attr('fill', 'white')
     //   .transition()
-    //   .attr('fill', (pos: Yardpos<T>) => this._fillFunction(pos));
-    // // cell
-    // //   .selectAll('text')
-    // //   .text((posInfo: Yardpos<T>) => (posInfo.text ? posInfo.text : ''));
-    // // 新增
-    // const enteredCell = cell.enter();
-    // this.renderYardposInfo(enteredCell);
-    // // 删除
-    // cell
-    //   .exit()
+    //   .duration(500)
+    //   .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    // updatedCells
     //   .transition()
-    //   .attr('transform', (pos: Yardpos<T>) => {
-    //     const x =
-    //       parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
-    //     // return `translate(${x}, -${this.cellSize})`;
+    //   .duration(500)
+    //   .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    // exitedCells
+    //   .transition()
+    //   .attr('transform', (pos: Vescell<T>) => {
     //     return `scale(0,0)`;
     //   })
     //   .remove();
@@ -578,5 +675,16 @@ export class CtVesselBayComponent<T> implements OnInit {
         return 'white';
       }
     }
+  }
+
+  private hasZeroRow(cells: Vescell<T>[]) {
+    for (let index = 0; index < cells.length; index++) {
+      const cell = cells[index];
+      if (+this.cellParser.getL(cell.name) === 0) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

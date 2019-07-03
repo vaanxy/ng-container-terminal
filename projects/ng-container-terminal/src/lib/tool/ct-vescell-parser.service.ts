@@ -16,9 +16,7 @@ export class CtVescellParserService {
 
   private finalConfig: VescellParserConfig = this.defaultConfig;
 
-  constructor(
-    @Inject(VESCELL_PARSER_CONFIG) private config: VescellParserConfig
-  ) {
+  constructor(@Inject(VESCELL_PARSER_CONFIG) private config: VescellParserConfig) {
     // 合并用户提供的解析器配置
     this.finalConfig = Object.assign(this.finalConfig, config);
     // 重新计算索引
@@ -52,6 +50,10 @@ export class CtVescellParserService {
 
   getC(vescell: string) {
     return vescell.slice(this.idxMap['C']['s'], this.idxMap['C']['e']);
+  }
+
+  getLC(vescell: string) {
+    return this.getL(vescell) + this.getC(vescell);
   }
 
   isDeck(vescell: string): boolean {
