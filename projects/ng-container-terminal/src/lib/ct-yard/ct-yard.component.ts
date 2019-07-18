@@ -38,7 +38,6 @@ export class CtYardComponent implements OnInit, OnChanges {
   maxTier = 5;
   maxBay = 0;
 
-  // TODO: 根据数据自动计算
   canvasWidth = 2000;
   canvasHeight = 100;
 
@@ -70,10 +69,7 @@ export class CtYardComponent implements OnInit, OnChanges {
   onNotifyDataChanged = new Subject<number>();
   onNotifyDataChanged$ = this.onNotifyDataChanged.asObservable();
 
-  constructor(
-    private el: ElementRef,
-    private yardposParser: CtYardposParserService
-  ) {}
+  constructor(private el: ElementRef, private yardposParser: CtYardposParserService) {}
 
   ngOnInit() {
     this.host = d3.select(this.el.nativeElement);
@@ -150,19 +146,26 @@ export class CtYardComponent implements OnInit, OnChanges {
    * pods: 所有卸货港数组
    */
   extractBasicInfo() {
-    this.maxRow = Math.max(
-      ...this.yardposInfoList.map(d => +this.yardposParser.getP(d.yardpos))
+    this.maxRow = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getP(d.yardpos)));
+    this.maxTier = Math.max(...this.yardposInfoList.map(d => +this.yardposParser.getC(d.yardpos)));
+    this.maxBay = Math.max(
+      ...this.yardposInfoList
+        .map(d => +this.yardposParser.getW(d.yardpos))
+        // .filter(bay => bay % 2 === 1)
+        .map(bay => (bay + (2 - (bay % 2))) / 2)
     );
-    this.maxTier = Math.max(
-      ...this.yardposInfoList.map(d => +this.yardposParser.getC(d.yardpos))
-    );
-    this.maxBay = d3
-      .set(
-        this.yardposInfoList
-          .map(d => +this.yardposParser.getW(d.yardpos))
-          .filter(bay => bay % 2 === 1)
-      )
-      .values().length;
+    console.log({
+      maxBay: this.maxBay,
+      maxRow: this.maxRow,
+      maxTier: this.maxTier
+    });
+    // this.maxBay = d3
+    //   .set(
+    //     this.yardposInfoList
+    //       .map(d => +this.yardposParser.getW(d.yardpos))
+    //       .filter(bay => bay % 2 === 1)
+    //   )
+    //   .values().length;
     const containers = this.yardposInfoList
       .filter(pos => pos.containers && pos.containers.length > 0)
       .map(pos => pos.containers)
@@ -199,33 +202,17 @@ export class CtYardComponent implements OnInit, OnChanges {
       if (idx % 2 === 1) {
         if (
           (bayInfo[idx + 1] === undefined ||
-            (bayInfo[idx + 1].containerCount === 0 &&
-              bayInfo[idx + 1].planCount === 0)) &&
+            (bayInfo[idx + 1].containerCount === 0 && bayInfo[idx + 1].planCount === 0)) &&
           (bayInfo[idx - 1] === undefined ||
-            (bayInfo[idx - 1].containerCount === 0 &&
-              bayInfo[idx - 1].planCount === 0))
+            (bayInfo[idx - 1].containerCount === 0 && bayInfo[idx - 1].planCount === 0))
         ) {
-          const poses = this.yardposInfoList.filter(
-            pos => +this.yardposParser.getW(pos.yardpos) === idx
-          );
-          this.displayYardposInfoList = [
-            ...poses,
-            ...this.displayYardposInfoList
-          ];
+          const poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
+          this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
         }
       } else {
-        if (
-          info.containerCount > 0 ||
-          info.planCount > 0 ||
-          info.taskCount > 0
-        ) {
-          const poses = this.yardposInfoList.filter(
-            pos => +this.yardposParser.getW(pos.yardpos) === idx
-          );
-          this.displayYardposInfoList = [
-            ...poses,
-            ...this.displayYardposInfoList
-          ];
+        if (info.containerCount > 0 || info.planCount > 0 || info.taskCount > 0) {
+          const poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
+          this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
         }
       }
     });
@@ -235,6 +222,14 @@ export class CtYardComponent implements OnInit, OnChanges {
    * 视图渲染
    */
   private redraw() {
+    if (this.rotation === 0) {
+      this.canvasWidth = (this.maxRow * this.maxBay + 1) * (this.baseWidth + 2 * this.interval);
+      this.canvasHeight = (this.maxTier + 1) * (this.baseHeight + 2 * this.interval);
+    } else {
+      this.canvasWidth = (this.maxTier * this.maxBay + 1) * (this.baseWidth + 2 * this.interval);
+      this.canvasHeight = (this.maxRow + 1) * (this.baseHeight + 2 * this.interval);
+    }
+    this.svg.attr('width', `${this.canvasWidth}px`).attr('height', `${this.canvasHeight}px`);
     // 绘制列标签
     this.rowLabelsGroup.selectAll('g.row-label').remove();
     let rowLabels = this.rowLabelsGroup.selectAll('g.row-label');
@@ -268,9 +263,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     // 绘制基数贝标签
     this.oddBayLabelsGroup.selectAll('g.odd-bay-label').remove();
-    const oddBayLabels = this.oddBayLabelsGroup
-      .selectAll('g.odd-bay-label')
-      .data(d3.range(0, this.maxBay * 2, 2));
+    const oddBayLabels = this.oddBayLabelsGroup.selectAll('g.odd-bay-label').data(d3.range(0, this.maxBay * 2, 2));
     const oddBayLabel = oddBayLabels
       .enter()
       .append('g')
@@ -305,12 +298,15 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     const yardPoses = this.yardGroup
       .selectAll('g.yardpos')
-      .data(this.displayYardposInfoList, data => JSON.stringify(data));
+      .data(this.displayYardposInfoList, (data: YardposInfo) => data.yardpos);
 
     // 更新
-    yardPoses.transition().attr('transform', (posInfo: YardposInfo) => {
-      return this._transformFunction(posInfo);
-    });
+    yardPoses
+      .transition()
+      .duration(500)
+      .attr('transform', (posInfo: YardposInfo) => {
+        return this._transformFunction(posInfo);
+      });
     yardPoses
       .selectAll('path.cell')
       .transition()
@@ -324,26 +320,18 @@ export class CtYardComponent implements OnInit, OnChanges {
           width = this.baseWidth * 2;
         }
 
-        const baseRect = `M0 0 L${width} 0 L${width} ${this.baseHeight} L0 ${
-          this.baseHeight
-        } Z`;
+        const baseRect = `M0 0 L${width} 0 L${width} ${this.baseHeight} L0 ${this.baseHeight} Z`;
         let finalRect = baseRect;
         if (data.isLocked) {
           // 有封场则画X表示
-          finalRect =
-            finalRect +
-            ` M0 0 L${width} ${this.baseHeight} M${width} 0 L0 ${
-              this.baseHeight
-            }`;
+          finalRect = finalRect + ` M0 0 L${width} ${this.baseHeight} M${width} 0 L0 ${this.baseHeight}`;
         }
         if (data.displayedContainer && data.displayedContainer.task) {
           // 显示的集装箱有任务则画圈表示
           finalRect =
             finalRect +
-            ` M0 ${this.baseHeight / 2} A${width / 2} ${width /
-              2} 0 0 1 ${width} ${this.baseHeight / 2}` + // 上半圈
-            ` M${width} ${this.baseHeight / 2} A${width / 2} ${width /
-              2} 0 0 1 ${0} ${this.baseHeight / 2}`; // 下半圈
+            ` M0 ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${width} ${this.baseHeight / 2}` + // 上半圈
+            ` M${width} ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${0} ${this.baseHeight / 2}`; // 下半圈
         }
         return finalRect;
       })
@@ -358,10 +346,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       .selectAll('path.ctn-height')
       .transition()
       .attr('d', (data: YardposInfo) => {
-        if (
-          data.displayedContainer &&
-          data.displayedContainer.height + '' === '9.6'
-        ) {
+        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
           let factor = 1;
           if (data.displayedContainer.size !== '20') {
             factor = 2;
@@ -373,10 +358,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       })
       .attr('stroke', 'black')
       .attr('stroke-width', (data: YardposInfo) => {
-        if (
-          data.displayedContainer &&
-          data.displayedContainer.height + '' === '9.6'
-        ) {
+        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
           return 4;
         } else {
           return 1;
@@ -437,7 +419,6 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     pos
       .transition()
-
       .duration(300)
       .ease(d3.easeCubicOut)
       .attr('transform', posInfo => {
@@ -460,26 +441,18 @@ export class CtYardComponent implements OnInit, OnChanges {
           width = this.baseWidth * 2;
         }
 
-        const baseRect = `M0 0 L${width} 0 L${width} ${this.baseHeight} L0 ${
-          this.baseHeight
-        } Z`;
+        const baseRect = `M0 0 L${width} 0 L${width} ${this.baseHeight} L0 ${this.baseHeight} Z`;
         let finalRect = baseRect;
         if (data.isLocked) {
           // 有封场则画X表示
-          finalRect =
-            finalRect +
-            ` M0 0 L${width} ${this.baseHeight} M${width} 0 L0 ${
-              this.baseHeight
-            }`;
+          finalRect = finalRect + ` M0 0 L${width} ${this.baseHeight} M${width} 0 L0 ${this.baseHeight}`;
         }
         if (data.displayedContainer && data.displayedContainer.task) {
           // 显示的集装箱有任务则画圈表示
           finalRect =
             finalRect +
-            ` M0 ${this.baseHeight / 2} A${width / 2} ${width /
-              2} 0 0 1 ${width} ${this.baseHeight / 2}` + // 上半圈
-            ` M${width} ${this.baseHeight / 2} A${width / 2} ${width /
-              2} 0 0 1 ${0} ${this.baseHeight / 2}`; // 下半圈
+            ` M0 ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${width} ${this.baseHeight / 2}` + // 上半圈
+            ` M${width} ${this.baseHeight / 2} A${width / 2} ${width / 2} 0 0 1 ${0} ${this.baseHeight / 2}`; // 下半圈
         }
         return finalRect;
       })
@@ -494,10 +467,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       .append('path')
       .attr('class', 'ctn-height')
       .attr('d', data => {
-        if (
-          data.displayedContainer &&
-          data.displayedContainer.height + '' === '9.6'
-        ) {
+        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
           let factor = 1;
           if (data.displayedContainer.size !== '20') {
             factor = 2;
@@ -509,10 +479,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       })
       .attr('stroke', 'black')
       .attr('stroke-width', data => {
-        if (
-          data.displayedContainer &&
-          data.displayedContainer.height + '' === '9.6'
-        ) {
+        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
           return 4;
         } else {
           return 1;

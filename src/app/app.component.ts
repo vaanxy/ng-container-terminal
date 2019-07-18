@@ -637,11 +637,25 @@ export class AppComponent implements OnInit {
     // }, 2000);
 
     this.mock.getYardposInfoList().subscribe(blockLocations => {
+      blockLocations = blockLocations.filter(l => l.displayedContainer || l.isLocked);
+      blockLocations = this.app.yardposCompletion(blockLocations, {
+        block: '*4D',
+        maxBay: 40,
+        maxRow: 6,
+        maxTier: 5,
+        x: 0,
+        y: 0,
+        direction: 'H',
+        width: 0,
+        height: 0
+      });
       this.blockLocations = blockLocations;
+
       this.blocks[0] = [...this.blockLocations];
       setTimeout(() => {
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
         location.container = this.blockLocations[50].container;
+        location.displayedContainer = this.blockLocations[50].displayedContainer;
         this.yardComponents.last.notifyDataUpdated();
       }, 2000);
 
