@@ -197,23 +197,44 @@ export class CtYardComponent implements OnInit, OnChanges {
       }
     });
 
+    const evenBayPoses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) % 2 === 0);
+
+    const oddBayPoses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) % 2 === 1);
+
+    const invalidOddBay = [];
     bayInfo.forEach((info, idx) => {
+      if (idx % 2 === 0) {
+        if (info && info.containerCount > 0) {
+          const poses = evenBayPoses.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
+          this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
+          invalidOddBay.push(idx + 1);
+          invalidOddBay.push(idx - 1);
+        }
+      }
+
       // 如果是基数贝，则向前向后找其偶数倍是否存在占位信息，若不存在则需要画该基数贝
-      if (idx % 2 === 1) {
-        if (
-          (bayInfo[idx + 1] === undefined ||
-            (bayInfo[idx + 1].containerCount === 0 && bayInfo[idx + 1].planCount === 0)) &&
-          (bayInfo[idx - 1] === undefined ||
-            (bayInfo[idx - 1].containerCount === 0 && bayInfo[idx - 1].planCount === 0))
-        ) {
-          const poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
-          this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
-        }
-      } else {
-        if (info.containerCount > 0 || info.planCount > 0 || info.taskCount > 0) {
-          const poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
-          this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
-        }
+      // if (idx % 2 === 1) {
+      //   if (
+      //     (bayInfo[idx + 1] === undefined ||
+      //       (bayInfo[idx + 1].containerCount === 0 && bayInfo[idx + 1].planCount === 0)) &&
+      //     (bayInfo[idx - 1] === undefined ||
+      //       (bayInfo[idx - 1].containerCount === 0 && bayInfo[idx - 1].planCount === 0))
+      //   ) {
+      //     const poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
+      //     this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
+      //   }
+      // } else {
+      //   if (info.containerCount > 0 || info.planCount > 0 || info.taskCount > 0) {
+      //     const poses = this.yardposInfoList.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
+      //     this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
+      //   }
+      // }
+    });
+
+    bayInfo.forEach((info, idx) => {
+      if (idx % 2 === 1 && invalidOddBay.indexOf(idx) <= 0) {
+        const poses = oddBayPoses.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
+        this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
       }
     });
   }
