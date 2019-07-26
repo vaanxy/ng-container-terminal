@@ -232,7 +232,7 @@ export class CtYardComponent implements OnInit, OnChanges {
     });
 
     bayInfo.forEach((info, idx) => {
-      if (idx % 2 === 1 && invalidOddBay.indexOf(idx) <= 0) {
+      if (idx % 2 === 1 && invalidOddBay.indexOf(idx) < 0) {
         const poses = oddBayPoses.filter(pos => +this.yardposParser.getW(pos.yardpos) === idx);
         this.displayYardposInfoList = [...poses, ...this.displayYardposInfoList];
       }
@@ -243,12 +243,14 @@ export class CtYardComponent implements OnInit, OnChanges {
    * 视图渲染
    */
   private redraw() {
-    if (this.rotation === 0) {
-      this.canvasWidth = (this.maxRow * this.maxBay + 1) * (this.baseWidth + 2 * this.interval);
-      this.canvasHeight = (this.maxTier + 1) * (this.baseHeight + 2 * this.interval);
+    const baseWidth = +this.baseWidth;
+    const baseHeight = +this.baseHeight;
+    if (+this.rotation === 0) {
+      this.canvasWidth = (this.maxRow * this.maxBay + 1) * (baseWidth + 2 * this.interval);
+      this.canvasHeight = (this.maxTier + 1) * (baseHeight + 2 * this.interval);
     } else {
-      this.canvasWidth = (this.maxTier * this.maxBay + 1) * (this.baseWidth + 2 * this.interval);
-      this.canvasHeight = (this.maxRow + 1) * (this.baseHeight + 2 * this.interval);
+      this.canvasWidth = (this.maxTier * this.maxBay + 1) * (baseWidth + 2 * this.interval);
+      this.canvasHeight = (this.maxRow + 1) * (baseHeight + 2 * this.interval);
     }
     this.svg.attr('width', `${this.canvasWidth}px`).attr('height', `${this.canvasHeight}px`);
     // 绘制列标签
