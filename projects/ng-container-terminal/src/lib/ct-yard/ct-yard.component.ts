@@ -361,7 +361,7 @@ export class CtYardComponent implements OnInit, OnChanges {
       .attr('fill', (data: YardposInfo) => {
         return this._fillFunction(data);
       })
-      .attr('stroke', 'rgb(90,68,70)')
+      .attr('stroke', (posInfo: YardposInfo) => this.draw('stroke', posInfo))
       .attr('stroke-width', '1px');
 
     // 高箱 需要加一条粗线
@@ -374,14 +374,17 @@ export class CtYardComponent implements OnInit, OnChanges {
           if (data.displayedContainer.size !== '20') {
             factor = 2;
           }
-          return `M0 2 L${this.baseWidth * factor} 2`;
+          return `M0.5 2.5 L${this.baseWidth * factor} 2.5`;
         } else {
-          return `M0 0 L${this.baseWidth} 0`;
+          return `M0.5 0 L${this.baseWidth} 0`;
         }
       })
       .attr('stroke', 'black')
       .attr('stroke-width', (data: YardposInfo) => {
-        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
+        if (!data.displayedContainer) {
+          return 0;
+        }
+        if (data.displayedContainer.height + '' === '9.6') {
           return 4;
         } else {
           return 1;
@@ -482,8 +485,8 @@ export class CtYardComponent implements OnInit, OnChanges {
       .attr('fill', data => {
         return this._fillFunction(data);
       })
-      .attr('stroke', 'rgb(90,68,70)')
-      .attr('stroke-width', '1px');
+      .attr('stroke', posInfo => this.draw('stroke', posInfo))
+      .attr('stroke-width', posInfo => this.draw('strokeWidth', posInfo));
 
     // 高箱 需要加一条粗线
     pos
@@ -495,14 +498,17 @@ export class CtYardComponent implements OnInit, OnChanges {
           if (data.displayedContainer.size !== '20') {
             factor = 2;
           }
-          return `M0 2 L${this.baseWidth * factor} 2`;
+          return `M0.5 2.5 L${this.baseWidth * factor} 2.5`; // 0.5是stroke-width的一半，不然高箱的线会超出边界
         } else {
-          return `M0 0 L${this.baseWidth} 0`;
+          return `M0.5 0 L${this.baseWidth} 0`;
         }
       })
       .attr('stroke', 'black')
       .attr('stroke-width', data => {
-        if (data.displayedContainer && data.displayedContainer.height + '' === '9.6') {
+        if (!data.displayedContainer) {
+          return 0;
+        }
+        if (data.displayedContainer.height + '' === '9.6') {
           return 4;
         } else {
           return 1;
@@ -570,5 +576,20 @@ export class CtYardComponent implements OnInit, OnChanges {
       y = this.baseHeight * (this.maxTier - tier);
     }
     return `translate(${x}, ${y})`;
+  }
+
+  private draw(which: string, yardInfo: YardposInfo) {
+    if (this.renderOptions && this.renderOptions[which]) {
+      switch (typeof this.renderOptions[which]) {
+        case 'string':
+          return this.renderOptions[which];
+        case 'number':
+          return `${this.renderOptions[which]}`;
+        default:
+          return this.renderOptions[which](yardInfo);
+      }
+    } else {
+      return null;
+    }
   }
 }

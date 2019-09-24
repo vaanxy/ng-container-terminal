@@ -609,7 +609,9 @@ export class AppComponent implements OnInit {
   };
 
   yardBayRenderOptions: RenderOptions<Yardpos<any>> = {
-    text: d => (d.data ? '10.2' : '')
+    text: d => (d.data ? '10.2' : ''),
+    stroke: 'red',
+    strokeWidth: 2
   };
 
   rotation = 0;
