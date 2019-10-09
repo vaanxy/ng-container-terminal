@@ -6,7 +6,6 @@ import { YardBay } from '../../model/yard-bay';
 import { Yardpos } from '../../model/yardpos';
 import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
 
-// import { YardposInfo } from '../../model/yardpos-info';
 @Component({
   selector: 'ct-yard-bay',
   templateUrl: './ct-yard-bay.component.html',
@@ -217,6 +216,8 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
     cell
       .selectAll('path')
       .transition()
+      .attr('stroke', (pos: Yardpos<T>) => this.draw('stroke', pos))
+      .attr('stroke-width', (pos: Yardpos<T>) => this.draw('strokeWidth', pos))
       .attr('fill', (pos: Yardpos<T>) => this._fillFunction(pos));
     cell.selectAll('text').text((pos: Yardpos<T>) => this._renderPosText(pos));
 
@@ -310,9 +311,6 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
       //   const tier = +this.yardposParser.getC(pos.name);
       //   return tier * 100;
       // })
-      .attr('fill', (pos: Yardpos<T>) => this._fillFunction(pos))
-      .attr('stroke', pos => this.draw('stroke', pos))
-      .attr('stroke-width', pos => this.draw('strokeWidth', pos))
       .attr('transform', (pos: Yardpos<T>) => {
         const x = parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
         const y = (this.displaySize.tier - +this.yardposParser.getC(pos.name)) * this.cellSize;

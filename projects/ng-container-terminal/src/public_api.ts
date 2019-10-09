@@ -38,3 +38,6 @@ export * from './model/prestow';
 export * from './model/vessel-container';
 export * from './model/vessel-bay';
 export * from './model/yardpos';
+
+export * from './core/renderable';
+export * from './core/render-object';
