@@ -400,7 +400,8 @@ export class CtVesselBayComponent<T> implements OnInit {
 
   renderVescells() {
     const deckCells = this.vesselDeckBayCellGroup
-      .selectAll('rect')
+      .selectAll('g')
+      // .attr('class', 'deck-cell')
       .data(this.deckCells, (d: Vescell<T>) => this.cellParser.getLC(d.name));
 
     const enteredDeckCells = deckCells.enter();
@@ -408,30 +409,41 @@ export class CtVesselBayComponent<T> implements OnInit {
     const exitedDeckCells = deckCells.exit();
     // console.log('deck cells', updatedDeckCells);
 
-    enteredDeckCells
+    const enteredDeckG = enteredDeckCells.append('g').attr('transform', cell => {
+      const row = +this.cellParser.getL(cell.name);
+      const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
+      let x = row * ((row % 2) * 2 - 1);
+      if (this.layout.deckHasZeroRow) {
+        x = x + (row % 2);
+      } else {
+        x = x - (row % 2);
+      }
+      x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
+      const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
+      x = this.cellSize * x;
+      return `translate(${x}, ${y})`;
+    });
+
+    enteredDeckG
+      // .selectAll('rect')
       .append('rect')
       .attr('stroke-width', '2px')
       .attr('stroke', 'black')
       .attr('fill', 'white')
-      .transition()
-      .duration(500)
-      .attr('transform', cell => {
-        const row = +this.cellParser.getL(cell.name);
-        const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
-        let x = row * ((row % 2) * 2 - 1);
-        if (this.layout.deckHasZeroRow) {
-          x = x + (row % 2);
-        } else {
-          x = x - (row % 2);
-        }
-        x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
-        const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
-        x = this.cellSize * x;
-        return `translate(${x}, ${y})`;
-      })
+      // .transition()
+      // .duration(500)
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    enteredDeckG
+      // .selectAll('text')
+      .append('text')
+      .attr('font-size', '9')
+      .attr('text-anchor', 'middle')
+      .attr('dx', this.cellSize / 2)
+      .attr('dy', this.cellSize / 1.2)
+      .text((cell: Vescell<T>) => this._renderText(cell));
 
     updatedDeckCells
       .transition()
@@ -449,10 +461,18 @@ export class CtVesselBayComponent<T> implements OnInit {
         const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
         x = this.cellSize * x;
         return `translate(${x}, ${y})`;
-      })
+      });
+    updatedDeckCells
+      .selectAll('rect')
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    updatedDeckCells
+      .selectAll('text')
+      .attr('dx', this.cellSize / 2)
+      .attr('dy', this.cellSize / 1.2)
+      .text((cell: Vescell<T>) => this._renderText(cell));
 
     exitedDeckCells
       .transition()
@@ -463,32 +483,33 @@ export class CtVesselBayComponent<T> implements OnInit {
 
     // hold cell group
     const holdCells = this.vesselHoldBayCellGroup
-      .selectAll('rect')
+      .selectAll('g')
       .data(this.holdCells, (d: Vescell<T>) => this.cellParser.getLC(d.name));
 
     const enteredHoldCells = holdCells.enter();
     const updatedHoldCells = holdCells;
     const exitedHoldCells = holdCells.exit();
 
-    enteredHoldCells
+    const enteredHoldG = enteredHoldCells.append('g').attr('transform', cell => {
+      const row = +this.cellParser.getL(cell.name);
+      const tier = +this.cellParser.getC(cell.name) / 2;
+
+      let x = row * ((row % 2) * 2 - 1);
+
+      if (this.layout.holdHasZeroRow) {
+        x = x + (row % 2);
+      } else {
+        x = x - (row % 2);
+      }
+      x = x / 2 + (this.layout.holdRowCount - +this.layout.holdHasZeroRow) / 2;
+
+      const y = (this.layout.holdTierCount - tier) * this.cellSize;
+      x = this.cellSize * x;
+      return `translate(${x}, ${y})`;
+    });
+
+    enteredHoldG
       .append('rect')
-      .attr('transform', cell => {
-        const row = +this.cellParser.getL(cell.name);
-        const tier = +this.cellParser.getC(cell.name) / 2;
-
-        let x = row * ((row % 2) * 2 - 1);
-
-        if (this.layout.holdHasZeroRow) {
-          x = x + (row % 2);
-        } else {
-          x = x - (row % 2);
-        }
-        x = x / 2 + (this.layout.holdRowCount - +this.layout.holdHasZeroRow) / 2;
-
-        const y = (this.layout.holdTierCount - tier) * this.cellSize;
-        x = this.cellSize * x;
-        return `translate(${x}, ${y})`;
-      })
       .attr('stroke-width', '2px')
       .attr('stroke', 'black')
       .attr('fill', 'white')
@@ -497,6 +518,14 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    enteredHoldG
+      .append('text')
+      .attr('font-size', '9')
+      .attr('text-anchor', 'middle')
+      .attr('dx', this.cellSize / 2)
+      .attr('dy', this.cellSize / 1.2)
+      .text((cell: Vescell<T>) => this._renderText(cell));
 
     updatedHoldCells
       .transition()
@@ -517,10 +546,22 @@ export class CtVesselBayComponent<T> implements OnInit {
         const y = (this.layout.holdTierCount - tier) * this.cellSize;
         x = this.cellSize * x;
         return `translate(${x}, ${y})`;
-      })
+      });
+    // .attr('width', this.cellSize)
+    // .attr('height', this.cellSize)
+    // .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    updatedHoldCells
+      .selectAll('rect')
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
       .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
+
+    updatedHoldCells
+      .selectAll('text')
+      .attr('dx', this.cellSize / 2)
+      .attr('dy', this.cellSize / 1.2)
+      .text((cell: Vescell<T>) => this._renderText(cell));
 
     exitedHoldCells
       .transition()
@@ -686,5 +727,17 @@ export class CtVesselBayComponent<T> implements OnInit {
     }
 
     return false;
+  }
+
+  private _renderText(cell: Vescell<T>) {
+    if (this.renderOptions && this.renderOptions.text) {
+      if (typeof this.renderOptions.text === 'string') {
+        return this.renderOptions.text;
+      } else {
+        return this.renderOptions.text(cell);
+      }
+    } else {
+      return '';
+    }
   }
 }

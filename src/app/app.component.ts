@@ -731,7 +731,8 @@ export class AppComponent implements OnInit {
         console.log(this.vescellsList[0].length);
         const idx = Math.floor(Math.random() * 3);
         this.vesselRenderOptions = {
-          fill: ['green', 'blue', 'red', 'yellow', 'orange'][idx]
+          fill: ['green', 'blue', 'red', 'yellow', 'orange'][idx],
+          text: Math.random().toFixed(2)
         };
         // if (this.vescellsList[0].length) {
         //   this.vescellsList[0] = this.vescellsList[0].slice(1, this.vescellsList[0].length);
