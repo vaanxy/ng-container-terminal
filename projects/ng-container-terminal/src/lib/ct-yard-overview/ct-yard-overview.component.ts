@@ -136,7 +136,7 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
       .attr('width', data => data.width)
       .attr('height', data => data.height)
       .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo))
-      .attr('stroke', 'red')
+      .attr('stroke', (yardInfo: YardInfo<T>) => this.draw('stroke', yardInfo))
       .attr('stroke-width', (yardInfo: YardInfo<T>) => this.draw('strokeWidth', yardInfo) + 'px');
     yardGroup.each((data, nodeIdx, nodes) => {
       this.yardContentRender.next({

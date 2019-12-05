@@ -625,7 +625,7 @@ export class AppComponent implements OnInit {
   vesselRenderOptions: RenderOptions<VesselBay<Prestow>>;
   yardOverviewRenderOptions: RenderOptions<YardInfo<any>> = {
     scaleFactor: 0.3,
-    stroke: 'green',
+    stroke: 'grey',
     strokeWidth: 6
   };
   constructor(private mock: CtMockService, private app: AppService, private cellParser: CtVescellParserService) {}
