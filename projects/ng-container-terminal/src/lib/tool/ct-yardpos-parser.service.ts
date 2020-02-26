@@ -21,7 +21,7 @@ export class CtYardposParserService {
 
   constructor(@Inject(YARDPOS_PARSER_CONFIG) private config: YardposParserConfig) {
     // 合并用户提供的解析器配置
-    this.finalConfig = Object.assign({}, this.finalConfig, config);
+    this.finalConfig = Object.assign({}, this.defaultConfig, config);
     // 重新计算索引
     this._updateIdxMap();
   }

@@ -8,22 +8,14 @@ import {
   CtYardBayModule,
   CtYardModule,
   CtYardOverviewModule,
+  CtYardposParserService,
   VESCELL_PARSER_CONFIG,
+  YARDPOS_PARSER_CONFIG,
 } from 'ng-container-terminal';
 import { CtMockService } from 'ng-container-terminal/mock';
 
 import { AppComponent } from './app.component';
 
-// import {
-//   CtVescellParserService,
-//   CtVesselBayModule,
-//   CtYardBayModule,
-//   CtYardModule,
-//   CtYardOverviewModule,
-//   VESCELL_PARSER_CONFIG,
-// } from 'projects/ng-container-terminal/src/public_api';
-
-// import { CtMockService } from 'projects/ng-container-terminal/mock/src/public_api';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -42,6 +34,13 @@ import { AppComponent } from './app.component';
       {
         provide: VESCELL_PARSER_CONFIG,
         useValue: { pattern: 'BBBBLLCC' }
+      }
+    ],
+    [
+      CtYardposParserService,
+      {
+        provide: YARDPOS_PARSER_CONFIG,
+        useValue: { pattern: 'QQQWWWPPCC' }
       }
     ]
   ],
