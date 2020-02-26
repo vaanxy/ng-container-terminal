@@ -6,11 +6,11 @@ import {
   Input,
   OnChanges,
   OnInit,
-  Output
+  Output,
 } from '@angular/core';
 import * as d3 from 'd3';
 
-import { RenderOptions, YardInfo } from '../../model';
+import { RenderOptions, YardInfo } from '../../public_api';
 
 @Component({
   selector: 'ct-yard-overview',
@@ -34,18 +34,11 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
     text: yardInfo => yardInfo.block + '-' + yardInfo.direction
   };
 
-  private _renderOptions: RenderOptions<YardInfo<T>> = Object.assign(
-    {},
-    this.defaultRenderOptions
-  );
+  private _renderOptions: RenderOptions<YardInfo<T>> = Object.assign({}, this.defaultRenderOptions);
 
   @Input() set renderOptions(options: RenderOptions<YardInfo<T>>) {
     if (options) {
-      this._renderOptions = Object.assign(
-        {},
-        this.defaultRenderOptions,
-        options
-      );
+      this._renderOptions = Object.assign({}, this.defaultRenderOptions, options);
     }
   }
 
@@ -73,14 +66,8 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
   }
 
   initYardOverview() {
-    this.ctxWidth = Math.max(
-      ...this.yardInfoList.map(d => d.x + d.width + 16),
-      0
-    );
-    this.ctxHeight = Math.max(
-      ...this.yardInfoList.map(d => d.y + d.height + 16),
-      0
-    );
+    this.ctxWidth = Math.max(...this.yardInfoList.map(d => d.x + d.width + 16), 0);
+    this.ctxHeight = Math.max(...this.yardInfoList.map(d => d.y + d.height + 16), 0);
 
     this.host
       .select('svg')
@@ -112,9 +99,7 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
   }
 
   redraw() {
-    const yard = this.yardOverviewGroup
-      .selectAll('g.yard-group')
-      .data(this.yardInfoList);
+    const yard = this.yardOverviewGroup.selectAll('g.yard-group').data(this.yardInfoList);
 
     yard
       .selectAll('rect.yard-rect')
@@ -152,10 +137,7 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
       .attr('height', data => data.height)
       .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo))
       .attr('stroke', (yardInfo: YardInfo<T>) => this.draw('stroke', yardInfo))
-      .attr(
-        'stroke-width',
-        (yardInfo: YardInfo<T>) => this.draw('strokeWidth', yardInfo) + 'px'
-      );
+      .attr('stroke-width', (yardInfo: YardInfo<T>) => this.draw('strokeWidth', yardInfo) + 'px');
     yardGroup.each((data, nodeIdx, nodes) => {
       this.yardContentRender.next({
         node: d3.select(nodes[nodeIdx]),

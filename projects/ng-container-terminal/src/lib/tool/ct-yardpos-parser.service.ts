@@ -1,10 +1,10 @@
-import { Injectable, Inject } from '@angular/core';
-import {
-  YardposParserConfig,
-  YARDPOS_PARSER_CONFIG
-} from './model/yardpos-parser-config';
+import { Inject, Injectable } from '@angular/core';
 
-@Injectable()
+import { YARDPOS_PARSER_CONFIG, YardposParserConfig } from './model/yardpos-parser-config';
+
+@Injectable({
+  providedIn: 'root'
+})
 export class CtYardposParserService {
   private defaultConfig: YardposParserConfig = {
     pattern: 'QQQWWWPPCC'
@@ -17,13 +17,11 @@ export class CtYardposParserService {
     C: { s: 7, e: 8 }
   };
 
-  private finalConfig: YardposParserConfig = this.defaultConfig;
+  private finalConfig: YardposParserConfig;
 
-  constructor(
-    @Inject(YARDPOS_PARSER_CONFIG) private config: YardposParserConfig
-  ) {
+  constructor(@Inject(YARDPOS_PARSER_CONFIG) private config: YardposParserConfig) {
     // 合并用户提供的解析器配置
-    this.finalConfig = Object.assign(this.finalConfig, config);
+    this.finalConfig = Object.assign({}, this.defaultConfig, config);
     // 重新计算索引
     this._updateIdxMap();
   }

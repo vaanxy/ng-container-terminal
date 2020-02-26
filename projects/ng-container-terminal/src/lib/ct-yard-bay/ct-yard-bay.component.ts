@@ -6,7 +6,6 @@ import { YardBay } from '../../model/yard-bay';
 import { Yardpos } from '../../model/yardpos';
 import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
 
-// import { YardposInfo } from '../../model/yardpos-info';
 @Component({
   selector: 'ct-yard-bay',
   templateUrl: './ct-yard-bay.component.html',
@@ -62,10 +61,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
 
   @Output() yardposClick: EventEmitter<Yardpos<T>> = new EventEmitter();
 
-  constructor(
-    private el: ElementRef,
-    private yardposParser: CtYardposParserService
-  ) {}
+  constructor(private el: ElementRef, private yardposParser: CtYardposParserService) {}
 
   ngOnInit() {
     // if (this.yardBay.dataUpdated) {
@@ -76,18 +72,10 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
     this.host = d3.select(this.el.nativeElement);
     this.svg = this.host
       .select('svg')
-      .attr(
-        'width',
-        (this.displaySize.row + 1) * this.cellSize + 2 * this.padding
-      )
-      .attr(
-        'height',
-        (this.displaySize.tier + 1) * this.cellSize + 2 * this.padding
-      );
+      .attr('width', (this.displaySize.row + 1) * this.cellSize + 2 * this.padding)
+      .attr('height', (this.displaySize.tier + 1) * this.cellSize + 2 * this.padding);
     this.yardBayGroup = this.svg.append('g').attr('class', 'yard-bay-group');
-    this.yardposInfoGroup = this.svg
-      .append('g')
-      .attr('class', 'yard-pos-info-group');
+    this.yardposInfoGroup = this.svg.append('g').attr('class', 'yard-pos-info-group');
     this.renderLayout();
     this.updateYardposInfo();
   }
@@ -100,18 +88,12 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
     const poses: Yardpos<T>[] = [];
     for (let row = 1; row <= this.displaySize.row; row++) {
       for (let tier = 1; tier <= this.displaySize.tier; tier++) {
-        const posName =
-          this.yardBay.name +
-          this.yardposParser.formatP(row) +
-          this.yardposParser.formatC(tier);
+        const posName = this.yardBay.name + this.yardposParser.formatP(row) + this.yardposParser.formatC(tier);
         if (posMap[posName]) {
           poses.push(posMap[posName]);
         } else {
           poses.push({
-            name:
-              this.yardBay.name +
-              this.yardposParser.formatP(row) +
-              this.yardposParser.formatC(tier),
+            name: this.yardBay.name + this.yardposParser.formatP(row) + this.yardposParser.formatC(tier),
             data: null
           });
         }
@@ -148,14 +130,8 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
         this.host = d3.select(this.el.nativeElement);
         this.svg = this.host
           .select('svg')
-          .attr(
-            'width',
-            (this.displaySize.row + 1) * this.cellSize + 2 * this.padding
-          )
-          .attr(
-            'height',
-            (this.displaySize.tier + 1) * this.cellSize + 2 * this.padding
-          );
+          .attr('width', (this.displaySize.row + 1) * this.cellSize + 2 * this.padding)
+          .attr('height', (this.displaySize.tier + 1) * this.cellSize + 2 * this.padding);
         this.renderLayout();
         this.updateYardposInfo();
       }, 0);
@@ -168,9 +144,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
   renderLayout() {
     // 绘制层标签
     this.svg.selectAll('g.yard-bay-tier-label-group').remove();
-    this.yardBayTierLabelGroup = this.svg
-      .append('g')
-      .attr('class', 'yard-bay-tier-label-group');
+    this.yardBayTierLabelGroup = this.svg.append('g').attr('class', 'yard-bay-tier-label-group');
     this.yardBayTierLabelGroup
       .selectAll('text')
       .data(d3.range(1, this.displaySize.row + 1))
@@ -191,9 +165,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
 
     // 绘制列标签
     this.svg.selectAll('g.yard-bay-row-label-group').remove();
-    this.yardBayRowLabelGroup = this.svg
-      .append('g')
-      .attr('class', 'yard-bay-row-label-group');
+    this.yardBayRowLabelGroup = this.svg.append('g').attr('class', 'yard-bay-row-label-group');
     this.yardBayRowLabelGroup
       .selectAll('text')
       .data(d3.range(1, this.displaySize.row + 1))
@@ -214,9 +186,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
 
     // 绘制区位号标签
     this.svg.selectAll('g.yard-bay-name-label-group').remove();
-    this.yardBayNameLabelGroup = this.svg
-      .append('g')
-      .attr('class', 'yard-bay-name-label-group');
+    this.yardBayNameLabelGroup = this.svg.append('g').attr('class', 'yard-bay-name-label-group');
     this.yardBayNameLabelGroup
       .append('text')
       .attr('transform', label => {
@@ -246,6 +216,8 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
     cell
       .selectAll('path')
       .transition()
+      .attr('stroke', (pos: Yardpos<T>) => this.draw('stroke', pos))
+      .attr('stroke-width', (pos: Yardpos<T>) => this.draw('strokeWidth', pos))
       .attr('fill', (pos: Yardpos<T>) => this._fillFunction(pos));
     cell.selectAll('text').text((pos: Yardpos<T>) => this._renderPosText(pos));
 
@@ -262,8 +234,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
       .exit()
       .transition()
       .attr('transform', (pos: Yardpos<T>) => {
-        const x =
-          parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
+        const x = parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
         // return `translate(${x}, -${this.cellSize})`;
         return `scale(0,0)`;
       })
@@ -276,11 +247,8 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
       .style('cursor', 'pointer')
       .attr('class', 'yard-pos-info')
       .attr('transform', (pos: Yardpos<T>) => {
-        const x =
-          parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
-        const y =
-          (this.displaySize.tier - +this.yardposParser.getC(pos.name)) *
-          this.cellSize;
+        const x = parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
+        const y = (this.displaySize.tier - +this.yardposParser.getC(pos.name)) * this.cellSize;
         return `translate(${x}, -${y + this.cellSize})`;
       })
       .on('mouseover', function(data, i, nodes) {
@@ -300,9 +268,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
     g.append('path')
       .attr('d', (pos: Yardpos<T>) => {
         // 基础图形是一个框
-        const path = `M0 0 L${this.cellSize} 0 L${this.cellSize} ${
-          this.cellSize
-        } L0 ${this.cellSize} Z`;
+        const path = `M0 0 L${this.cellSize} 0 L${this.cellSize} ${this.cellSize} L0 ${this.cellSize} Z`;
         // if (data.isLocked) {
         //   // 箱区封锁要画叉
         //   path =
@@ -314,8 +280,8 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
         return path;
       })
       .attr('fill', (pos: Yardpos<T>) => this._fillFunction(pos))
-      .attr('stroke', 'rgb(90,68,70)')
-      .attr('stroke-width', '1px');
+      .attr('stroke', pos => this.draw('stroke', pos))
+      .attr('stroke-width', pos => this.draw('strokeWidth', pos));
     // 高箱 需要加一条粗线
     // g.append('path')
     //   .attr('d', data => {
@@ -341,16 +307,13 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
       .text((pos: Yardpos<T>) => this._renderPosText(pos));
 
     g.transition()
-      .delay((pos: Yardpos<T>) => {
-        const tier = +this.yardposParser.getC(pos.name);
-        return tier * 100;
-      })
+      // .delay((pos: Yardpos<T>) => {
+      //   const tier = +this.yardposParser.getC(pos.name);
+      //   return tier * 100;
+      // })
       .attr('transform', (pos: Yardpos<T>) => {
-        const x =
-          parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
-        const y =
-          (this.displaySize.tier - +this.yardposParser.getC(pos.name)) *
-          this.cellSize;
+        const x = parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
+        const y = (this.displaySize.tier - +this.yardposParser.getC(pos.name)) * this.cellSize;
         return `translate(${x}, ${y})`;
       });
   }
@@ -370,6 +333,21 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
       } else {
         return 'white';
       }
+    }
+  }
+
+  private draw(which: string, target: Yardpos<T>) {
+    if (this.renderOptions && this.renderOptions[which]) {
+      switch (typeof this.renderOptions[which]) {
+        case 'string':
+          return this.renderOptions[which];
+        case 'number':
+          return `${this.renderOptions[which]}`;
+        default:
+          return this.renderOptions[which](target);
+      }
+    } else {
+      return null;
     }
   }
 

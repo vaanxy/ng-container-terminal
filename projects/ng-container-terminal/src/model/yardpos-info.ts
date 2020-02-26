@@ -1,6 +1,5 @@
-import { Plan } from './plan';
-import { Task } from './task';
 import { Container } from './container';
+import { Plan } from './plan';
 
 export interface YardposInfo {
   displayedContainer: Container;

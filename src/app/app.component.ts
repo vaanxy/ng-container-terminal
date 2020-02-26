@@ -1,16 +1,18 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { CtMockService } from 'projects/ng-container-terminal/mock/src/public_api';
-import { Vescell, Yardpos } from 'projects/ng-container-terminal/src/model';
 import {
   CtVescellParserService,
   CtYardComponent,
+  Prestow,
   RenderOptions,
+  Vescell,
   VesselBay,
   YardBay,
   YardInfo,
+  Yardpos,
   YardposInfo,
-} from 'projects/ng-container-terminal/src/public_api';
+} from 'ng-container-terminal';
+import { CtMockService } from 'ng-container-terminal/mock';
 
 import { AppService } from './app.service';
 
@@ -596,19 +598,22 @@ export class AppComponent implements OnInit {
   blockLocations = [];
   yardInfoList: YardInfo<any>[] = [];
   blocks: YardposInfo[][] = [];
-  vesselBay: VesselBay<any>;
-  vesselBays: VesselBay<any>[] = [];
+  // vesselBay: VesselBay<any>;
+  // vesselBays: VesselBay<any>[] = [];
+  vescellsList: Vescell<Prestow>[][] = [];
+  vescells: Vescell<Prestow>[] = [];
 
   yardBay: YardBay<string> = {
     name: '*1A063',
-    poses: [
-      { name: '*1A0630101', data: '666' },
-      { name: '*1A0630102', data: '666' }
-    ]
+    poses: [{ name: '*1A0630101', data: '666' }, { name: '*1A0630102', data: '666' }]
   };
 
   yardBayRenderOptions: RenderOptions<Yardpos<any>> = {
-    text: d => (d.data ? '10.2' : '')
+    text: d => (d.data ? '10.2' : ''),
+    stroke: d => {
+      return 'green';
+    },
+    strokeWidth: 2
   };
 
   rotation = 0;
@@ -617,17 +622,13 @@ export class AppComponent implements OnInit {
 
   @ViewChildren(CtYardComponent) yardComponents: QueryList<CtYardComponent>;
 
-  renderOptions: RenderOptions<YardposInfo>;
+  vesselRenderOptions: RenderOptions<VesselBay<Prestow>>;
   yardOverviewRenderOptions: RenderOptions<YardInfo<any>> = {
     scaleFactor: 0.3,
-    stroke: 'green',
+    stroke: 'grey',
     strokeWidth: 6
   };
-  constructor(
-    private mock: CtMockService,
-    private app: AppService,
-    private cellParser: CtVescellParserService
-  ) {}
+  constructor(private mock: CtMockService, private app: AppService, private cellParser: CtVescellParserService) {}
 
   ngOnInit() {
     this.getPrestows();
@@ -640,21 +641,31 @@ export class AppComponent implements OnInit {
     // }, 2000);
 
     this.mock.getYardposInfoList().subscribe(blockLocations => {
+      blockLocations = blockLocations.filter(l => l.displayedContainer || l.isLocked);
+      blockLocations = this.app.yardposCompletion(blockLocations, {
+        block: '*4D',
+        maxBay: 40,
+        maxRow: 6,
+        maxTier: 5,
+        x: 0,
+        y: 0,
+        direction: 'H',
+        width: 0,
+        height: 0
+      });
       this.blockLocations = blockLocations;
+
       this.blocks[0] = [...this.blockLocations];
       setTimeout(() => {
-        const location = this.blockLocations.find(
-          p => p.yardpos === '*4D0060101'
-        );
+        const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
         location.container = this.blockLocations[50].container;
+        location.displayedContainer = this.blockLocations[50].displayedContainer;
         this.yardComponents.last.notifyDataUpdated();
       }, 2000);
 
       setTimeout(() => {
         this.rotation = 90;
-        const location = this.blockLocations.find(
-          p => p.yardpos === '*4D0060102'
-        );
+        const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
         location.container = this.blockLocations[50].container;
         this.yardComponents.last.notifyDataUpdated(true);
         // setTimeout(() => {
@@ -673,10 +684,7 @@ export class AppComponent implements OnInit {
     console.log(yardInfo);
   }
 
-  renderYardContent($event: {
-    node: d3.Selection<any, any, any, any>;
-    data: YardInfo<any>;
-  }) {
+  renderYardContent($event: { node: d3.Selection<any, any, any, any>; data: YardInfo<any> }) {
     const { node, data } = $event;
     node
       .append('rect')
@@ -692,6 +700,17 @@ export class AppComponent implements OnInit {
     const cellMap: { [key: string]: Vescell<any> } = {};
     const bayMap: { [key: string]: Vescell<any>[] } = {};
     this.app.getPrestow().subscribe(cells => {
+      // setTimeout(() => {
+      //   // this.vesselRenderOptions = {
+      //   //   fill: 'green'
+      //   // };
+
+      //   // this.vesselBays[0] = {
+      //   //   name: '001',
+      //   //   vescells: this.vesselBays[0].vescells
+      //   // };
+      //   this.vescellSize = 40;
+      // }, 3000);
       cells.forEach(cell => {
         cellMap[cell.name] = cell;
         const bayName = this.cellParser.getBayno(cell.name);
@@ -703,12 +722,27 @@ export class AppComponent implements OnInit {
           bayMap[bayName] = [cell];
         }
       });
+      const vcells: Vescell<Prestow>[][] = [];
       Object.entries(bayMap).forEach(([bayName, arr]) => {
-        this.vesselBays.push({
-          name: bayName,
-          vescells: arr
-        });
+        vcells.push(arr);
       });
+      this.vescellsList = vcells;
+      const timer = setInterval(() => {
+        console.log(this.vescellsList[0].length);
+        const idx = Math.floor(Math.random() * 3);
+        this.vesselRenderOptions = {
+          fill: ['green', 'blue', 'red', 'yellow', 'orange'][idx],
+          text: Math.random().toFixed(2)
+        };
+        // if (this.vescellsList[0].length) {
+        //   this.vescellsList[0] = this.vescellsList[0].slice(1, this.vescellsList[0].length);
+        // } else {
+        //   clearInterval(timer);
+        // }
+        const randIdx = Math.floor(Math.random() * this.vescellsList.length);
+        this.vescells = this.vescellsList[randIdx];
+        // this.vescellSize = Math.max(0, Math.random() * 40);
+      }, 1001);
     });
   }
 }

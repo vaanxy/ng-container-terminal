@@ -2,19 +2,20 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CtMockService } from 'projects/ng-container-terminal/mock/src/public_api';
 import {
   CtVescellParserService,
   CtVesselBayModule,
   CtYardBayModule,
   CtYardModule,
   CtYardOverviewModule,
+  CtYardposParserService,
   VESCELL_PARSER_CONFIG,
-} from 'projects/ng-container-terminal/src/public_api';
+  YARDPOS_PARSER_CONFIG,
+} from 'ng-container-terminal';
+import { CtMockService } from 'ng-container-terminal/mock';
 
 import { AppComponent } from './app.component';
 
-// import { CtMockService } from 'ng-container-terminal/mock';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -33,6 +34,13 @@ import { AppComponent } from './app.component';
       {
         provide: VESCELL_PARSER_CONFIG,
         useValue: { pattern: 'BBBBLLCC' }
+      }
+    ],
+    [
+      CtYardposParserService,
+      {
+        provide: YARDPOS_PARSER_CONFIG,
+        useValue: { pattern: 'QQQWWWPPCC' }
       }
     ]
   ],

@@ -1,6 +1,6 @@
 {
   "name": "ng-container-terminal",
-  "version": "0.5.8",
+  "version": "0.6.13",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -11,7 +11,8 @@
     "test-headless": "ng test ng-container-terminal --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "release": "standard-version"
   },
   "author": "vaanxy",
   "description": "Container terminal related UI components & tools based on Angular & d3",
@@ -20,32 +21,31 @@
     "url": "git+https://github.com:vaanxy/ng-container-terminal.git"
   },
   "dependencies": {
-    "@angular/animations": "^7.1.1",
-    "@angular/common": "^7.1.1",
-    "@angular/compiler": "^7.1.1",
-    "@angular/core": "^7.1.1",
-    "@angular/forms": "^7.1.1",
-    "@angular/http": "^7.1.1",
-    "@angular/platform-browser": "^7.1.1",
-    "@angular/platform-browser-dynamic": "^7.1.1",
-    "@angular/router": "^7.1.1",
+    "@angular/animations": "^9.0.2",
+    "@angular/common": "^9.0.2",
+    "@angular/compiler": "^9.0.2",
+    "@angular/core": "^9.0.2",
+    "@angular/forms": "^9.0.2",
+    "@angular/platform-browser": "^9.0.2",
+    "@angular/platform-browser-dynamic": "^9.0.2",
+    "@angular/router": "^9.0.2",
     "core-js": "^2.4.1",
     "d3": "^5.7.0",
-    "rxjs": "^6.3.3",
-    "tslib": "^1.9.0",
-    "web-animations-js": "^2.3.1",
-    "zone.js": "^0.8.26"
+    "rxjs": "^6.5.4",
+    "tslib": "^1.10.0",
+    "web-animations-js": "^2.3.2",
+    "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.11.0",
-    "@angular-devkit/build-ng-packagr": "~0.11.0",
-    "@angular/cli": "^7.1.0",
-    "@angular/compiler-cli": "^7.1.1",
+    "@angular-devkit/build-angular": "~0.900.3",
+    "@angular-devkit/build-ng-packagr": "~0.900.3",
+    "@angular/cli": "^9.0.3",
+    "@angular/compiler-cli": "^9.0.2",
     "@types/d3": "^5.0.1",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
-    "@types/node": "~8.9.4",
-    "codelyzer": "~4.5.0",
+    "@types/node": "^12.11.1",
+    "codelyzer": "^5.1.2",
     "commitizen": "^3.0.5",
     "cz-conventional-changelog": "^2.1.0",
     "jasmine-core": "2.99.1",
@@ -55,13 +55,13 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
-    "ng-packagr": "^4.4.5",
+    "ng-packagr": "^9.0.0",
     "prettier": "1.15.3",
     "protractor": "~5.4.0",
+    "standard-version": "^7.0.1",
     "ts-node": "~7.0.0",
-    "tsickle": "^0.34.0",
     "tslint": "~5.11.0",
-    "typescript": "~3.1.0"
+    "typescript": "~3.7.5"
   },
   "config": {
     "commitizen": {

@@ -1,9 +1,9 @@
 {
   "name": "ng-container-terminal",
-  "version": "0.5.8",
+  "version": "0.6.13",
   "peerDependencies": {
-    "@angular/common": "^7.1.0",
-    "@angular/core": "^7.1.0"
+    "@angular/common": "^7.0.0||^8.0.0||^9.0.0",
+    "@angular/core": "^7.0.0||^8.0.0||^9.0.0"
   },
   "author": "vaanxy",
   "description": "Container terminal related UI components & tools based on Angular & d3",
