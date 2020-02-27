@@ -61,6 +61,10 @@ export class CtVesselBayComponent<T> implements OnInit {
     this.renderUpdateSubject.next();
   }
 
+  @Input() cellTrackByFn = (cell: Vescell<T>) => {
+    return JSON.stringify(cell);
+  };
+
   get renderOptions() {
     return this._renderOptions;
   }
@@ -401,8 +405,7 @@ export class CtVesselBayComponent<T> implements OnInit {
   renderVescells() {
     const deckCells = this.vesselDeckBayCellGroup
       .selectAll('g')
-      // .attr('class', 'deck-cell')
-      .data(this.deckCells, (d: Vescell<T>) => this.cellParser.getLC(d.name));
+      .data(this.deckCells, (cell: Vescell<T>) => this.cellTrackByFn(cell));
 
     const enteredDeckCells = deckCells.enter();
     const updatedDeckCells = deckCells;
@@ -463,6 +466,7 @@ export class CtVesselBayComponent<T> implements OnInit {
         return `translate(${x}, ${y})`;
       });
     updatedDeckCells
+
       .selectAll('rect')
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)
@@ -484,7 +488,7 @@ export class CtVesselBayComponent<T> implements OnInit {
     // hold cell group
     const holdCells = this.vesselHoldBayCellGroup
       .selectAll('g')
-      .data(this.holdCells, (d: Vescell<T>) => this.cellParser.getLC(d.name));
+      .data(this.holdCells, (cell: Vescell<T>) => this.cellTrackByFn(cell));
 
     const enteredHoldCells = holdCells.enter();
     const updatedHoldCells = holdCells;

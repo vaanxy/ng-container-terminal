@@ -6,7 +6,6 @@ import {
   Prestow,
   RenderOptions,
   Vescell,
-  VesselBay,
   YardBay,
   YardInfo,
   Yardpos,
@@ -622,11 +621,15 @@ export class AppComponent implements OnInit {
 
   @ViewChildren(CtYardComponent) yardComponents: QueryList<CtYardComponent>;
 
-  vesselRenderOptions: RenderOptions<VesselBay<Prestow>>;
+  vesselRenderOptions: RenderOptions<Vescell<Prestow>>;
   yardOverviewRenderOptions: RenderOptions<YardInfo<any>> = {
     scaleFactor: 0.3,
     stroke: 'grey',
     strokeWidth: 6
+  };
+
+  cellTrackByFn = (cell: Vescell<Prestow>) => {
+    return cell.name + (cell.data ? cell.data.height : '');
   };
   constructor(private mock: CtMockService, private app: AppService, private cellParser: CtVescellParserService) {}
 
@@ -731,8 +734,10 @@ export class AppComponent implements OnInit {
         console.log(this.vescellsList[0].length);
         const idx = Math.floor(Math.random() * 3);
         this.vesselRenderOptions = {
-          fill: ['green', 'blue', 'red', 'yellow', 'orange'][idx],
-          text: Math.random().toFixed(2)
+          // fill: ['green', 'blue', 'red', 'yellow', 'orange'][idx],
+          text: v => {
+            return v.data ? v.data.height : '';
+          }
         };
         // if (this.vescellsList[0].length) {
         //   this.vescellsList[0] = this.vescellsList[0].slice(1, this.vescellsList[0].length);
@@ -741,6 +746,8 @@ export class AppComponent implements OnInit {
         // }
         const randIdx = Math.floor(Math.random() * this.vescellsList.length);
         this.vescells = this.vescellsList[randIdx];
+        // this.vescells = this.vescellsList[0];
+
         // this.vescellSize = Math.max(0, Math.random() * 40);
       }, 1001);
     });
