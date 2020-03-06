@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 
 import { YARDPOS_PARSER_CONFIG, YardposParserConfig } from './model/yardpos-parser-config';
 
@@ -19,7 +19,7 @@ export class CtYardposParserService {
 
   private finalConfig: YardposParserConfig;
 
-  constructor(@Inject(YARDPOS_PARSER_CONFIG) private config: YardposParserConfig) {
+  constructor(@Optional() @Inject(YARDPOS_PARSER_CONFIG) private config: YardposParserConfig) {
     // 合并用户提供的解析器配置
     this.finalConfig = Object.assign({}, this.defaultConfig, config);
     // 重新计算索引

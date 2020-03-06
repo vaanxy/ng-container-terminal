@@ -1,17 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import {
-  CtVescellParserService,
-  CtYardComponent,
-  Prestow,
-  RenderOptions,
-  Vescell,
-  YardBay,
-  YardInfo,
-  Yardpos,
-  YardposInfo,
-} from 'ng-container-terminal';
+import { Prestow, RenderOptions, Vescell, YardBay, YardInfo, Yardpos, YardposInfo } from 'ng-container-terminal/core';
 import { CtMockService } from 'ng-container-terminal/mock';
+import { CtVescellParserService } from 'ng-container-terminal/tool';
+import { CtYardComponent } from 'ng-container-terminal/yard';
 
 import { AppService } from './app.service';
 

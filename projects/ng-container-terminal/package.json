@@ -1,6 +1,6 @@
 {
   "name": "ng-container-terminal",
-  "version": "0.6.14",
+  "version": "0.7.0",
   "peerDependencies": {
     "@angular/common": "^7.0.0||^8.0.0||^9.0.0",
     "@angular/core": "^7.0.0||^8.0.0||^9.0.0"

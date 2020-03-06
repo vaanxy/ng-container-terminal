@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CtYardposParserService, Vescell, YardInfo, YardposInfo } from 'ng-container-terminal';
+import { Vescell, YardInfo, YardposInfo } from 'ng-container-terminal';
+import { CtYardposParserService } from 'ng-container-terminal/tool';
 
 @Injectable({
   providedIn: 'root'

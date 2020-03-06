@@ -10,12 +10,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import * as d3 from 'd3';
+import { RenderOptions, YardposInfo } from 'ng-container-terminal/core';
+import { CtYardposParserService } from 'ng-container-terminal/tool';
 import { Subject } from 'rxjs';
 import { bufferTime, filter } from 'rxjs/operators';
-
-import { RenderOptions } from '../../model/render-options';
-import { YardposInfo } from '../../model/yardpos-info';
-import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
 
 @Component({
   selector: 'ct-yard',
@@ -154,11 +152,11 @@ export class CtYardComponent implements OnInit, OnChanges {
         // .filter(bay => bay % 2 === 1)
         .map(bay => (bay + (2 - (bay % 2))) / 2)
     );
-    console.log({
-      maxBay: this.maxBay,
-      maxRow: this.maxRow,
-      maxTier: this.maxTier
-    });
+    // console.log({
+    //   maxBay: this.maxBay,
+    //   maxRow: this.maxRow,
+    //   maxTier: this.maxTier
+    // });
     // this.maxBay = d3
     //   .set(
     //     this.yardposInfoList

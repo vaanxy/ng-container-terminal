@@ -1,11 +1,9 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as d3 from 'd3';
+import { RenderOptions, Vescell } from 'ng-container-terminal/core';
+import { CtVescellParserService } from 'ng-container-terminal/tool';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-
-import { CtVescellParserService } from '../../lib/tool/ct-vescell-parser.service';
-import { Vescell } from '../../model/cell';
-import { RenderOptions } from '../../model/render-options';
 
 // import { YardposInfo } from '../../model/yardpos-info';
 @Component({
@@ -14,6 +12,41 @@ import { RenderOptions } from '../../model/render-options';
   styleUrls: ['./ct-vessel-bay.component.css']
 })
 export class CtVesselBayComponent<T> implements OnInit {
+  @Input() set renderOptions(options: RenderOptions<Vescell<T>>) {
+    this._renderOptions = options;
+    this.renderUpdateSubject.next();
+  }
+
+  get renderOptions() {
+    return this._renderOptions;
+  }
+
+  @Input() set cellSize(size: number) {
+    this._cellSize = +size;
+    this.renderUpdateSubject.next();
+  }
+
+  get cellSize() {
+    return this._cellSize;
+  }
+
+  @Input() set vescells(vescells: Vescell<T>[]) {
+    // console.log('update vescells');
+
+    this._vescells = vescells;
+    this.renderUpdateSubject.next();
+  }
+
+  get vescells() {
+    return this._vescells;
+  }
+
+  constructor(private el: ElementRef, private cellParser: CtVescellParserService) {
+    this.renderUpdateSubject.pipe(debounceTime(100)).subscribe(() => {
+      this.premarshalling(this.vescells);
+      this.renderAll();
+    });
+  }
   renderUpdateSubject: Subject<void> = new Subject();
   host: d3.Selection<any, any, any, any>;
   svg: d3.Selection<any, any, any, any>;
@@ -56,47 +89,11 @@ export class CtVesselBayComponent<T> implements OnInit {
 
   @Input() name: string;
 
-  @Input() set renderOptions(options: RenderOptions<Vescell<T>>) {
-    this._renderOptions = options;
-    this.renderUpdateSubject.next();
-  }
+  @Output() vescellClick: EventEmitter<Vescell<T>> = new EventEmitter();
 
   @Input() cellTrackByFn = (cell: Vescell<T>) => {
     return JSON.stringify(cell);
   };
-
-  get renderOptions() {
-    return this._renderOptions;
-  }
-
-  @Input() set cellSize(size: number) {
-    this._cellSize = +size;
-    this.renderUpdateSubject.next();
-  }
-
-  get cellSize() {
-    return this._cellSize;
-  }
-
-  @Input() set vescells(vescells: Vescell<T>[]) {
-    console.log('update vescells');
-
-    this._vescells = vescells;
-    this.renderUpdateSubject.next();
-  }
-
-  get vescells() {
-    return this._vescells;
-  }
-
-  @Output() vescellClick: EventEmitter<Vescell<T>> = new EventEmitter();
-
-  constructor(private el: ElementRef, private cellParser: CtVescellParserService) {
-    this.renderUpdateSubject.pipe(debounceTime(100)).subscribe(() => {
-      this.premarshalling(this.vescells);
-      this.renderAll();
-    });
-  }
 
   ngOnInit() {
     console.log('ng on init');

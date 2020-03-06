@@ -22,8 +22,8 @@
       "ng-container-terminal": [
         "projects/ng-container-terminal/src/public_api.ts"
       ],
-      "ng-container-terminal/mock": [
-        "projects/ng-container-terminal/mock/src/public_api.ts"
+      "ng-container-terminal/*": [
+        "projects/ng-container-terminal/*/src/public_api.ts"
       ],
     }
   }

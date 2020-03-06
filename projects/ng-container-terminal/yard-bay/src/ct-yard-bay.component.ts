@@ -1,10 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
-
-import { RenderOptions } from '../../model/render-options';
-import { YardBay } from '../../model/yard-bay';
-import { Yardpos } from '../../model/yardpos';
-import { CtYardposParserService } from '../tool/ct-yardpos-parser.service';
+import { RenderOptions, YardBay, Yardpos } from 'ng-container-terminal/core';
+import { CtYardposParserService } from 'ng-container-terminal/tool';
 
 @Component({
   selector: 'ct-yard-bay',
@@ -126,7 +123,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['yardBay']) {
       setTimeout(() => {
-        console.log(this.yardBay);
+        // console.log(this.yardBay);
         this.host = d3.select(this.el.nativeElement);
         this.svg = this.host
           .select('svg')
@@ -202,7 +199,7 @@ export class CtYardBayComponent<T> implements OnInit, OnChanges {
   }
 
   updateYardposInfo() {
-    console.log('updating....');
+    // console.log('updating....');
     this.generatePoses();
     if (!this.yardposInfoGroup) {
       return;

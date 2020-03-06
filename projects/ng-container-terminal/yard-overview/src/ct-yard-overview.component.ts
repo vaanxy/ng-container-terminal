@@ -9,8 +9,7 @@ import {
   Output,
 } from '@angular/core';
 import * as d3 from 'd3';
-
-import { RenderOptions, YardInfo } from '../../public_api';
+import { RenderOptions, YardInfo } from 'ng-container-terminal/core';
 
 @Component({
   selector: 'ct-yard-overview',

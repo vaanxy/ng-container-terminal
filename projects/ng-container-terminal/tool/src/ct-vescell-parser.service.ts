@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 
 import { VESCELL_PARSER_CONFIG, VescellParserConfig } from './model/vescell-parser-config';
 
@@ -18,7 +18,7 @@ export class CtVescellParserService {
 
   private finalConfig: VescellParserConfig;
 
-  constructor(@Inject(VESCELL_PARSER_CONFIG) private config: VescellParserConfig) {
+  constructor(@Optional() @Inject(VESCELL_PARSER_CONFIG) private config: VescellParserConfig) {
     // 合并用户提供的解析器配置
     this.finalConfig = Object.assign({}, this.defaultConfig, config);
     // 重新计算索引
