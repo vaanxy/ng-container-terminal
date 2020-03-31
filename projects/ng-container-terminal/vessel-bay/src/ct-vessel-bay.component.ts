@@ -41,6 +41,19 @@ export class CtVesselBayComponent<T> implements OnInit {
     return this._vescells;
   }
 
+  @Input() set name(name: string) {
+    this._name = name;
+    this.displayName = name;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  displayName: string;
+
+  @Output() vescellClick: EventEmitter<Vescell<T>> = new EventEmitter();
+
   constructor(private el: ElementRef, private cellParser: CtVescellParserService) {
     this.renderUpdateSubject.pipe(debounceTime(100)).subscribe(() => {
       this.premarshalling(this.vescells);
@@ -83,13 +96,10 @@ export class CtVesselBayComponent<T> implements OnInit {
 
     maxRow: 0 // 整贝最大列宽 max(deckMaxRow, holdMaxRow)
   };
-  // private _vesselBay: VesselBay<T>;
+
+  private _name: string;
   private _cellSize = 20;
   private _renderOptions: RenderOptions<Vescell<T>>;
-
-  @Input() name: string;
-
-  @Output() vescellClick: EventEmitter<Vescell<T>> = new EventEmitter();
 
   @Input() cellTrackByFn = (cell: Vescell<T>) => {
     return JSON.stringify(cell);
@@ -160,7 +170,7 @@ export class CtVesselBayComponent<T> implements OnInit {
       return;
     }
     if (!this.name) {
-      this.name = this.cellParser.getBayno(cells[0].name);
+      this.displayName = this.cellParser.getBayno(cells[0].name);
     }
     const deckRows = new Set<string>();
     const holdRows = new Set<string>();

@@ -32,6 +32,7 @@ import { AppComponent } from './app.component';
       provide: YARDPOS_PARSER_CONFIG,
       useValue: { pattern: 'QQQWWWPPCC' }
     }
+    //
     // [
     //   CtVescellParserService,
     //   {
