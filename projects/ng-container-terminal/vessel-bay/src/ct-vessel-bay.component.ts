@@ -106,7 +106,7 @@ export class CtVesselBayComponent<T> implements OnInit {
   };
 
   ngOnInit() {
-    console.log('ng on init');
+    // console.log('ng on init');
 
     this.host = d3.select(this.el.nativeElement);
     // step1
@@ -355,7 +355,7 @@ export class CtVesselBayComponent<T> implements OnInit {
     const updatedRowLabels = rowLabelSelection;
     const exitedRowLabels = rowLabelSelection.exit();
 
-    console.log('row labels', updatedRowLabels);
+    // console.log('row labels', updatedRowLabels);
 
     enteredRowLabels
       .append('text')
@@ -419,20 +419,26 @@ export class CtVesselBayComponent<T> implements OnInit {
     const exitedDeckCells = deckCells.exit();
     // console.log('deck cells', updatedDeckCells);
 
-    const enteredDeckG = enteredDeckCells.append('g').attr('transform', cell => {
-      const row = +this.cellParser.getL(cell.name);
-      const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
-      let x = row * ((row % 2) * 2 - 1);
-      if (this.layout.deckHasZeroRow) {
-        x = x + (row % 2);
-      } else {
-        x = x - (row % 2);
-      }
-      x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
-      const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
-      x = this.cellSize * x;
-      return `translate(${x}, ${y})`;
-    });
+    const enteredDeckG = enteredDeckCells
+      .append('g')
+      .attr('transform', cell => {
+        const row = +this.cellParser.getL(cell.name);
+        const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
+        let x = row * ((row % 2) * 2 - 1);
+        if (this.layout.deckHasZeroRow) {
+          x = x + (row % 2);
+        } else {
+          x = x - (row % 2);
+        }
+        x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
+        const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
+        x = this.cellSize * x;
+        return `translate(${x}, ${y})`;
+      })
+      .on('click', (cell: Vescell<T>, index: number) => {
+        this.vescellClick.emit(cell);
+        // console.log('vescell click', cell);
+      });
 
     enteredDeckG
       // .selectAll('rect')
@@ -501,24 +507,29 @@ export class CtVesselBayComponent<T> implements OnInit {
     const updatedHoldCells = holdCells;
     const exitedHoldCells = holdCells.exit();
 
-    const enteredHoldG = enteredHoldCells.append('g').attr('transform', cell => {
-      const row = +this.cellParser.getL(cell.name);
-      const tier = +this.cellParser.getC(cell.name) / 2;
+    const enteredHoldG = enteredHoldCells
+      .append('g')
+      .attr('transform', cell => {
+        const row = +this.cellParser.getL(cell.name);
+        const tier = +this.cellParser.getC(cell.name) / 2;
 
-      let x = row * ((row % 2) * 2 - 1);
+        let x = row * ((row % 2) * 2 - 1);
 
-      if (this.layout.holdHasZeroRow) {
-        x = x + (row % 2);
-      } else {
-        x = x - (row % 2);
-      }
-      x = x / 2 + (this.layout.holdRowCount - +this.layout.holdHasZeroRow) / 2;
+        if (this.layout.holdHasZeroRow) {
+          x = x + (row % 2);
+        } else {
+          x = x - (row % 2);
+        }
+        x = x / 2 + (this.layout.holdRowCount - +this.layout.holdHasZeroRow) / 2;
 
-      const y = (this.layout.holdTierCount - tier) * this.cellSize;
-      x = this.cellSize * x;
-      return `translate(${x}, ${y})`;
-    });
-
+        const y = (this.layout.holdTierCount - tier) * this.cellSize;
+        x = this.cellSize * x;
+        return `translate(${x}, ${y})`;
+      })
+      .on('click', (cell: Vescell<T>, index: number) => {
+        this.vescellClick.emit(cell);
+        // console.log('vescell click', cell);
+      });
     enteredHoldG
       .append('rect')
       .attr('stroke-width', '2px')
@@ -580,135 +591,6 @@ export class CtVesselBayComponent<T> implements OnInit {
         return `scale(0,0)`;
       })
       .remove();
-
-    // const cells = selection
-    //   .selectAll('rect')
-    //   .data(data, (d: Vescell<T>) => JSON.stringify(d));
-
-    // const enteredCells = cells.enter();
-    // const updatedCells = cells;
-    // const exitedCells = cells.exit();
-    // // console.log('cells', updatedCells);
-
-    // enteredCells
-    //   .append('rect')
-    //   .attr('width', this.cellSize)
-    //   .attr('height', this.cellSize)
-    //   .attr('transform', (cell) => {
-    //     const row = +this.cellParser.getL(cell.name);
-    //     const tier = (+this.cellParser.getC(cell.name) - this.layout.deckMinTierLabel) / 2;
-    //     let x = row * ((row % 2) * 2 - 1);
-    //     if (this.layout.deckHasZeroRow) {
-    //       x = x + (row % 2);
-    //     } else {
-    //       x = x - (row % 2);
-    //     }
-    //     x = x / 2 + (this.layout.deckRowCount - +this.layout.deckHasZeroRow) / 2;
-    //     const y = (this.layout.deckTierCount - tier - 1) * this.cellSize;
-    //     x = this.cellSize * x;
-    //     return `translate(${x}, ${y})`;
-    //   })
-    //   .attr('stroke-width', '2px')
-    //   .attr('stroke', 'black')
-    //   .attr('fill', 'white')
-    //   .transition()
-    //   .duration(500)
-    //   .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
-
-    // updatedCells
-    //   .transition()
-    //   .duration(500)
-    //   .attr('fill', (cell: Vescell<T>) => this._fillFunction(cell));
-
-    // exitedCells
-    //   .transition()
-    //   .attr('transform', (pos: Vescell<T>) => {
-    //     return `scale(0,0)`;
-    //   })
-    //   .remove();
-  }
-
-  renderYardposInfo(selection: d3.Selection<any, any, any, any>) {
-    // const g = selection
-    //   .append('g')
-    //   .style('cursor', 'pointer')
-    //   .attr('class', 'yard-pos-info')
-    //   .attr('transform', (pos: Yardpos<T>) => {
-    //     const x =
-    //       parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
-    //     const y =
-    //       (this.displaySize.tier - +this.yardposParser.getC(pos.name)) *
-    //       this.cellSize;
-    //     return `translate(${x}, -${y + this.cellSize})`;
-    //   })
-    //   .on('mouseover', function(data, i, nodes) {
-    //     d3.select(nodes[i])
-    //       .select('path')
-    //       .attr('fill', 'grey');
-    //   })
-    //   .on('mouseleave', (data, i, nodes) => {
-    //     d3.select(nodes[i])
-    //       .select('path')
-    //       .attr('fill', d => this._fillFunction(data));
-    //   })
-    //   .on('click', (posInfo: Yardpos<T>, index: number) => {
-    //     this.yardposClick.emit(posInfo);
-    //   });
-    // g.append('path')
-    //   .attr('d', (pos: Yardpos<T>) => {
-    //     // 基础图形是一个框
-    //     const path = `M0 0 L${this.cellSize} 0 L${this.cellSize} ${
-    //       this.cellSize
-    //     } L0 ${this.cellSize} Z`;
-    //     // if (data.isLocked) {
-    //     //   // 箱区封锁要画叉
-    //     //   path =
-    //     //     path +
-    //     //     `M0 0 L${this.cellSize} ${this.cellSize} M${this.cellSize} 0 L0 ${
-    //     //       this.cellSize
-    //     //     }`;
-    //     // }
-    //     return path;
-    //   })
-    //   .attr('fill', (pos: Yardpos<T>) => this._fillFunction(pos))
-    //   .attr('stroke', 'rgb(90,68,70)')
-    //   .attr('stroke-width', '1px');
-    // // 高箱 需要加一条粗线
-    // // g.append('path')
-    // //   .attr('d', data => {
-    // //     if (data.container && data.container.height + '' === '9.6') {
-    // //       return `M0 2 L${this.cellSize} 2`;
-    // //     } else {
-    // //       return `M0 0 L${this.cellSize} 0`;
-    // //     }
-    // //   })
-    // //   .attr('stroke', 'black')
-    // //   .attr('stroke-width', data => {
-    // //     if (data.container && data.container.height + '' === '9.6') {
-    // //       return 4;
-    // //     } else {
-    // //       return 1;
-    // //     }
-    // //   });
-    // // g.append('text')
-    // //   .attr('font-size', '9')
-    // //   .attr('text-anchor', 'middle')
-    // //   .attr('dx', this.cellSize / 2)
-    // //   .attr('dy', this.cellSize / 1.2)
-    // //   .text((posInfo: YardposInfo) => (posInfo.text ? posInfo.text : ''));
-    // g.transition()
-    //   .delay((pos: Yardpos<T>) => {
-    //     const tier = +this.yardposParser.getC(pos.name);
-    //     return tier * 100;
-    //   })
-    //   .attr('transform', (pos: Yardpos<T>) => {
-    //     const x =
-    //       parseInt(this.yardposParser.getP(pos.name), 10) * this.cellSize;
-    //     const y =
-    //       (this.displaySize.tier - +this.yardposParser.getC(pos.name)) *
-    //       this.cellSize;
-    //     return `translate(${x}, ${y})`;
-    //   });
   }
 
   private _fillFunction(cell: Vescell<T>) {

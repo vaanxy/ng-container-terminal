@@ -1,12 +1,12 @@
 {
   "name": "ng-container-terminal",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
     "pretty": "prettier --write --config ./.prettierrc ./projects/**/*.{ts,html,css,less}",
     "start": "ng serve",
-    "build": "ng build ng-container-terminal && cp README.md dist/ng-container-terminal && cp CHANGELOG.md dist/ng-container-terminal",
+    "build": "ng build ng-container-terminal --prod && cp README.md dist/ng-container-terminal && cp CHANGELOG.md dist/ng-container-terminal",
     "test": "ng test ng-container-terminal",
     "test-headless": "ng test ng-container-terminal --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
