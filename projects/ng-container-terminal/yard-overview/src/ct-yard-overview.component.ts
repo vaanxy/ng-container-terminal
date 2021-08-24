@@ -58,10 +58,13 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
     this.host = d3.select(this.el.nativeElement);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.initYardOverview();
+  }
 
   ngOnChanges() {
-    this.initYardOverview();
+    this.redraw();
+    // this.initYardOverview();
   }
 
   initYardOverview() {
@@ -98,16 +101,18 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
   }
 
   redraw() {
-    const yard = this.yardOverviewGroup.selectAll('g.yard-group').data(this.yardInfoList);
+    const allYards = this.yardOverviewGroup.selectAll('g.yard-group').data(this.yardInfoList);
 
-    yard
-      .selectAll('rect.yard-rect')
-      .transition()
-      .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo));
+    // overview
+    //   .selectAll('rect.yard-rect')
+    //   .transition()
+    //   .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo));
 
-    const enteredYard = yard.enter();
+    const enterYards = allYards.enter();
+    const updateYards = allYards;
+    const exitYards = allYards.exit();
 
-    const yardGroup = enteredYard
+    const yardGroup = enterYards
       .append('g')
       .attr('class', 'yard-group')
       .attr('transform', data => {
@@ -149,6 +154,59 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
       .attr('font-size', '12')
       .attr('text-anchor', 'middle')
       .text((yardInfo: YardInfo<any>) => this.draw('text', yardInfo));
+
+    updateYards
+      .selectAll('g.yard-group')
+      .transition()
+      .duration(500)
+      .attr('transform', (data: YardInfo<T>) => {
+        const x = data.x;
+        const y = this.ctxHeight - data.y - data.height;
+        return `translate(${x}, ${y})`;
+      })
+      .on('mouseover', (data, i, nodes) => {
+        d3.select(nodes[i])
+          .select('rect')
+          .attr('fill', 'grey');
+      })
+      .on('mouseleave', (data, i, nodes) => {
+        d3.select(nodes[i])
+          .select('rect')
+          .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo));
+      })
+      .on('click', (data: YardInfo<T>) => {
+        this.yardClick.emit(data);
+      });
+
+    updateYards
+      .selectAll('rect.yard-rect')
+      .transition()
+      .duration(500)
+      .attr('width', (yardInfo: YardInfo<T>) => yardInfo.width)
+      .attr('height', (yardInfo: YardInfo<T>) => yardInfo.height)
+      .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo))
+      .attr('stroke', (yardInfo: YardInfo<T>) => this.draw('stroke', yardInfo))
+      .attr('stroke-width', (yardInfo: YardInfo<T>) => this.draw('strokeWidth', yardInfo) + 'px')
+      .each((yardInfo: YardInfo<T>, nodeIdx, nodes) => {
+        this.yardContentRender.next({
+          node: d3.select(nodes[nodeIdx]),
+          data: yardInfo
+        });
+      });
+
+    updateYards.selectAll('text').text((yardInfo: YardInfo<any>) => this.draw('text', yardInfo));
+
+    exitYards
+      .attr('opacity', 1)
+      // .selectAll('g.yard-group')
+      .transition()
+      .duration(500)
+      .attr('opacity', 0)
+
+      // .attr('transform', (yard: YardInfo<any>) => {
+      //   return `scale(0,0)`;
+      // })
+      .remove();
   }
 
   private draw(which: string, yardInfo: YardInfo<T>) {

@@ -479,7 +479,6 @@ export class CtVesselBayComponent<T> implements OnInit {
         return `translate(${x}, ${y})`;
       });
     updatedDeckCells
-
       .selectAll('rect')
       .attr('width', this.cellSize)
       .attr('height', this.cellSize)

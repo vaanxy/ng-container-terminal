@@ -672,6 +672,15 @@ export class AppComponent implements OnInit {
 
     this.mock.getYardInfoList().subscribe((yardInfoList: YardInfo<any>[]) => {
       this.yardInfoList = yardInfoList;
+      setTimeout(() => {
+        this.yardInfoList = yardInfoList.slice(0, 10);
+        this.yardOverviewRenderOptions = {
+          scaleFactor: 0.8,
+          stroke: 'red',
+          fill: 'green',
+          strokeWidth: 10
+        };
+      }, 6000);
     });
   }
 
