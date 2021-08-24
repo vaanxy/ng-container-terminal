@@ -675,7 +675,7 @@ export class AppComponent implements OnInit {
       setTimeout(() => {
         this.yardInfoList = yardInfoList.slice(0, 10);
         this.yardOverviewRenderOptions = {
-          scaleFactor: 0.8,
+          scaleFactor: 0.5,
           stroke: 'red',
           fill: 'green',
           strokeWidth: 10

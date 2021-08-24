@@ -104,6 +104,20 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
   }
 
   redraw() {
+    this.ctxWidth = Math.max(...this.yardInfoList.map(d => d.x + d.width + 16), 0);
+    this.ctxHeight = Math.max(...this.yardInfoList.map(d => d.y + d.height + 16), 0);
+
+    this.svgCtx
+      .transition()
+      .duration(500)
+      .attr('width', this.ctxWidth * this.renderOptions.scaleFactor + 'px')
+      .attr('height', this.ctxHeight * this.renderOptions.scaleFactor + 'px');
+
+    this.yardOverviewGroup
+      .transition()
+      .duration(500)
+      .attr('transform', `scale(${this.renderOptions.scaleFactor})`);
+
     const allYards = this.yardOverviewGroup.selectAll('g.yard-group').data(this.yardInfoList);
 
     // overview
@@ -159,27 +173,27 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
       .text((yardInfo: YardInfo<any>) => this.draw('text', yardInfo));
 
     updateYards
-      .selectAll('g.yard-group')
       .transition()
       .duration(500)
       .attr('transform', (data: YardInfo<T>) => {
         const x = data.x;
         const y = this.ctxHeight - data.y - data.height;
+        console.log(this.ctxHeight);
         return `translate(${x}, ${y})`;
-      })
-      .on('mouseover', (data, i, nodes) => {
-        d3.select(nodes[i])
-          .select('rect')
-          .attr('fill', 'grey');
-      })
-      .on('mouseleave', (data, i, nodes) => {
-        d3.select(nodes[i])
-          .select('rect')
-          .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo));
-      })
-      .on('click', (data: YardInfo<T>) => {
-        this.yardClick.emit(data);
       });
+    // .on('mouseover', (data, i, nodes) => {
+    //   d3.select(nodes[i])
+    //     .select('rect')
+    //     .attr('fill', 'grey');
+    // })
+    // .on('mouseleave', (data, i, nodes) => {
+    //   d3.select(nodes[i])
+    //     .select('rect')
+    //     .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo));
+    // })
+    // .on('click', (data: YardInfo<T>) => {
+    //   this.yardClick.emit(data);
+    // });
 
     updateYards
       .selectAll('rect.yard-rect')
@@ -201,14 +215,9 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
 
     exitYards
       .attr('opacity', 1)
-      // .selectAll('g.yard-group')
       .transition()
       .duration(500)
       .attr('opacity', 0)
-
-      // .attr('transform', (yard: YardInfo<any>) => {
-      //   return `scale(0,0)`;
-      // })
       .remove();
   }
 
