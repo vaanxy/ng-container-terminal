@@ -1,4 +1,14 @@
 {
+  "packageFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "projects/ng-container-terminal/package.json",
+      "type": "json"
+    }
+  ],
   "bumpFiles": [
     {
       "filename": "package.json",
