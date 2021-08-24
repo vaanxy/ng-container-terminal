@@ -178,7 +178,6 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
       .attr('transform', (data: YardInfo<T>) => {
         const x = data.x;
         const y = this.ctxHeight - data.y - data.height;
-        console.log(this.ctxHeight);
         return `translate(${x}, ${y})`;
       });
     // .on('mouseover', (data, i, nodes) => {
@@ -203,13 +202,7 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
       .attr('height', (yardInfo: YardInfo<T>) => yardInfo.height)
       .attr('fill', (yardInfo: YardInfo<T>) => this.draw('fill', yardInfo))
       .attr('stroke', (yardInfo: YardInfo<T>) => this.draw('stroke', yardInfo))
-      .attr('stroke-width', (yardInfo: YardInfo<T>) => this.draw('strokeWidth', yardInfo) + 'px')
-      .each((yardInfo: YardInfo<T>, nodeIdx, nodes) => {
-        this.yardContentRender.next({
-          node: d3.select(nodes[nodeIdx]),
-          data: yardInfo
-        });
-      });
+      .attr('stroke-width', (yardInfo: YardInfo<T>) => this.draw('strokeWidth', yardInfo) + 'px');
 
     updateYards.selectAll('text').text((yardInfo: YardInfo<any>) => this.draw('text', yardInfo));
 
