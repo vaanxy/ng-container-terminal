@@ -63,8 +63,11 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.redraw();
-    // this.initYardOverview();
+    if (!this.svgCtx) {
+      this.initYardOverview();
+    } else {
+      this.redraw();
+    }
   }
 
   initYardOverview() {
