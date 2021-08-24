@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.7](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.6...v0.7.7) (2021-08-24)
+
+
+### Bug Fixes
+
+* **yard-overview:** custom render call in wrong node while updating ([5f81bbd](https://github.com/vaanxy/ng-container-terminal/commit/5f81bbd46bf9ddd0db169197d52888529f7057b6))
+
 ### [0.7.6](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.5...v0.7.6) (2021-08-24)
 
 ### 0.7.5 (2021-08-24)
