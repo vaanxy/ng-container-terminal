@@ -24,7 +24,7 @@
       ],
       "ng-container-terminal/*": [
         "projects/ng-container-terminal/*/src/public_api.ts"
-      ],
+      ]
     }
   }
 }
