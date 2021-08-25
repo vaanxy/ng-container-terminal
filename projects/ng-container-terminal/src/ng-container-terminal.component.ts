@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'ct-ng-container-terminal',
@@ -7,8 +7,6 @@ import { Component, OnInit } from '@angular/core';
   `,
   styles: []
 })
-export class NgContainerTerminalComponent implements OnInit {
+export class NgContainerTerminalComponent {
   constructor() {}
-
-  ngOnInit() {}
 }
