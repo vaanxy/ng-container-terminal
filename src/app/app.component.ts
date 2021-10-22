@@ -685,10 +685,12 @@ export class AppComponent implements OnInit {
   }
 
   onYardClicked(yardInfo: YardInfo<any>) {
+    this.yardInfoList = [...this.yardInfoList];
     console.log(yardInfo);
   }
 
   renderYardContent($event: { node: d3.Selection<any, any, any, any>; data: YardInfo<any> }) {
+    console.log('renderYardContent');
     const { node, data } = $event;
     node
       .append('rect')

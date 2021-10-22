@@ -182,6 +182,13 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
         const y = this.ctxHeight - data.y - data.height;
         return `translate(${x}, ${y})`;
       });
+
+    updateYards.each((data, nodeIdx, nodes) => {
+      this.yardContentRender.next({
+        node: d3.select(nodes[nodeIdx]),
+        data: data
+      });
+    });
     // .on('mouseover', (data, i, nodes) => {
     //   d3.select(nodes[i])
     //     .select('rect')
