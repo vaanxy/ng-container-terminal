@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.10](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.9...v0.7.10) (2021-10-22)
+
+
+### Bug Fixes
+
+* **ct-yard-overview:** fix yardContentRender event not emit while updating ([176a0d8](https://github.com/vaanxy/ng-container-terminal/commit/176a0d8be3aa52a16bcf7ee04102d4c652ae11be))
+
 ### [0.7.9](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.8...v0.7.9) (2021-10-22)
 
 
