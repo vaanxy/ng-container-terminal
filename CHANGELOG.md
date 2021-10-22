@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.9](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.8...v0.7.9) (2021-10-22)
+
+
+### Bug Fixes
+
+* **ct-yard-overview:** add identity function to ct-yard-overview component ([4ba9f45](https://github.com/vaanxy/ng-container-terminal/commit/4ba9f4546baa0a3edcc8adecb02fcb469bbde381))
+
 ### [0.7.8](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.7...v0.7.8) (2021-08-25)
 
 ### [0.7.7](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.6...v0.7.7) (2021-08-24)
