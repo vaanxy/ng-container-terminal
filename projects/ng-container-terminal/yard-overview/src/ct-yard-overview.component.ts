@@ -118,7 +118,9 @@ export class CtYardOverviewComponent<T> implements OnInit, OnChanges {
       .duration(500)
       .attr('transform', `scale(${this.renderOptions.scaleFactor})`);
 
-    const allYards = this.yardOverviewGroup.selectAll('g.yard-group').data(this.yardInfoList);
+    const allYards = this.yardOverviewGroup
+      .selectAll('g.yard-group')
+      .data(this.yardInfoList, (pos: YardInfo<T>, idx) => JSON.stringify(pos));
 
     // overview
     //   .selectAll('rect.yard-rect')
