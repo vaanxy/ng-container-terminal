@@ -1,0 +1,9 @@
+{
+  "integrationFolder": "projects/ng-container-terminal/cypress/integration",
+  "supportFile": "projects/ng-container-terminal/cypress/support/index.ts",
+  "videosFolder": "projects/ng-container-terminal/cypress/videos",
+  "screenshotsFolder": "projects/ng-container-terminal/cypress/screenshots",
+  "pluginsFile": "projects/ng-container-terminal/cypress/plugins/index.ts",
+  "fixturesFolder": "projects/ng-container-terminal/cypress/fixtures",
+  "baseUrl": "http://localhost:4200"
+}
