@@ -12,7 +12,7 @@ import {
 import * as d3 from 'd3';
 import { RenderOptions, YardposInfo } from 'ng-container-terminal/core';
 import { CtYardposParserService } from 'ng-container-terminal/tool';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { bufferTime, filter } from 'rxjs/operators';
 
 @Component({
@@ -48,9 +48,9 @@ export class CtYardComponent implements OnInit, OnChanges {
 
   @Input() set renderOptions(options: RenderOptions<YardposInfo>) {
     this._renderOptions = options;
-    setTimeout(() => {
-      this.notifyDataUpdated(true);
-    }, 0);
+    // setTimeout(() => {
+    //   this.notifyDataUpdated(true);
+    // }, 0);
   }
 
   get renderOptions() {
@@ -64,7 +64,7 @@ export class CtYardComponent implements OnInit, OnChanges {
 
   @Output() yardposClick: EventEmitter<YardposInfo> = new EventEmitter();
 
-  onNotifyDataChanged = new Subject<number>();
+  onNotifyDataChanged = new BehaviorSubject<boolean>(false);
   onNotifyDataChanged$ = this.onNotifyDataChanged.asObservable();
 
   constructor(private el: ElementRef, private yardposParser: CtYardposParserService) {}
@@ -92,48 +92,50 @@ export class CtYardComponent implements OnInit, OnChanges {
     this.onNotifyDataChanged$
       .pipe(
         bufferTime(100),
-        filter(x => x.length > 0)
+        filter((x: boolean[]) => x.length > 0)
       )
-      .subscribe((data: number[]) => {
-        // console.log(data);
+      .subscribe((data: boolean[]) => {
+        // console.log('subscribe onNotifyDataChanged: ', data);
         const s = new Date().getTime();
-        if (Math.max(...data) === 1) {
+        if (data.indexOf(false) >= 0) {
           this.extractBasicInfo();
           this.processData();
         }
         this.redraw();
         const e = new Date().getTime();
-        // console.log( (e - s) + 'ms');
+        console.log(`redraw cost: ${e - s} ms`);
       });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // console.log('ng changes: ', changes);
+    let redrawOnly = true;
     if (changes['yardposInfoList']) {
+      console.log('yardposInfoList changes');
+      redrawOnly = false;
       if (this.yardposInfoList.length > 0) {
         this.block = this.yardposParser.getQ(this.yardposInfoList[0].yardpos);
       } else {
         this.block = '';
       }
-      setTimeout(() => {
-        this.notifyDataUpdated();
-      }, 0);
+      // setTimeout(() => {
+      //   this.notifyDataUpdated();
+      // }, 0);
     }
-    if (changes['rotation']) {
-      setTimeout(() => {
-        this.notifyDataUpdated(true);
-      }, 0);
-    }
+    // if (changes['rotation']) {
+    //   setTimeout(() => {
+    //     this.notifyDataUpdated(true);
+    //   }, 0);
+    // }
+    this.notifyDataUpdated(redrawOnly);
   }
 
   /**
    * 当yardposInfoList里面的相关属性发生变化时，通知视图进行刷行
    */
   notifyDataUpdated(redrawOnly = false) {
-    if (redrawOnly) {
-      this.onNotifyDataChanged.next(0);
-    } else {
-      this.onNotifyDataChanged.next(1);
-    }
+    // console.log('notifyDataUpdated: ', redrawOnly);
+    this.onNotifyDataChanged.next(redrawOnly);
   }
 
   /**

@@ -586,7 +586,7 @@ export const prestows: Vescell<any>[] = [
   ]
 })
 export class AppComponent implements OnInit {
-  blockLocations = [];
+  blockLocations: YardposInfo[] = [];
   yardInfoList: YardInfo<any>[] = [];
   blocks: YardposInfo[][] = [];
   // vesselBay: VesselBay<any>;
@@ -651,23 +651,17 @@ export class AppComponent implements OnInit {
       this.blockLocations = blockLocations;
 
       this.blocks[0] = [...this.blockLocations];
-      setTimeout(() => {
-        const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
-        location.container = this.blockLocations[50].container;
-        location.displayedContainer = this.blockLocations[50].displayedContainer;
-        this.yardComponents.first.notifyDataUpdated();
-      }, 2000);
 
       setTimeout(() => {
         this.rotation = 90;
-        // const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
-        // location.container = this.blockLocations[50].container;
-        // this.yardComponents.last.notifyDataUpdated(true);
-        // setTimeout(() => {
-        //   this.yardComponents.first.redraw();
-        //   this.yardComponents.last.redraw();
-        // }, 0);
-      }, 4000);
+      }, 2000);
+      setTimeout(() => {
+        const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
+        location.containers = this.blockLocations[50].containers;
+        location.displayedContainer = this.blockLocations[50].displayedContainer;
+        // 修改组件@Input字段的内部属性，需要手动通知组件刷新
+        this.yardComponents.first.notifyDataUpdated();
+      }, 2000);
     });
 
     this.mock.getYardInfoList().subscribe((yardInfoList: YardInfo<any>[]) => {
