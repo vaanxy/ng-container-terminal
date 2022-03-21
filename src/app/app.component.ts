@@ -661,7 +661,7 @@ export class AppComponent implements OnInit {
         location.displayedContainer = this.blockLocations[50].displayedContainer;
         // 修改组件@Input字段的内部属性，需要手动通知组件刷新
         this.yardComponents.first.notifyDataUpdated();
-      }, 2000);
+      }, 4000);
     });
 
     this.mock.getYardInfoList().subscribe((yardInfoList: YardInfo<any>[]) => {
