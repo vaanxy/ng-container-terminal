@@ -12,7 +12,8 @@ export class AppService {
   getPrestow() {
     return this.http.get<Vescell<any>[]>(
       // 'http://0.0.0.0:5001/prestow/' + 'P170323001C'
-      'http://0.0.0.0:5001/prestow/' + 'P1812050001'
+      // 'http://0.0.0.0:5001/prestow/' + 'P1812050001'
+      'https://ctas-server.smuport.com/prestow/' + 'P1812050001'
     );
   }
 

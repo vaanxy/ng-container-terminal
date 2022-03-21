@@ -655,14 +655,14 @@ export class AppComponent implements OnInit {
         const location = this.blockLocations.find(p => p.yardpos === '*4D0060101');
         location.container = this.blockLocations[50].container;
         location.displayedContainer = this.blockLocations[50].displayedContainer;
-        this.yardComponents.last.notifyDataUpdated();
+        this.yardComponents.first.notifyDataUpdated();
       }, 2000);
 
       setTimeout(() => {
         this.rotation = 90;
-        const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
-        location.container = this.blockLocations[50].container;
-        this.yardComponents.last.notifyDataUpdated(true);
+        // const location = this.blockLocations.find(p => p.yardpos === '*4D0060102');
+        // location.container = this.blockLocations[50].container;
+        // this.yardComponents.last.notifyDataUpdated(true);
         // setTimeout(() => {
         //   this.yardComponents.first.redraw();
         //   this.yardComponents.last.redraw();
@@ -754,5 +754,9 @@ export class AppComponent implements OnInit {
         // this.vescellSize = Math.max(0, Math.random() * 40);
       }, 1001);
     });
+  }
+
+  yardposClick($event: YardposInfo) {
+    console.log($event);
   }
 }

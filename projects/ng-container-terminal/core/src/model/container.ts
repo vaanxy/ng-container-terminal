@@ -1,6 +1,6 @@
 import { Task } from './task';
 
-export interface Container {
+export interface Container<T = any> {
   shippingLineOut: string;
   shippingLineIn: string;
   ctnno: string;
@@ -14,6 +14,7 @@ export interface Container {
   voyageIn: string;
   vesselNameOut: string;
   voyageOut: string;
-  tense: string; // 时态, 一般包含2个时态: 当前态, 将来态
-  task: Task;
+  tense?: string; // 时态, 一般包含2个时态: 当前态, 将来态
+  task?: Task;
+  data?: T;
 }

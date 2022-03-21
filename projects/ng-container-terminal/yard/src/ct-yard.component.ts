@@ -319,7 +319,8 @@ export class CtYardComponent implements OnInit, OnChanges {
 
     const yardPoses = this.yardGroup
       .selectAll('g.yardpos')
-      .data(this.displayYardposInfoList, (data: YardposInfo) => data.yardpos);
+
+      .data(this.displayYardposInfoList, (data: YardposInfo) => JSON.stringify(data));
 
     // 更新
     yardPoses
@@ -360,7 +361,7 @@ export class CtYardComponent implements OnInit, OnChanges {
         return this._fillFunction(data);
       })
       .attr('stroke', (posInfo: YardposInfo) => this.draw('stroke', posInfo))
-      .attr('stroke-width', '1px');
+      .attr('stroke-width', (posInfo: YardposInfo) => this.draw('strokeWidth', posInfo));
 
     // 高箱 需要加一条粗线
     yardPoses
