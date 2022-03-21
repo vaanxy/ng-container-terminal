@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.12](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.10...v0.7.12) (2022-03-21)
+
+
+### Features
+
+* **ct-yard:** update redraw logic ([e9617bf](https://github.com/vaanxy/ng-container-terminal/commit/e9617bfa9d862293c0e648960b2631849e469652))
+
+
+### Bug Fixes
+
+* **ct-yard:** stroke width fix to 1px while redrawing ([9781898](https://github.com/vaanxy/ng-container-terminal/commit/97818980a30e394f57a66fb156a3ee07eb837f73))
+
 ### [0.7.11](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.10...v0.7.11) (2022-03-21)
 
 
