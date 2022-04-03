@@ -53,6 +53,10 @@ export class CtVesselBayComponent<T> implements OnInit {
   displayName: string;
 
   @Output() vescellClick: EventEmitter<Vescell<T>> = new EventEmitter();
+  @Output() contentRender: EventEmitter<{
+    node: d3.Selection<any, any, any, any>;
+    data: Vescell<T>;
+  }> = new EventEmitter();
 
   constructor(private el: ElementRef, private cellParser: CtVescellParserService) {
     this.renderUpdateSubject.pipe(debounceTime(100)).subscribe(() => {
@@ -461,6 +465,13 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('dy', this.cellSize / 1.2)
       .text((cell: Vescell<T>) => this._renderText(cell));
 
+    enteredDeckG.each((data, nodeIdx, nodes) => {
+      this.contentRender.next({
+        node: d3.select(nodes[nodeIdx]),
+        data: data
+      });
+    });
+
     updatedDeckCells
       .transition()
       .duration(500)
@@ -489,6 +500,13 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('dx', this.cellSize / 2)
       .attr('dy', this.cellSize / 1.2)
       .text((cell: Vescell<T>) => this._renderText(cell));
+
+    updatedDeckCells.each((data, nodeIdx, nodes) => {
+      this.contentRender.next({
+        node: d3.select(nodes[nodeIdx]),
+        data: data
+      });
+    });
 
     exitedDeckCells
       .transition()
@@ -548,6 +566,12 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('dy', this.cellSize / 1.2)
       .text((cell: Vescell<T>) => this._renderText(cell));
 
+    enteredHoldG.each((data, nodeIdx, nodes) => {
+      this.contentRender.next({
+        node: d3.select(nodes[nodeIdx]),
+        data: data
+      });
+    });
     updatedHoldCells
       .transition()
       .duration(500)
@@ -583,6 +607,13 @@ export class CtVesselBayComponent<T> implements OnInit {
       .attr('dx', this.cellSize / 2)
       .attr('dy', this.cellSize / 1.2)
       .text((cell: Vescell<T>) => this._renderText(cell));
+
+    updatedHoldCells.each((data, nodeIdx, nodes) => {
+      this.contentRender.next({
+        node: d3.select(nodes[nodeIdx]),
+        data: data
+      });
+    });
 
     exitedHoldCells
       .transition()

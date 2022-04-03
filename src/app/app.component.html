@@ -28,6 +28,7 @@
     [vescells]="vescells"
     [cellSize]="vescellSize"
     [cellTrackByFn]="cellTrackByFn"
+    (contentRender)="renderVescellContent($event)"
     [renderOptions]="vesselRenderOptions"
   ></ct-vessel-bay>
 </div>

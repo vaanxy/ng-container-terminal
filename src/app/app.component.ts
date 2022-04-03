@@ -696,6 +696,21 @@ export class AppComponent implements OnInit {
       .attr('fill', 'red');
   }
 
+  renderVescellContent($event: { node: d3.Selection<any, any, any, any>; data: Vescell<any> }) {
+    console.log('renderVescellContent');
+    const { node, data } = $event;
+    if (Math.random() >= 0.5) {
+      node
+        .append('rect')
+        .attr('width', 10)
+        .attr('height', 10)
+        .attr('stroke', 'rgb(0,0,0)')
+        .attr('stroke-width', '2px')
+        // .attr('transform', `translate(${index * pieceWidth}, 0)`)
+        .attr('fill', 'red');
+    }
+  }
+
   getPrestows() {
     const cellMap: { [key: string]: Vescell<any> } = {};
     const bayMap: { [key: string]: Vescell<any>[] } = {};
