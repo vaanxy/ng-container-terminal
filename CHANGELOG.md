@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.13](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.12...v0.7.13) (2022-04-03)
+
+
+### Features
+
+* **ct-vessel-bay:** add new event renderContent to customize content in each vescell ([f583d7b](https://github.com/vaanxy/ng-container-terminal/commit/f583d7bc16018be523cacbabbe693cfabaeb720a))
+
 ### [0.7.12](https://github.com/vaanxy/ng-container-terminal/compare/v0.7.10...v0.7.12) (2022-03-21)
 
 
